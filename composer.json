@@ -1,6 +1,6 @@
 {
     "name": "weblabormx/laravel-front",
-    "description": "A front end resource tool for Laravel",
+    "description": "Front is a administration panel for Laravel. It allows you to create CRUD easily in minutes. It allows to fully customize any part of the code.",
     "keywords": [
         "laravel",
         "admin"
