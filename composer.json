@@ -1,6 +1,6 @@
 {
-    "name": "weblabormx/front",
-    "description": "A front end resource tool",
+    "name": "weblabormx/laravel-front",
+    "description": "A front end resource tool for Laravel",
     "keywords": [
         "laravel",
         "admin"
@@ -16,7 +16,8 @@
         "php": ">=7.1.0",
         "laracasts/flash": ">=3",
         "laravelcollective/html": ">=5",
-        "opis/closure": "^3.1"
+        "opis/closure": "^3.1",
+        "laravel/framework": ">5.5",
     },
     "autoload": {
         "psr-4": {
