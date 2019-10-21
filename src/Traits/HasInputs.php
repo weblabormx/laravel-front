@@ -23,7 +23,7 @@ trait HasInputs
 		$sum = [];
 		if($where=='index' || $flatten) {
 			$sum = collect($this->fields())->flatten()->filter(function($item) {
-				return class_basename(get_class($item)) == 'Panel';
+				return is_object($item) && class_basename(get_class($item)) == 'Panel';
 			})->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
 				return $item->$field && $item->show;

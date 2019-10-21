@@ -172,7 +172,7 @@ abstract class Resource
         unset($inputs['redirect_url']);
 
         // Remove autocomplete helper input
-        $autocomplete_fields = $this->filterFields($this->source=='update' ? 'edit' : 'create')->filter(function($item) {
+        $autocomplete_fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true)->filter(function($item) {
             return isset($item->searchable) && $item->searchable;
         })->map(function($item) {
             return $item->column.'ce';
