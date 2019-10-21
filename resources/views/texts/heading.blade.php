@@ -1,0 +1,1 @@
+<h6 class="small font-weight-semibold mb-4">{{$heading->title}}</h6>
