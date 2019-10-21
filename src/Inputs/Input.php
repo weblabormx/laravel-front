@@ -6,11 +6,12 @@ use WeblaborMx\Front\Front;
 use WeblaborMx\Front\Traits\InputVisibility;
 use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputRules;
+use WeblaborMx\Front\Traits\WithWidth;
 use Illuminate\Support\Str;
 
 class Input
 {
-	use InputVisibility, InputSetters, InputRules;
+	use InputVisibility, InputSetters, InputRules, WithWidth;
 
 	public $is_input = true;
 	public $is_panel = false;
@@ -62,9 +63,14 @@ class Input
 	public function getValueProcessed($object)
 	{
 		$return = $this->getValue($object);
+		if(Str::startsWith($return, 'http') && !isset($this->link)) {
+			$this->link = $return;
+			$this->link_target = '_blank';
+		}
 		$link = $this->link;
 		if(isset($link)) {
-			$return = "<a href='{$link}'>{$return}</a>";
+			$add = isset($this->link_target) ? ' target="'.$this->link_target.'"' : '';
+			$return = "<a href='{$link}'{$add}>{$return}</a>";
 		}
 		if(isset($this->display_using) && is_callable($this->display_using) && $return!='--') {
 			$function = $this->display_using;
