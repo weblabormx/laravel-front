@@ -10,11 +10,12 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 - It tries to be simpler to modify and adapt to any use.
 - Menu is not generated automatically
 
-## Resources
+## Documentation
+### Resources
 
 A resource is a class that allows you to configure all the information about the front end of a Laravel Model. Things as fields, url, buttons and more are configured on this file.
 
-### Registering resources
+#### Registering resources
 
 The front resources are saved by default on `App\Front` folder. You can generate a new front using the artisan command:
 
@@ -28,7 +29,7 @@ And then you will need to add the route. This will generate a access on `/models
 Route::front('Model');
 ```
 
-### Working with resources
+#### Working with resources
 
 There are some basic variables that can be added on the resource
 
@@ -38,7 +39,7 @@ public $label;		// Name of the resource (Generated automatically if empty)
 public $base_url;	// Url created on routes (Required)
 ```
 
-### Modifying query of results
+#### Modifying query of results
 
 If you want to modify the results of CRUD you are able to modify it with `indexQuery` function
 
@@ -49,7 +50,7 @@ public function indexQuery($query)
 }
 ```
 
-### Pagination
+#### Pagination
 
 By default a pagination is created with 50 elements, if you want to modify the quantity you can add a new attribute called `pagination` on the resource
 
@@ -57,7 +58,7 @@ By default a pagination is created with 50 elements, if you want to modify the q
 public $pagination = 50;
 ```
 
-## Fields
+### Fields
 
 Each resource contains a `fields` method, where it returns an array with the list of all the fields that the resource should have.
 
@@ -84,7 +85,7 @@ public function fields()
 }
 ```
 
-### Field column convention
+#### Field column convention
 
 As noted above, Front will "snake case" the displayable name of the field to determine the underlying database column. However, if necessary, you may pass the column name as the second argument to the field's make method:
 
@@ -92,7 +93,7 @@ As noted above, Front will "snake case" the displayable name of the field to det
 Text::make('Name', 'name_column')
 ```
 
-### Showing / Hidding Fields
+#### Showing / Hidding Fields
 
 - hideFromIndex
 - hideFromDetail
@@ -111,7 +112,7 @@ You may chain any of these methods onto your field's definition in order to inst
 Text::make('Name')->hideFromIndex()
 ```
 
-### Field Panels
+#### Field Panels
 
 If your resource contains many fields, your resource "detail" screen can become crowded. For that reason, you may choose to break up groups of fields into their own "panels":
 
@@ -139,7 +140,7 @@ public function generalInformationFields()
 }
 ```
 
-### Field types
+#### Field types
 
 All the fields available on front:
 
@@ -167,3 +168,5 @@ All the fields available on front:
 - Textarea
 - Trix
 
+## Premium Support
+If you'd like to implement this package in your project and need our help, or you just want to help this package to continue being develop please write us to carlosescobar@weblabor.mx and we can talk about prices for premium support.
