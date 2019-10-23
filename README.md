@@ -11,22 +11,25 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 - Menu is not generated automatically
 
 ## Documentation
+### Installation
+- Install via composer executing `composer require weblabormx/laravel-front`
+
 ### Resources
 
 A resource is a class that allows you to configure all the information about the front end of a Laravel Model. Things as fields, url, buttons and more are configured on this file.
 
 #### Registering resources
 
-The front resources are saved by default on `App\Front` folder. You can generate a new front using the artisan command:
+The front resources are saved by default on `App\Front` folder. You can generate a new front using the artisan command (In this case a new resource alled Page):
 
 ```
 php artisan front:resource Page
 ```
 
-And then you will need to add the route. This will generate a access on `/models` (It uses the plural name)
+And then you will need to add the route. This will generate a access on `/pages` (It uses the plural name)
 
 ```
-Route::front('Model');
+Route::front('Page');
 ```
 
 #### Working with resources
