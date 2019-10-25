@@ -10,6 +10,7 @@ trait InputSetters
 	public $resource;
 	public $display_using;
 	public $link;
+	public $class = '';
 
 	public function setColumn($value)
 	{
@@ -129,6 +130,12 @@ trait InputSetters
 			return $this;
 		}
 		$this->default_value = $value;
+		return $this;
+	}
+
+	public function class($class)
+	{
+		$this->class = $class;
 		return $this;
 	}
 }

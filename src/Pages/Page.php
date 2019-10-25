@@ -20,4 +20,9 @@ class Page
 			$this->title = preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $title);
 		}
 	}
+
+	public function style()
+	{
+		return;
+	}
 }

@@ -1,4 +1,4 @@
-<div class="card mb-4">
+<div class="card mb-4 {{$panel->class}}">
     @if(strlen($panel->title) > 0)
         <div class="card-header">
             <b>{{$panel->title}}</b>

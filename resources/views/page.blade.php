@@ -1,5 +1,15 @@
 @extends('front::layout')
-    
+
+@section('styles')
+
+    @if(!is_null($page->style()))
+        <style type="text/css">
+            {!! $page->style() !!}
+        </style>
+    @endif
+
+@endsection
+
 @section('content')
 
     <!-- Content -->

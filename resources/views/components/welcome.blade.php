@@ -1,4 +1,4 @@
-<h4 class="media align-items-center font-weight-bold py-3 mb-4">
+<h4 class="media align-items-center font-weight-bold py-3 mb-4 {{$component->class}}">
     <img src="{{Auth::user()->photo_url}}" alt="" class="ui-w-50 rounded-circle">
     <div class="media-body ml-3">
         Welcome back, {{Auth::user()->name}}!
