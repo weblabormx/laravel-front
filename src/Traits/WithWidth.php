@@ -25,10 +25,10 @@ trait WithWidth
         if($this->width=='full') {
             return;
         }
-        return "width: calc({$this->porcentage()}% - 25px); display: inline-block; vertical-align:top; margin: 20px 10px;";
+        return "width: calc({$this->width_porcentage()}% - 25px); display: inline-block; vertical-align:top; margin: 20px 10px;";
     }
 
-    public function porcentage()
+    public function width_porcentage()
     {
         if($this->width=='1/2') {
             return 50;
