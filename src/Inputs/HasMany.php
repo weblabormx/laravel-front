@@ -31,6 +31,7 @@ class HasMany extends Input
 		}
 		
 		$this->create_link = $this->front->base_url.'/create';
+		$this->show_before = \Auth::user()->can('viewAny', $this->front->getModel());
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 

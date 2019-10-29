@@ -7,6 +7,7 @@ use WeblaborMx\Front\Front;
 trait InputVisibility
 {
 	public $show = true;
+	public $show_before = true;
 	public $show_on_index = true;
 	public $show_on_show = true;
 	public $show_on_edit = true;
@@ -99,12 +100,17 @@ trait InputVisibility
 		return $this;
 	}
 
+	public function shouldBeShown()
+	{
+		return $this->show && $this->show_before;
+	}
+
 	public function showOnHere()
 	{
 		$var = $this->source;
 		$var = $var=='update' ? 'edit' : $var;
 		$var = $var=='store' ? 'create' : $var;
 		$var = 'show_on_'.$var;
-		return $this->$var && $this->show;
+		return $this->$var && $this->shouldBeShown();
 	}
 }

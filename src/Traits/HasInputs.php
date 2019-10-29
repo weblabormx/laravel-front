@@ -26,12 +26,12 @@ trait HasInputs
 				return is_object($item) && class_basename(get_class($item)) == 'Panel';
 			})->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
-				return $item->$field && $item->show;
+				return $item->$field && $item->shouldBeShown();
 			})->map(function($item) {
 				return $item->column;
 			})->flatten()->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
-				return $item->$field && $item->show;
+				return $item->$field && $item->shouldBeShown();
 			})->map(function($item) use ($where) {
 				return $item->setResource($this)->setSource($where);
 			});
@@ -40,7 +40,7 @@ trait HasInputs
 			return isset($item);
 		})->filter(function($item) use ($where) {
 			$field = 'show_on_'.$where;
-			return $item->$field && $item->show;
+			return $item->$field && $item->shouldBeShown();
 		})->map(function($item) use ($where) {
 			return $item->setResource($this)->setSource($where);
 		})->map(function($item) use ($where) {
@@ -49,7 +49,7 @@ trait HasInputs
 			}
 			$item->column = collect($item->column)->flatten()->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
-				return $item->$field && $item->show;
+				return $item->$field && $item->shouldBeShown();
 			})->map(function($item) use ($where) {
 				return $item->setResource($this)->setSource($where);
 			})->values()->toArray();

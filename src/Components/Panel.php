@@ -12,6 +12,11 @@ class Panel extends Component
 	
 	public $is_panel = true;
 	
+	public function load()
+	{
+		$this->show_before = count($this->fields()) > 0;
+	}
+
 	public function formHtml()
 	{
 		$panel = $this;
@@ -21,7 +26,8 @@ class Panel extends Component
 	public function showHtml($object)
 	{
 		$panel = $this;
-		$is_input = $this->fields()->first()->is_input;
+		$field = $this->fields()->first();
+		$is_input = is_object($field) ? $field->is_input : false;
 		return view('front::components.panel', compact('panel', 'object', 'is_input'));
 	}
 
@@ -48,11 +54,13 @@ class Panel extends Component
 
 	private function filterFields($where)
 	{
+		$where = $where=='update' ? 'edit' : $where;
+		$where = $where=='store' ? 'create' : $where;
 		return collect($this->column)->filter(function($item) {
 			return isset($item);
 		})->flatten()->filter(function($item) use ($where) {
 			$field = 'show_on_'.$where;
-			return $item->$field;
+			return $item->$field && $item->shouldBeShown();
 		});
 	}
 

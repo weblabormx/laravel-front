@@ -146,7 +146,7 @@ abstract class Resource
     		return;
     	}
     	$rules = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
-    		return strlen($item->getRules($this->source))>0 && $item->show;
+    		return strlen($item->getRules($this->source))>0 && $item->shouldBeShown();
     	})->map(function($item) {
     		return $item->setResource($this);
     	})->mapWithKeys(function($item) {
