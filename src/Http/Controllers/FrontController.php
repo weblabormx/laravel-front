@@ -54,7 +54,10 @@ class FrontController extends Controller
         $object = $model::create($inputs);
         $front->store($object, $request);
 
-        flash('Element created successfully')->success();
+        $message = config('front.messages.crud_success_create');
+        $message = str_replace('{title}', $front->label, $message);
+        flash($message)->success();
+
         $redirect_url = $front->base_url;
         if($request->filled('redirect_url')) {
             $redirect_url = $request->redirect_url;
@@ -106,7 +109,11 @@ class FrontController extends Controller
         if($request->filled('redirect')) {
             return redirect($request->redirect);
         }
-        flash('Element modified successfully')->success();
+
+        $message = config('front.messages.crud_sucesss_update');
+        $message = str_replace('{title}', $front->label, $message);
+        flash($message)->success();
+
         return back();
     }
 
@@ -123,7 +130,10 @@ class FrontController extends Controller
         $front->destroy($object);
         $object->delete();
         
-        flash('Element removed successfully')->success();
+        $message = config('front.messages.crud_sucesss_destroy');
+        $message = str_replace('{title}', $front->label, $message);
+        flash($message)->success();
+
         return redirect($this->front->base_url);
     }
 
@@ -153,7 +163,9 @@ class FrontController extends Controller
 
         $result = $action->handle($request);
         if(!isset($result)) {
-            flash('Element created successfully')->success();    
+            $message = config('front.messages.action_sucess');
+            $message = str_replace('{title}', $action->title, $message);
+            flash($message)->success();
         } else {
             $request->flash();
         }
@@ -199,7 +211,9 @@ class FrontController extends Controller
 
         $result = $action->handle($object, $request);
         if(!isset($result)) {
-            flash("{$action->title} action executed correctly")->success();    
+            $message = config('front.messages.action_sucess');
+            $message = str_replace('{title}', $action->title, $message);
+            flash($message)->success();
         } else {
             $request->flash();
         }

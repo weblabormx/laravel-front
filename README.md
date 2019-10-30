@@ -14,6 +14,11 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 ### Installation
 - Install via composer executing `composer require weblabormx/laravel-front`
 
+You can optionally publish the config file with:
+```bash
+php artisan vendor:publish --provider="WeblaborMx\Front\FrontServiceProvider" --tag="config"
+```
+
 ### Resources
 
 A resource is a class that allows you to configure all the information about the front end of a Laravel Model. Things as fields, url, buttons and more are configured on this file.
