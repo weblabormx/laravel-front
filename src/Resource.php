@@ -204,6 +204,9 @@ abstract class Resource
     	if(isset($model)) {
             return $model;
         }
+        if(isset($this->object) && is_object($this->object)) {
+            return get_class($this->object);
+        }
         $return = 'App\\'.class_basename(get_class($this));
         if(class_exists($return)) {
             return $return;
