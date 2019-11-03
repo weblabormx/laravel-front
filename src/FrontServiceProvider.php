@@ -10,6 +10,7 @@ use WeblaborMx\Front\Http\Controllers\PageController;
 use Opis\Closure\SerializableClosure;
 use WeblaborMx\Front\Console\Commands\CreateResource;
 use WeblaborMx\Front\Console\Commands\CreatePage;
+use WeblaborMx\Front\Console\Commands\Install;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -89,7 +90,8 @@ class FrontServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateResource::class,
-                CreatePage::class
+                CreatePage::class,
+                Install::class
             ]);
         }
     }

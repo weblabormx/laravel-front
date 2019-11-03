@@ -19,6 +19,8 @@ You can optionally publish the config file with:
 php artisan vendor:publish --provider="WeblaborMx\Front\FrontServiceProvider" --tag="config"
 ```
 
+- Execute `php artisan front:install` to install necessary files
+
 ### Resources
 
 A resource is a class that allows you to configure all the information about the front end of a Laravel Model. Things as fields, url, buttons and more are configured on this file.
@@ -180,6 +182,10 @@ All the fields available on front:
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
 
 You will able to change the data on `app/Front/PageName`
+
+### Sidebar
+
+You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar
 
 ## Premium Support
 If you'd like to implement this package in your project and need our help, or you just want to help this package to continue being develop please write us to carlosescobar@weblabor.mx and we can talk about prices for premium support.
