@@ -4,7 +4,6 @@ namespace App\Front;
 
 use WeblaborMx\Front\Inputs\ID;
 use WeblaborMx\Front\Inputs\Text;
-use App\Front\User;
 
 class {name} extends Resource
 {

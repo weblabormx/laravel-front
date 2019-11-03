@@ -176,5 +176,10 @@ All the fields available on front:
 - Textarea
 - Trix
 
+### Pages
+You can create pages on the system, on the routes you need to add it easily with `Route::page('Dashboard', '/');` and execute the command `php artisan front:page Name`
+
+You will able to change the data on `app/Front/Page`
+
 ## Premium Support
 If you'd like to implement this package in your project and need our help, or you just want to help this package to continue being develop please write us to carlosescobar@weblabor.mx and we can talk about prices for premium support.

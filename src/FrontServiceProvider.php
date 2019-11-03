@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Http\Controllers\PageController;
 use Opis\Closure\SerializableClosure;
+use WeblaborMx\Front\Console\Commands\CreateResource;
+use WeblaborMx\Front\Console\Commands\CreatePage;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -71,5 +73,24 @@ class FrontServiceProvider extends ServiceProvider
         });
 
         $this->app->make('form')->considerRequest(true);
+    }
+
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        if (! defined('WLFRONT_PATH')) {
+            define('WLFRONT_PATH', realpath(__DIR__.'/../'));
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateResource::class,
+                CreatePage::class
+            ]);
+        }
     }
 }
