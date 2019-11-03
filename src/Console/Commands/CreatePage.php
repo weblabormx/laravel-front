@@ -43,7 +43,7 @@ class CreatePage extends Command
         }
 
         // Create resource base
-        $file_name = app_path('Front/Pages/Resource.php');
+        $file_name = app_path('Front/Pages/Page.php');
         if(!FileModifier::file($file_name)->exists()) {
             copy($directory.'/base-page.php', $file_name);
         }
