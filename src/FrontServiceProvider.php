@@ -22,6 +22,8 @@ class FrontServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([__DIR__.'/../config/front.php' => config_path('front.php')], 'config');
+        $this->mergeConfigFrom(__DIR__.'/../config/front.php', 'front');
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'front');
         $this->registerRoutes();
         SerializableClosure::addSecurityProvider(new SecurityProvider);
