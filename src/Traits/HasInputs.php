@@ -108,7 +108,7 @@ trait HasInputs
 	{
 		return $this->filterFields('show')->filter(function($item) {
 			return Str::contains(class_basename(get_class($item)), $this->relations);
-		});
+		})->values();
 	}
 
 	public function editPanels()
