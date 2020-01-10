@@ -35,7 +35,13 @@ abstract class Resource
         if(!isset($this->view_title)) {
             $this->view_title = $this->title;
         }
+        $this->load();
 	}
+
+    public function load()
+    {
+        //
+    }
 
 	/* 
 	 * Functions that can be modified
