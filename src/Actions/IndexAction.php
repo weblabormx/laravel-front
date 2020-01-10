@@ -10,8 +10,10 @@ class IndexAction
 	public $title;
     public $icon = 'fa fa-book';
     public $show = true;
+    public $show_button = true;
 	public $data;
     public $save_button = 'Save changes';
+    public $slug;
 
 	public function __construct()
 	{
@@ -20,7 +22,9 @@ class IndexAction
 	    	$title = ucwords(str_replace('_', ' ', $title));
 	    	$this->title = $title;
     	}
-		$this->slug = Str::slug(Str::snake(class_basename(get_class($this))));
+        if(is_null($this->slug)) {
+            $this->slug = Str::slug(Str::snake(class_basename(get_class($this))));
+        }
 		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
 	}
 
