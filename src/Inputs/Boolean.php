@@ -6,7 +6,7 @@ class Boolean extends Input
 {
 	public function form()
 	{
-		return \Form::hidden($this->column, 0).\Form::checkbox($this->column, 1,  $this->source=='create' ? $this->default_value  == 1 : null);
+		return \Form::hidden($this->column, 0).\Form::checkbox($this->column, 1,  !is_null($this->default_value) ? $this->default_value == 1 : null);
 	}
 
 	public function getValue($object)
