@@ -22,6 +22,7 @@ class Input
 	public $column;
 	public $extra;
 	public $source; 
+	public $value;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -48,8 +49,21 @@ class Input
 		// Do nothing
 	}
 
+	public function setValue($value)
+	{
+		if(!is_string($value) && is_callable($value)) {
+			$value = $value();
+		}
+		$this->value = $value;
+		$this->default_value = $value;
+		return $this;
+	}
+
 	public function getValue($object)
 	{
+		if(isset($this->value)) {
+			return $this->value;
+		}
 		$column = $this->column;
 		if(!is_string($column) && is_callable($column)) {
 			$return = $column($object);
