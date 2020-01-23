@@ -13,6 +13,7 @@ trait InputRelationship
 	public $force_query;
 	public $lense;
 	public $hide_columns;
+	public $massive_class;
 
 	public function setCreateLink($function)
 	{
@@ -98,6 +99,15 @@ trait InputRelationship
 	public function hideColumns($hide_columns)
 	{
 		$this->hide_columns = $hide_columns;
+		return $this;
+	}
+
+	public function setMassiveClass($class)
+	{
+		if(!is_null($class)) {
+			$class = new $class;
+		}
+		$this->massive_class = $class;
 		return $this;
 	}
 }	
