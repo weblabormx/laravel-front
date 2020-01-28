@@ -31,28 +31,38 @@
             {!! $panel->showHtml($object) !!}
         @endforeach
 
-        @foreach($front->showRelations() as $relation)
-            <div class="pb-4">
-                <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold">
-                    <div>{{$relation->title}}</div>
-                    <div>
-                        @if(count($relation->actions)>0)
-                            @foreach($relation->actions as $action)
-                                <a href="{{$front->base_url}}/{{$object->getKey()}}/action/{{$action->slug}}" class="btn btn-primary rounded-pill">{!! $action->button_text !!}</a>
-                            @endforeach
-                        @endif
-                        @if(count($relation->links)>0)
-                            @foreach($relation->links as $link => $title)
-                                <a href="{{$link}}" class="btn btn-primary rounded-pill">{!! $title !!}</a>
-                            @endforeach
-                        @endif
-                        @if( Auth::user()->can('create', $relation->front->getModel()) && isset($relation->create_link))
-                            <a href="{{$relation->create_link}}" class="btn btn-primary rounded-pill"><span class="ion ion-md-add"></span> Add {{$relation->front->label}}</a>
-                        @endif
-                    </div>
-                </h4>
-                {!! $relation->getValue($object) !!}
+        @foreach($front->showRelations() as $key => $relation)
+            @php $porcentage += $relation->width_porcentage(); @endphp
+            <div class="relation" style="{{$relation->style_width()}}">
+                <div class="pb-4">
+                    <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold">
+                        <div>{{$relation->title}}</div>
+                        <div>
+                            @if(count($relation->actions)>0)
+                                @foreach($relation->actions as $action)
+                                    <a href="{{$front->base_url}}/{{$object->getKey()}}/action/{{$action->slug}}" class="btn btn-primary rounded-pill">{!! $action->button_text !!}</a>
+                                @endforeach
+                            @endif
+                            @if(count($relation->links)>0)
+                                @foreach($relation->links as $link => $title)
+                                    <a href="{{$link}}" class="btn btn-primary rounded-pill">{!! $title !!}</a>
+                                @endforeach
+                            @endif
+                            @if(isset($relation->masive_edit_link))
+                                <a href="{{$sportable->getBaseUrl($sport)}}/{{$object->getKey()}}/masive_edit/{{$key}}{{$relation->masive_edit_link}}" class="add-btn" style="margin-right: 5px;"><i class="fa fa-edit"></i> Edit {{$relation->front->plural_label}}</a>
+                            @endif
+                            @if( Auth::user()->can('create', $relation->front->getModel()) && isset($relation->create_link))
+                                <a href="{{$relation->create_link}}" class="btn btn-primary rounded-pill"><span class="ion ion-md-add"></span> Add {{$relation->front->label}}</a>
+                            @endif
+                        </div>
+                    </h4>
+                    {!! $relation->getValue($object) !!}
+                </div>
             </div>
+            @if($porcentage>=100)
+                @php $porcentage = 0; @endphp
+                <div style="clear:both;"></div>
+            @endif
         @endforeach
     </div>
    
