@@ -2,20 +2,17 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use Illuminate\Support\Str;
+
 trait WithWidth
 {
 	public $width = 'full';
 
 	public function bootstrap_width()
     {
-        if($this->width=='1/2') {
-            return 6;
-        } else if($this->width=='1/3') {
-            return 4;
-        } else if($this->width=='1/4') {
-            return 3;
-        } else if($this->width=='3/4') {
-            return 9;
+        if(Str::contains($this->width, '/')) {
+            $width = explode('/', $this->width);
+            return round((12/$width[1])*$width[0]);
         }
         return 12;
     }
