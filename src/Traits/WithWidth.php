@@ -27,14 +27,9 @@ trait WithWidth
 
     public function width_porcentage()
     {
-        if($this->width=='1/2') {
-            return 50;
-        } else if($this->width=='1/3') {
-            return 33;
-        } else if($this->width=='1/4') {
-            return 25;
-        } else if($this->width=='3/4') {
-            return 75;
+        if(Str::contains($this->width, '/')) {
+            $width = explode('/', $this->width);
+            return round((100/$width[1])*$width[0]);
         }
         return 100;
     }
