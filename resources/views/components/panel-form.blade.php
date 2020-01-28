@@ -4,8 +4,10 @@
     @endif
     <hr class="m-0">
     <div class="card-body pb-2">
-        @foreach($panel->fields() as $field)
-            {!! $field->formHtml() !!}
-        @endforeach
+    	<div class="row">
+	        @foreach($panel->fields() as $field)
+	            {!! $field->formHtml() !!}
+	        @endforeach
+        </div>
     </div>
 </div>

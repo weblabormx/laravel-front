@@ -3,7 +3,7 @@
 @section('content')
     
     <!-- Content -->
-    <div class="container-fluid flex-grow-1 container-p-y">
+    <div class="container-fluid container">
         @include('front::elements.breadcrumbs')
 
         <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold py-3 mb-4">

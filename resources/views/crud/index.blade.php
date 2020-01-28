@@ -25,13 +25,13 @@
 @section('content')
     
     <!-- Content -->
-    <div class="container-fluid flex-grow-1 container-p-y">
+    <div class="container-fluid container">
         @include('front::elements.breadcrumbs')
 
         <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold py-3 mb-4">
             <div>{{$front->plural_label}}</div>
             @if($front->show_create_button_on_index && Auth::user()->can('create', $front->getModel()))
-                <a href="{{$front->base_url}}/create" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Create {{$front->label}}</a>
+                <a href="{{$front->base_url}}/create" class="btn btn-primary rounded-pill d-block"><span class="fa fa-plus"></span>&nbsp; Create {{$front->label}}</a>
             @endif
             @include('front::elements.index-actions')
             @foreach($front->index_links() as $link => $button)

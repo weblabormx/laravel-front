@@ -7,6 +7,8 @@
     </a>
     <div class="dropdown-menu dropdown-menu-right">
         <a href="/settings" class="dropdown-item"><i class="ion ion-md-settings text-lightest"></i> &nbsp; Account settings</a>
+        <a href="/settings/teams/{{Auth::user()->currentTeam->id}}" class="dropdown-item"><i class="ion ion-md-settings text-lightest"></i> &nbsp; Team settings</a>
+        <a href="/" class="dropdown-item"><i class="fa fa-exchange-alt  text-lightest"></i> &nbsp; Change team</a>
         <div class="dropdown-divider"></div>
         <a href="/logout" class="dropdown-item"><i class="ion ion-ios-log-out text-danger"></i> &nbsp; Log Out</a>
     </div>

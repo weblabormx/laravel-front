@@ -2,10 +2,9 @@
 
 @section('content')
     
-    @include ('front::elements.errors')
-
     <!-- Content -->
-    <div class="container-fluid flex-grow-1 container-p-y">
+    <div class="container-fluid container">
+        @include ('front::elements.errors')
         @include('front::elements.breadcrumbs')
         @php $title_field = $front->title; @endphp
         

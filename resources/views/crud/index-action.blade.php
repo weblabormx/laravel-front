@@ -31,13 +31,3 @@
     {!! Form::close() !!}
 
 @stop
-
-@section('footer')
-    
-    @if($action->getFieldsWithPanel()->count() <= 0)
-        <script type="text/javascript">
-            $('form').submit();
-        </script>
-    @endif
-    
-@stop

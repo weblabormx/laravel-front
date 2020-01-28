@@ -1,11 +1,11 @@
 @extends('front::layout')
 
 @section('content')
-    
-    @include ('front::elements.errors')
 
     <!-- Content -->
-    <div class="container-fluid flex-grow-1 container-p-y">
+    <div class="container-fluid container">
+        @include ('front::elements.errors')
+        
         @include('front::elements.breadcrumbs')
 
         <h4 class="font-weight-bold py-3 mb-4">Create {{$front->label}}</h4>

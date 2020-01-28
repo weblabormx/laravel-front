@@ -1,4 +1,4 @@
-<ol class="breadcrumb">
+<ol class="breadcrumb bg-transparent">
     <li class="breadcrumb-item">
         <a href="/admin">Home</a>
     </li>

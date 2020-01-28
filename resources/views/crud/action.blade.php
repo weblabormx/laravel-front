@@ -2,9 +2,9 @@
 
 @section('content')
     
-    @include ('front::elements.errors')
     <!-- Content -->
     <div class="container-fluid flex-grow-1 container-p-y">
+        @include ('front::elements.errors')
         @php $title_field = $front->title; @endphp
         @component('front::elements.breadcrumbs')
             @foreach($front->breadcrumbs() as $link => $title)
@@ -41,14 +41,4 @@
         {!! Form::close() !!}
     </div>
 
-@stop
-
-@section('footer')
-    
-    @if($action->getFieldsWithPanel()->count() <= 0)
-        <script type="text/javascript">
-            $('form').submit();
-        </script>
-    @endif
-    
 @stop
