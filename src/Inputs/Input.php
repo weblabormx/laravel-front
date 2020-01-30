@@ -124,4 +124,10 @@ class Input
 		return $this;
 	}
 
+	public function size($size)
+	{
+		$this->attributes['style'] = 'width: '.$size.'px';
+		return $this;
+	}
+
 }
