@@ -130,4 +130,18 @@ class Input
 		return $this;
 	}
 
+	// In case there default attributes for the model
+	public function setDefaultValueFromAttributes($model)
+	{
+		if($this->source!='create' || !is_null($this->default_value) || is_null($model)) {
+			return $this;
+		}
+		$model = new $model;
+		$attributes = $model->getAttributes();
+		if(isset($attributes[$this->column])) {
+			$this->default($attributes[$this->column]);
+		}
+		return $this;
+	}
+
 }

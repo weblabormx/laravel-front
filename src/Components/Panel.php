@@ -52,20 +52,22 @@ class Panel extends Component
 		})->implode('');
 	}
 
-	private function filterFields($where)
+	private function filterFields($where, $model)
 	{
 		$where = $where=='update' ? 'edit' : $where;
 		$where = $where=='store' ? 'create' : $where;
 		return collect($this->column)->filter(function($item) {
 			return isset($item);
-		})->flatten()->filter(function($item) use ($where) {
+		})->flatten()->map(function($item) use ($model) {
+			return $item->setDefaultValueFromAttributes($model);
+		})->filter(function($item) use ($where) {
 			$field = 'show_on_'.$where;
 			return $item->$field && $item->shouldBeShown();
 		});
 	}
 
-	public function fields()
+	public function fields($model = null)
 	{
-		return $this->filterFields($this->source);
+		return $this->filterFields($this->source, $model);
 	}
 }
