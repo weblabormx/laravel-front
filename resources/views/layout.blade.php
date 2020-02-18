@@ -1,14 +1,16 @@
-@extends('spark::layouts.app')
+@extends(View::exists('path.to.view.one') ? 'spark::layouts.app' : 'layouts.app')
 
 @section('after-nav')
 
     <div class="bg-dark text-light navbar-team">
         <div class="container">
-            <div class="d-inline-block team-name">
-                <img src="{{ \Auth::user()->currentTeam->photo_url }}" height="20" />
-                <span class="font-weight-normal ml-2">{{ \Auth::user()->currentTeam->name }}</span>
-                <a class="fa fa-arrow-left" href="/" title="Change of team" style="color:#aaa; margin-left: 10px;"></a>
-            </div>
+            @isset(\Auth::user()->currentTeam)
+                <div class="d-inline-block team-name">
+                    <img src="{{ \Auth::user()->currentTeam->photo_url }}" height="20" />
+                    <span class="font-weight-normal ml-2">{{ \Auth::user()->currentTeam->name }}</span>
+                    <a class="fa fa-arrow-left" href="/" title="Change of team" style="color:#aaa; margin-left: 10px;"></a>
+                </div>
+            @endisset
             <div class="d-inline-block">
                 <nav class="nav">
                     @include('front.sidebar')
