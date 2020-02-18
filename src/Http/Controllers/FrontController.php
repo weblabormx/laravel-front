@@ -186,7 +186,11 @@ class FrontController extends Controller
 
         $this->authorize('update', $object);
         $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front)->setObject($object);
+        $action = $this->repository->getAction($action, $front);
+        if(!is_object($action)) {
+            abort(406, "Action wasn't found: {$original_action}");
+        }
+        $action = $action->setObject($object);
 
         // Detect if dont have fields process inmediately
         if(count($action->fields())==0) {
@@ -206,7 +210,11 @@ class FrontController extends Controller
 
         $this->authorize('update', $object);
         $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front)->setObject($object);
+        $action = $this->repository->getAction($action, $front);
+        if(!is_object($action)) {
+            abort(406, "Action wasn't found: {$original_action}");
+        }
+        $action = $action->setObject($object);
         $action->validate();
 
         $result = $action->handle($object, $request);
