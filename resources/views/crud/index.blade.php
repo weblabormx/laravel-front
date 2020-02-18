@@ -4,7 +4,7 @@
 
     @if(count($front->filters())>0)
         <div class="sidenav-inner py-1 mb-4">
-            <div class="sidenav-header small font-weight-semibold">FILTER {{strtoupper($front->plural_label)}}</div>
+            <div class="sidenav-header small font-weight-semibold">{{ __('FILTER') }} {{strtoupper($front->plural_label)}}</div>
             <!-- Dashboards -->
             {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!}
                 {!! Form::hidden('search') !!}
@@ -31,7 +31,7 @@
         <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold py-3 mb-4">
             <div>{{$front->plural_label}}</div>
             @if($front->show_create_button_on_index && Auth::user()->can('create', $front->getModel()))
-                <a href="{{$front->base_url}}/create" class="btn btn-primary rounded-pill d-block"><span class="fa fa-plus"></span>&nbsp; Create {{$front->label}}</a>
+                <a href="{{$front->base_url}}/create" class="btn btn-primary rounded-pill d-block"><span class="fa fa-plus"></span>&nbsp; {{ __('Create') }} {{$front->label}}</a>
             @endif
             @include('front::elements.index-actions')
             @foreach($front->index_links() as $link => $button)

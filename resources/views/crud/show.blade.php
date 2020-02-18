@@ -50,10 +50,10 @@
                                 @endforeach
                             @endif
                             @if(isset($relation->masive_edit_link))
-                                <a href="{{$sportable->getBaseUrl($sport)}}/{{$object->getKey()}}/masive_edit/{{$key}}{{$relation->masive_edit_link}}" class="add-btn" style="margin-right: 5px;"><i class="fa fa-edit"></i> Edit {{$relation->front->plural_label}}</a>
+                                <a href="{{$sportable->getBaseUrl($sport)}}/{{$object->getKey()}}/masive_edit/{{$key}}{{$relation->masive_edit_link}}" class="add-btn" style="margin-right: 5px;"><i class="fa fa-edit"></i> {{ __('Edit') }} {{$relation->front->plural_label}}</a>
                             @endif
                             @if( Auth::user()->can('create', $relation->front->getModel()) && isset($relation->create_link))
-                                <a href="{{$relation->create_link}}" class="btn btn-primary rounded-pill"><span class="ion ion-md-add"></span> Add {{$relation->front->label}}</a>
+                                <a href="{{$relation->create_link}}" class="btn btn-primary rounded-pill"><span class="ion ion-md-add"></span> {{ __('Add') }} {{$relation->front->label}}</a>
                             @endif
                         </div>
                     </h4>

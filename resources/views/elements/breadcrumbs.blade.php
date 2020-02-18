@@ -1,6 +1,6 @@
 <ol class="breadcrumb bg-transparent">
     <li class="breadcrumb-item">
-        <a href="/admin">Home</a>
+        <a href="/admin">{{ __('Home') }}</a>
     </li>
 	@isset($front)
 	    @foreach($front->getBreadcrumbs(isset($object) ? $object : null) as $breadcrumb)

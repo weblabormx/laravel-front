@@ -12,7 +12,7 @@
                         @foreach($front->indexFields() as $field)
                             <th class="{{$field->data_classes}}">{{$field->title}}</th>
                         @endforeach
-                        <th>Actions</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>

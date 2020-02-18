@@ -19,7 +19,7 @@
                     <a href="{{$link}}" class="add-btn">{!! $button !!}</a>
                 @endforeach
                 <button type="submit" class="add-btn">
-                    <i class="fa fa-save fa-lg"></i> Save
+                    <i class="fa fa-save fa-lg"></i> {{ __('Save') }}
                 </button>
             </div>
             <h1>{{$action->title}}</h1>
