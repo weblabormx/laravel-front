@@ -1,4 +1,4 @@
-<tr>
-    <td class="text-muted">{!! $input->title !!}</td>
-    <td>{!! $input->getValueProcessed($object) !!}</td>
-</tr>
+<div class="col-sm-{{$input->bootstrap_width()}}">
+    <b>{!! $input->title !!}</b>
+    <p>{!! $input->getValueProcessed($object) !!}</p>
+</div>

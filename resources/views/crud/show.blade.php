@@ -31,6 +31,7 @@
             {!! $panel->showHtml($object) !!}
         @endforeach
 
+        @php $porcentage = 0; @endphp
         @foreach($front->showRelations() as $key => $relation)
             @php $porcentage += $relation->width_porcentage(); @endphp
             <div class="relation" style="{{$relation->style_width()}}">
