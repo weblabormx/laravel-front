@@ -47,7 +47,7 @@ trait HasBreadcrumbs
     	// Create normal
     	if($front->source=='create' && is_null($relation['front'])) {
     		$breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->base_url];
-    		$breadcrumbs[] = ['title' => 'Add new', 'active' => true];
+    		$breadcrumbs[] = ['title' => __('Add new'), 'active' => true];
     	}
 
     	// Create with relation
@@ -55,7 +55,7 @@ trait HasBreadcrumbs
     		$breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->base_url];
     		$title = $front->title;
     		$breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->base_url.'/'.$relation['object']->getKey()];
-    		$breadcrumbs[] = ['title' => 'Add new '.$this->label, 'active' => true];
+    		$breadcrumbs[] = ['title' => __('Add new').' '.$this->label, 'active' => true];
     	}
 
     	// Edit normal
@@ -65,7 +65,7 @@ trait HasBreadcrumbs
     			$title = $front->title;
 	    		$breadcrumbs[] = ['title' => $front->$title, 'url' => $front->base_url.'/'.$front->object->getKey()];
     		}
-    		$breadcrumbs[] = ['title' => 'Edit', 'active' => true];
+    		$breadcrumbs[] = ['title' => __('Edit'), 'active' => true];
     	}
 
     	// Edit with relation
@@ -75,9 +75,19 @@ trait HasBreadcrumbs
     		$breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->base_url.'/'.$relation['object']->getKey()];
     		$breadcrumbs[] = ['title' => $this->plural_label];
     		$title = $front->title;
-    		$breadcrumbs[] = ['title' => 'Edit '.$this->$title, 'active' => true];
+    		$breadcrumbs[] = ['title' => __('Edit').' '.$this->$title, 'active' => true];
     	}
-
+        $breadcrumbs = collect($breadcrumbs)->map(function($item) {
+            $item['html'] = '';
+            if(isset($item['url'])) {
+                $item['html'] .= '<a href="'.$item['url'].'">';
+            }
+            $item['html'] .= $item['title'];
+            if(isset($item['url'])) {
+                $item['html'] .= '</a>';
+            }
+            return $item;
+        });
     	return $breadcrumbs;
     }
 

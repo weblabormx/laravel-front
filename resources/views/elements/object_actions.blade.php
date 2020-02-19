@@ -14,6 +14,6 @@
     @endif
     <!-- Remove button -->
     @if( Auth::user()->can('delete', $object) )
-        <a data-type="confirm" title="{{ __('Do you really want to remove this item?') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($link)}}" data-redirection="{{url($base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default btn-xs icon-btn md-btn-flat article-tooltip" href="#"><i class="fa fa-times"></i></a>
+        <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($link)}}" data-redirection="{{url($base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default btn-xs icon-btn md-btn-flat article-tooltip" href="#"><i class="fa fa-times"></i></a>
     @endif
 </td>

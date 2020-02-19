@@ -19,10 +19,10 @@
                     <a href="{{ $link }}" class="btn btn-primary rounded-pill">{!! $text !!}</a>
                 @endforeach
                 @if(Auth::user()->can('update', $object))
-                    <a href="{{$front->base_url}}/{{$object->getKey()}}/edit{{str_replace(request()->url(), '', request()->fullUrl())}}" class="btn btn-primary rounded-pill"><span class="fa fa-edit"></span>&nbsp; Edit</a>
+                    <a href="{{$front->base_url}}/{{$object->getKey()}}/edit{{str_replace(request()->url(), '', request()->fullUrl())}}" class="btn btn-primary rounded-pill"><span class="fa fa-edit"></span>&nbsp; {{ __('Edit') }}</a>
                 @endif
                 @if( Auth::user()->can('delete', $object) )
-                    <a data-type="confirm" title="Do you really want to remove this item?" data-info="Do you really want to remove this item?" data-button-yes="Yes" data-button-no="No" data-action="{{url($front->base_url.'/'.$object->getKey())}}" data-redirection="{{url($front->base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-danger rounded-pill" href="#"><i class="fa fa-times pr-2"></i> Delete</a>
+                    <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($front->base_url.'/'.$object->getKey())}}" data-redirection="{{url($front->base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-danger rounded-pill" href="#"><i class="fa fa-times pr-2"></i> {{ __('Delete') }}</a>
                 @endif
             </div>
         </h4>
