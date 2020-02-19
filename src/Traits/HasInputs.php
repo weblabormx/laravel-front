@@ -82,7 +82,7 @@ trait HasInputs
 
 	private function addAtLeastOnePanel($type)
 	{
-		$fields = $this->filterFields($type, $this->model ?? null)->filter(function($item) {
+		$fields = $this->filterFields($type)->filter(function($item) {
 			return !Str::contains(class_basename(get_class($item)), $this->relations);
 		});
 		$components = $fields->filter(function($item) {
