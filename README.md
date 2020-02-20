@@ -176,6 +176,7 @@ All the fields available on front:
 - Select
 - Text
 - Textarea
+- Time
 - Trix
 
 ### Pages

@@ -20,7 +20,7 @@ trait WithWidth
     public function style_width()
     {
         if($this->width=='full') {
-            return;
+            return "width: 100%";
         }
         return "width: calc({$this->width_porcentage()}% - 25px); display: inline-block; vertical-align:top; margin: 20px 10px;";
     }

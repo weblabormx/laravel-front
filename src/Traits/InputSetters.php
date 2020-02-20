@@ -72,7 +72,7 @@ trait InputSetters
 	public function conditional($key, $value)
 	{
 		// This work on form
-		$this->form_before = '<div data-type="conditional" data-cond-option="'.$key.'" data-cond-value="'.$value.'">';
+		$this->form_before = '<div data-type="conditional" data-cond-option="'.$key.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
 		$this->form_after = '</div>';
 		$this->conditional = ['key' => $key,  'value' => $value];
 		return $this;

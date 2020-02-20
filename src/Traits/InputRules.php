@@ -42,6 +42,6 @@ trait InputRules
 		if(!$this->validateConditional(request())) {
 			return;
 		}
-		return collect($rules)->implode('|');
+		return $rules;
 	}
 }
