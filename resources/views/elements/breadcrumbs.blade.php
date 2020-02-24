@@ -1,4 +1,4 @@
-<ol class="breadcrumb bg-transparent">
+<ol class="breadcrumb">
     <li class="breadcrumb-item">
         <a href="/admin">{{ __('Home') }}</a>
     </li>
