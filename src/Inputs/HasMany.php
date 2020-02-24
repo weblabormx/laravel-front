@@ -26,7 +26,7 @@ class HasMany extends Input
 			$this->title = $title;
 			$this->relationship = Str::snake(Str::plural($this->title));
 		} else {
-			$this->title = Str::plural($this->front->label);
+			$this->title = $this->front->plural_label;
 			$this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
 		}
 		
