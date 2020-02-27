@@ -40,7 +40,7 @@ trait InputRules
 			$rules = collect($rules)->merge($extra_rules)->toArray();
 		}
 		if(!$this->validateConditional(request())) {
-			return;
+			return [];
 		}
 		return $rules;
 	}
