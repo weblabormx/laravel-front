@@ -23,6 +23,11 @@ class NumericCard extends Card
         return;
     }
 
+    public function link()
+    {
+        return;
+    }
+
     public function cacheFor()
     {
         return now()->addMinutes(5);
@@ -36,7 +41,7 @@ class NumericCard extends Card
     public function cacheName()
     {
         $name = get_class($this);
-        return 'Card:'.$name.':'.\Auth::user()->currentTeam->id;
+        return 'Card:'.$name;
     }
 
     /*

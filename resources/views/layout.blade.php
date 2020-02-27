@@ -1,4 +1,4 @@
-@extends(View::exists('path.to.view.one') ? 'spark::layouts.app' : 'layouts.app')
+@extends(isset($front) ? $front->layout : 'layouts.app')
 
 @section('after-nav')
 

@@ -1,7 +1,13 @@
 <div class="d-flex col-sm-{{$card->bootstrap_width()}} align-items-center">
     <div class="card-body media align-items-center text-body">
         @if(!is_null($card->getIcon()))
+            @if(!is_null($card->link()))
+                <a href="{{$card->link()}}">
+            @endif
             <i class="{{$card->getIcon()}} display-4 d-block text-primary font-weight-bold"></i>
+            @if(!is_null($card->link()))
+                </a>
+            @endif
         @endif
         <span class="media-body d-block ml-3">
             <span class="text-big">
