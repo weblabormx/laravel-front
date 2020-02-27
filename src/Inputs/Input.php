@@ -19,6 +19,7 @@ class Input
 	public $form_after = '';
 	public $data_classes = '';
 	public $title;
+	public $set_title_executed = false;
 	public $column;
 	public $extra;
 	public $source; 
@@ -121,6 +122,7 @@ class Input
 	public function setTitle($title)
 	{
 		$this->title = $title;
+		$this->set_title_executed = true;
 		return $this;
 	}
 
