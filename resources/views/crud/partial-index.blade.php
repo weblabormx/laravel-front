@@ -37,7 +37,7 @@
 @else
     <div class="card">
         <div class="card-body">
-            No data to show
+            {{ __('No data to show') }}
         </div>
     </div>
 @endif
