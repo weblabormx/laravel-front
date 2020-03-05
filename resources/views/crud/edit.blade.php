@@ -9,7 +9,7 @@
     <h4 class="font-weight-bold py-3 mb-4">{{ __('Edit') }} @if($front->show_title) {{$object->$title_field}} @endif
     </h4>
 
-    {!! Form::model($object, array('method' => 'put', 'url' => $front->base_url.'/'.$object->getKey())) !!}
+    {!! Form::model($object, array('method' => 'put', 'url' => $front->base_url.'/'.$object->getKey(), 'files' => true)) !!}
     
         @foreach($front->editPanels() as $panel)
             {!! $panel->formHtml() !!}

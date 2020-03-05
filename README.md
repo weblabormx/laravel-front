@@ -163,6 +163,7 @@ All the fields available on front:
 - Date
 - DateTime
 - Disabled
+- File
 - HasMany
 - Hidden
 - ID
@@ -184,9 +185,50 @@ You can create pages on the system, on the routes you need to add it easily with
 
 You will able to change the data on `app/Front/PageName`
 
+### Actions
+
+You can add actions buttons to any resource, so for example if you want to resend email for a Reservation you can create a new action that will resend the email.
+
+Just create a action on `App\Front\Actions`, the structure is similar to the next file
+
+```
+namespace App\Front\Actions;
+
+use WeblaborMx\Front\Inputs\Text;
+use Illuminate\Http\Request;
+
+class ResendEmail extends Action
+{
+    public function handle($object, Request $request)
+    {
+        // Execute what you want to do
+    }
+
+    public function fields()
+    {
+        // Do you need to ask some information? You can avoid this function if just want to execute an action
+        return [
+            Text::make('Note')->rules('required'),
+        ];
+    }
+}
+```
+
+Then add on the front resource (Reservation on this case) the next function
+
+```
+public function actions()
+{
+    return [
+        new ResendEmail
+    ];
+}
+```
+
 ### Sidebar
 
-You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar
+You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar`
+
 
 ## Premium Support
 If you'd like to implement this package in your project and need our help, or you just want to help this package to continue being develop please write us to carlosescobar@weblabor.mx and we can talk about prices for premium support.

@@ -1,0 +1,1 @@
+<img src="{{$value}}" style="max-width:100%" />

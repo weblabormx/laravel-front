@@ -71,10 +71,13 @@ class IndexAction
         return $components->sortKeys()->values();
     }
 
-    public function show($function)
+    public function show($result)
     {
-    	$this->show = $function();
-    	return $this;
+    	if(!is_string($result) && is_callable($result)) {
+            $result = $result();
+        } 
+        $this->show = $result;
+        return $this;
     }
 
     public function setObject($object)

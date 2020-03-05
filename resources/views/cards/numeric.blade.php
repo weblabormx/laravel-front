@@ -1,10 +1,10 @@
-<div class="d-flex col-sm-{{$card->bootstrap_width()}} align-items-center">
-    <div class="card-body media align-items-center text-body">
+<div class="col-sm-{{$card->bootstrap_width()}}">
+    <div class="card-body media align-items-center ">
         @if(!is_null($card->getIcon()))
             @if(!is_null($card->link()))
                 <a href="{{$card->link()}}">
             @endif
-            <i class="{{$card->getIcon()}} display-4 d-block text-primary font-weight-bold"></i>
+            <i class="{{$card->getIcon()}} display-4  text-primary"></i>
             @if(!is_null($card->link()))
                 </a>
             @endif
@@ -16,9 +16,9 @@
             </span><br>
             <small class="float-right">
                 @if($card->getPorcentage() > 0)
-                    <i class='fa fa-arrow-alt-circle-up text-success'></i> {{$card->getPorcentage()}}% Increase
+                    <i class='fa fa-arrow-circle-up text-success'></i> {{$card->getPorcentage()}}% Increase
                 @elseif($card->getPorcentage() < 0)
-                    <i class='fa fa-arrow-alt-circle-down text-danger'></i> {{($card->getPorcentage())*-1}}% Decrease
+                    <i class='fa fa-arrow-circle-down text-danger'></i> {{($card->getPorcentage())*-1}}% Decrease
                 @endif
             </small>
             <small class="text-muted">{!! $card->getText() !!}</small>

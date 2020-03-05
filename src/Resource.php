@@ -180,13 +180,24 @@ abstract class Resource
         // Remove redirect url helper
         unset($inputs['redirect_url']);
 
+        // Get fields processing
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
+
         // Remove autocomplete helper input
-        $autocomplete_fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true)->filter(function($item) {
+        $autocomplete_fields = $fields->filter(function($item) {
             return isset($item->searchable) && $item->searchable;
         })->map(function($item) {
             return $item->column.'ce';
         })->values()->each(function($item) use (&$inputs) {
             unset($inputs[$item]);
+        });
+
+        $fields->filter(function($item) use ($inputs) {
+            return $item->is_input;
+        })->filter(function($item) use ($inputs) {
+            return isset($inputs[$item->column]);
+        })->each(function($item) use (&$inputs) {
+            $inputs[$item->column] = $item->processData($inputs[$item->column]);
         });
     	return $inputs;
     }

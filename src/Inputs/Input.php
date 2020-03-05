@@ -146,4 +146,8 @@ class Input
 		return $this;
 	}
 
+	public function processData($data)
+	{
+		return $data;
+	}
 }
