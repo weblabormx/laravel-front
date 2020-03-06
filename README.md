@@ -180,6 +180,23 @@ All the fields available on front:
 - Time
 - Trix
 
+#### Text types
+
+- Alert
+- Heading
+- HorizontalDescription
+- Paragraph
+- Table
+- Title
+
+#### Components
+
+- FrontIndex
+- Line
+- Panel
+- ShowCards
+- Welcome
+
 ### Pages
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
 

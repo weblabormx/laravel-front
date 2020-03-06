@@ -1,15 +1,15 @@
 <?php
 
-namespace WeblaborMx\Front\Components;
+namespace WeblaborMx\Front\Texts;
 
-class Title extends Component
+class Title extends Text
 {
 	public $size = 2;
 
 	public function form()
 	{
 		$component = $this;
-		return view('front::components.title', compact('component'))->render();
+		return view('front::texts.title', compact('component'))->render();
 	}
 
 	public function setSize($size)
