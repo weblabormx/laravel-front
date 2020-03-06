@@ -5,16 +5,25 @@ namespace WeblaborMx\Front\Inputs;
 class MorphTo extends Input
 {
 	public $types;
+	public $types_models;
 	public $hide = false;
 
 	public function types($types)
 	{
 		$this->types = collect($types)->map(function($item) {
 			return new $item($this->source);
-		})->mapWithKeys(function($item) {
+		});
+		$this->types_models = $this->types->mapWithKeys(function($item) {
 			return [$item->label => $item->getModel()];
 		});
 		return $this;
+	}
+
+	private function getFrontOnClass($class)
+	{
+		return $this->types->filter(function($item) use ($class) {
+			return $item->getModel() == $class;
+		})->first();
 	}
 
 	public function getValue($object)
@@ -29,10 +38,12 @@ class MorphTo extends Input
 			return '--';
 		}
 		$class = get_class($value);
-		$result = $this->types->search($class);
+		$result = $this->types_models->search($class);
 		if(!isset($result)) {
 			return '--';
 		}
+		$front = $this->getFrontOnClass($class);
+		$this->link = $front->base_url.'/'.$value->getKey();
 		return $result.' #'.$value->getKey();
 	}
 
@@ -47,7 +58,7 @@ class MorphTo extends Input
 			})->implode('');
 		}
 		return collect([
-			Select::make($this->title, $this->column.'_type')->options($this->types->flip()),
+			Select::make($this->title, $this->column.'_type')->options($this->types_models->flip()),
 			Text::make($this->title.' Id', $this->column.'_id')
 		])->map(function($item) {
 			return $item->formHtml();

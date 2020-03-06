@@ -51,7 +51,7 @@ class NumericCard extends Card
     public function load()
     {
         
-        $values = Cache::remember($this->cacheName(), $this->cacheFor(), function() {
+        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function() {
             return [
                 'number' => $this->value(),
                 'porcentage' => $this->calculatePorcentage($this->value(), $this->old())
