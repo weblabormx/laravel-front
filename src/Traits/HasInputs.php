@@ -18,6 +18,7 @@ trait HasInputs
         return [];
     }
 
+    // This need to be improved
 	private function filterFields($where, $flatten = false)
 	{
 		$sum = [];
@@ -32,6 +33,15 @@ trait HasInputs
 			})->flatten()->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
 				return $item->$field && $item->shouldBeShown();
+			})->filter(function($item) {
+				if(!isset($this->hide_columns) || is_null($item->column)) {
+					return true;
+				}
+				$columns = $this->hide_columns;
+				if(!is_array($columns)) {
+					$columns = [$columns];
+				}
+				return !collect($columns)->contains($item->column);
 			})->map(function($item) use ($where) {
 				return $item->setResource($this)->setSource($where);
 			});
@@ -55,7 +65,7 @@ trait HasInputs
 			})->values()->toArray();
 			return $item;
 		})->filter(function($item) {
-			if(!isset($this->hide_columns)) {
+			if(!isset($this->hide_columns) || is_null($item->column)) {
 				return true;
 			}
 			$columns = $this->hide_columns;
