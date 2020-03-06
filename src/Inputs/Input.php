@@ -20,6 +20,7 @@ class Input
 	public $data_classes = '';
 	public $title;
 	public $set_title_executed = false;
+	public $needs_to_be_on_panel = true;
 	public $column;
 	public $extra;
 	public $source; 

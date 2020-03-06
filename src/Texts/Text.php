@@ -10,6 +10,7 @@ class Text extends Input
 	use WithWidth;
 
 	public $is_input = false;
+	public $needs_to_be_on_panel = false;
 	public $text;
 
 	public function formHtml()

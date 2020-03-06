@@ -82,21 +82,37 @@ trait HasInputs
 
 	private function addAtLeastOnePanel($type)
 	{
+		// Get all fields that are not relationships
 		$fields = $this->filterFields($type)->filter(function($item) {
 			return !Str::contains(class_basename(get_class($item)), $this->relations);
 		});
+
+		// Get components or elements that dont need to have a panel
 		$components = $fields->filter(function($item) {
-			return class_basename(get_class($item)) == 'Panel';
+			return class_basename(get_class($item)) == 'Panel' || !$item->needs_to_be_on_panel;
 		})->filter(function($item) {
-			return $item->fields()->count() > 0;
+			return class_basename(get_class($item)) != 'Panel' || $item->fields()->count() > 0;
 		});
-		$fields = $fields->filter(function($item) {
-			return class_basename(get_class($item)) != 'Panel';
+
+		// Get other fields that were not gotten on $components
+		$new_panels = [];
+		$last_key = -99;
+		$field_key = null;
+		$fields = $fields->filter(function($item, $key) {
+			return class_basename(get_class($item)) != 'Panel' && $item->needs_to_be_on_panel;
+		})->each(function($item, $key) use (&$new_panels, &$last_key, &$field_key) {
+			if($key-1!=$last_key) {
+				$field_key = $key;
+			}
+			$new_panels[$field_key][] = $item;
+			$last_key = $key;
 		});
-		if($fields->count() > 0) {
-			$components[-1] = Panel::make('', $fields);	
-		}
-		return $components->sortKeys()->values();
+
+		// Create panels for this new_panels
+		$new_panels = collect($new_panels)->map(function($item) {
+			return Panel::make('', $item);
+		});	
+		return $components->union($new_panels)->sortKeys()->values();
 	}
 
 	public function showPanels()
