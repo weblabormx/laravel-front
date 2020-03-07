@@ -151,9 +151,11 @@ abstract class Resource
 
     public function validate()
     {
+        // Just execute on edit or create
     	if($this->source != 'update' && $this->source != 'store') {
     		return;
     	}
+        // Get rules on inputs of the resource
     	$rules = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
     		return count($item->getRules($this->source))>0 && $item->shouldBeShown();
     	})->map(function($item) {
@@ -164,7 +166,16 @@ abstract class Resource
             $column = str_replace(']', '', $column);
     		return [$column => $item->getRules($this->source)];
     	})->toArray();
+
+        // Validate all the rules
     	\Validator::make(request()->all(), $rules)->validate();
+
+        // Execute validator function on fields
+        collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->map(function($item) {
+            return $item->setResource($this);
+        })->each(function($item) {
+            return $item->validate();
+        });
     	return $this;
     }
 
@@ -197,7 +208,7 @@ abstract class Resource
         })->filter(function($item) use ($inputs) {
             return isset($inputs[$item->column]);
         })->each(function($item) use (&$inputs) {
-            $inputs[$item->column] = $item->processData($inputs[$item->column]);
+            $inputs = $item->processData($inputs);
         });
     	return $inputs;
     }
