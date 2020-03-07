@@ -147,8 +147,21 @@ class Input
 		return $this;
 	}
 
+	/**
+	 * Allow to edit the data passed to create function of the object, returns the request gotten
+	 **/
+
 	public function processData($data)
 	{
 		return $data;
+	}
+
+	/**
+	 * Can add extra validation to inputs in case is needed
+	 **/
+
+	public function validate()
+	{
+		return;
 	}
 }

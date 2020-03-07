@@ -167,6 +167,7 @@ All the fields available on front:
 - HasMany
 - Hidden
 - ID
+- Image
 - Input
 - Money
 - MorphMany
