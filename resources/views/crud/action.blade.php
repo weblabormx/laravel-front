@@ -13,7 +13,7 @@
         <li class="breadcrumb-item active">{{ $action->title }}</li>
     @endcomponent
 
-    <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold py-3 mb-4">
+    <h4 class="d-flex align-items-center font-weight-bold py-3 mb-4">
         <div>{{ $action->title }}</div>
         <div>
             @foreach($action->buttons() as $link => $button)
@@ -22,16 +22,11 @@
         </div>
     </h4>
 
-    {!! Form::open(array('url' => request()->url())) !!}
+    {!! Form::open(array('url' => request()->url(), 'files' => true)) !!}
 
-        <div class="card">
-            <hr class="m-0">
-            <div class="card-body pb-2">
-                @foreach($action->fields() as $field)
-                    {!! $field->formHtml() !!}
-                @endforeach
-            </div>
-        </div>
+        @foreach($action->createPanels() as $panel)
+            {!! $panel->formHtml() !!}
+        @endforeach
         <div class="text-right mt-3">
             <button type="submit" class="btn btn-primary">{{ $action->save_button }}</button>
         </div>

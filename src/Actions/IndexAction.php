@@ -4,15 +4,18 @@ namespace WeblaborMx\Front\Actions;
 
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\Panel;
+use WeblaborMx\Front\Traits\HasInputs;
 
 class IndexAction
 {
+    use HasInputs;
+    
 	public $title;
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
 	public $data;
-    public $save_button = 'Save changes';
+    public $save_button;
     public $slug;
 
 	public function __construct()
@@ -24,6 +27,9 @@ class IndexAction
     	}
         if(is_null($this->slug)) {
             $this->slug = Str::slug(Str::snake(class_basename(get_class($this))));
+        }
+        if(is_null($this->save_button)) {
+            $this->save_button = __('Save changes');
         }
 		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
 	}
@@ -47,7 +53,7 @@ class IndexAction
     public function validate()
     {
     	$rules = collect($this->fields())->filter(function($item) {
-    		return strlen($item->getRules())>0;
+    		return count($item->getRules($this->source))>0;
     	})->mapWithKeys(function($item) {
             return [$item->column => $item->getRules()];
         })->toArray();

@@ -187,11 +187,13 @@ class FrontController extends Controller
             abort(404);
         }
 
-        $this->authorize('update', $object);
         $front = $this->front->setSource('create')->setObject($object);
         $action = $this->repository->getAction($action, $front);
         if(!is_object($action)) {
             abort(406, "Action wasn't found: {$original_action}");
+        }
+        if(!$action->show) {
+            abort(404);
         }
         $action = $action->setObject($object);
 
@@ -211,16 +213,21 @@ class FrontController extends Controller
             abort(404);
         }
 
-        $this->authorize('update', $object);
         $front = $this->front->setSource('create')->setObject($object);
         $action = $this->repository->getAction($action, $front);
         if(!is_object($action)) {
             abort(406, "Action wasn't found: {$original_action}");
         }
+        if(!$action->show) {
+            abort(404);
+        }
         $action = $action->setObject($object);
         $action->validate();
 
         $result = $action->handle($object, $request);
+        if(get_class($result)=='Illuminate\Http\RedirectResponse') {
+            return $result;
+        }
         if(!isset($result)) {
             $message = config('front.messages.action_sucess');
             $message = str_replace('{title}', $action->title, $message);

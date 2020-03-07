@@ -3,12 +3,9 @@
 namespace WeblaborMx\Front\Texts;
 
 use WeblaborMx\Front\Inputs\Input;
-use WeblaborMx\Front\Traits\WithWidth;
 
 class Text extends Input
 {
-	use WithWidth;
-
 	public $is_input = false;
 	public $needs_to_be_on_panel = false;
 	public $text;
