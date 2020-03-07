@@ -22,6 +22,9 @@ class File extends Input
 
 	public function processData($data)
 	{
+		if(!isset($data[$this->column])) {
+			return $data;
+		}
 		$file = Storage::putFile($this->directory, $data[$this->column]);
 		$url = Storage::url($file);
 		$data[$this->column] = $url;

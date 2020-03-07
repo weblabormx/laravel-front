@@ -48,10 +48,11 @@ class FrontController extends Controller
         $this->authorize('create', $this->front->getModel());
 
         $model = $this->front->getModel();
-        $front = $this->front->setSource('store')->validate();
+        $front = $this->front->setSource('store');
+        $data = $front->processData($request->all());
+        $front->validate($data);
 
-        $inputs = $front->processData($request->all());
-        $object = $model::create($inputs);
+        $object = $model::create($data);
         $front->store($object, $request);
 
         $message = config('front.messages.crud_success_create');
@@ -101,8 +102,10 @@ class FrontController extends Controller
         }
         
         $this->authorize('update', $object);
-        $front = $this->front->setSource('update')->setObject($object)->validate();
+        $front = $this->front->setSource('update')->setObject($object);
         $data = $front->processData($request->all());
+        $front->validate($data);
+        
         $front->update($object, $request);
         $object->update($data);
 

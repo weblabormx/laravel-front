@@ -40,7 +40,7 @@ class Image extends Input
 		return view('front::inputs.image', compact('value'));
 	}
 
-	public function validate()
+	public function validate($data)
 	{
 		$name = $this->column.'_new';
 		$attribute_name = $this->title;
@@ -50,6 +50,6 @@ class Image extends Input
 		$attributes = [
 			$name => $attribute_name
 		];
-		\Validator::make(request()->all(), $rules, [], $attributes)->validate();
+		\Validator::make($data, $rules, [], $attributes)->validate();
 	}
 }

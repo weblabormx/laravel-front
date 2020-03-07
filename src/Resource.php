@@ -149,7 +149,7 @@ abstract class Resource
 		return $url;
     }
 
-    public function validate()
+    public function validate($data)
     {
         // Just execute on edit or create
     	if($this->source != 'update' && $this->source != 'store') {
@@ -170,8 +170,8 @@ abstract class Resource
         // Execute validator function on fields
         collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->map(function($item) {
             return $item->setResource($this);
-        })->each(function($item) {
-            return $item->validate();
+        })->each(function($item) use ($data) {
+            return $item->validate($data);
         });
 
         // Validate all the rules
@@ -180,7 +180,7 @@ abstract class Resource
         })->mapWithKeys(function($item) {
             return [$item->column => $item->title];
         })->toArray();
-        \Validator::make(request()->all(), $rules, [], $attributes)->validate();
+        \Validator::make($data, $rules, [], $attributes)->validate();
     	return $this;
     }
 
@@ -210,8 +210,6 @@ abstract class Resource
 
         $fields->filter(function($item) use ($inputs) {
             return $item->is_input;
-        })->filter(function($item) use ($inputs) {
-            return isset($inputs[$item->column]);
         })->each(function($item) use (&$inputs) {
             $inputs = $item->processData($inputs);
         });

@@ -160,7 +160,7 @@ class Input
 	 * Can add extra validation to inputs in case is needed
 	 **/
 
-	public function validate()
+	public function validate($data)
 	{
 		return;
 	}
