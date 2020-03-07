@@ -36,7 +36,8 @@ class Image extends Input
 
 	public function getValue($object)
 	{
-		$value = parent::getValue($object);
+		$name = $this->column;
+		$value = $object->$name;
 		return view('front::inputs.image', compact('value'));
 	}
 

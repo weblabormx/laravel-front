@@ -225,7 +225,8 @@ class FrontController extends Controller
         $action->validate();
 
         $result = $action->handle($object, $request);
-        if(get_class($result)=='Illuminate\Http\RedirectResponse') {
+        if(is_object($result) && get_class($result)=='Illuminate\Http\RedirectResponse') {
+            $request->flash();
             return $result;
         }
         if(!isset($result)) {

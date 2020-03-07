@@ -1,6 +1,6 @@
 @if($objects->count() > 0)
     @php $appends = isset($pagination_name) ? request()->except($pagination_name) : request()->except('page'); @endphp
-    <div class="card">
+    <div class="card" @isset($style) style="{{$style}}" @endisset>
         @if($objects instanceof \Illuminate\Pagination\LengthAwarePaginator )
             {{ $objects->appends($appends)->links() }}
         @endif
@@ -35,7 +35,7 @@
         @endif
     </div>
 @else
-    <div class="card">
+    <div class="card" @isset($style) style="{{$style}}" @endisset>
         <div class="card-body">
             {{ __('No data to show') }}
         </div>

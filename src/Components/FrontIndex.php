@@ -30,7 +30,8 @@ class FrontIndex extends Component
 			$query = $function($query);
 		}
 		$objects = $query->get();
-		return view('front::crud.partial-index', compact('objects', 'front'))->render();
+		$style = 'margin-bottom: 30px;';
+		return view('front::crud.partial-index', compact('objects', 'front', 'style'))->render();
 	}
 
 	public function setRequest($request)
