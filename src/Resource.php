@@ -167,15 +167,20 @@ abstract class Resource
     		return [$column => $item->getRules($this->source)];
     	})->toArray();
 
-        // Validate all the rules
-    	\Validator::make(request()->all(), $rules)->validate();
-
         // Execute validator function on fields
         collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->map(function($item) {
             return $item->setResource($this);
         })->each(function($item) {
             return $item->validate();
         });
+
+        // Validate all the rules
+        $attributes = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+            return isset($item->column) && isset($item->title) && is_string($item->column) && is_string($item->title);
+        })->mapWithKeys(function($item) {
+            return [$item->column => $item->title];
+        })->toArray();
+        \Validator::make(request()->all(), $rules, [], $attributes)->validate();
     	return $this;
     }
 

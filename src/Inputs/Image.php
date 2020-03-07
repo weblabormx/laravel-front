@@ -47,10 +47,9 @@ class Image extends Input
 		$rules = [
 			$name => ['image','mimes:jpeg,png,jpg,gif,svg']
 		];
-		$messages = [
-			$name.'.image' => __('validation.image', ['attribute' => $attribute_name]),
-			$name.'.mimes' => __('validation.mimes', ['attribute' => $attribute_name]),
+		$attributes = [
+			$name => $attribute_name
 		];
-		\Validator::make(request()->all(), $rules, $messages)->validate();
+		\Validator::make(request()->all(), $rules, [], $attributes)->validate();
 	}
 }
