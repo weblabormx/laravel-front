@@ -9,6 +9,7 @@ class FrontCreate extends Component
 	public $front_class;
 	public $query;
 	public $lense;
+	public $base_url;
 
 	public function __construct($front_class, $column = null, $extra = null, $source = null)
 	{
@@ -24,19 +25,10 @@ class FrontCreate extends Component
 		if(isset($this->lense)) {
 			$front = $front->getLense($this->lense);
 		}
+		if(isset($this->base_url)) {
+			$front = $front->setBaseUrl($this->base_url);
+		}
 		return view('front::crud.partial-create', compact('front'))->render();
-	}
-
-	public function setRequest($request)
-	{
-		request()->request->add($request);
-		return $this;
-	}
-
-	public function query($query)
-	{
-		$this->query = $query;
-		return $this;
 	}
 
 	public function setLense($lense)
@@ -44,4 +36,10 @@ class FrontCreate extends Component
 		$this->lense = $lense;
 		return $this;
 	}
+
+	public function formUrl($base_url)
+    {
+        $this->base_url = $base_url;
+        return $this;
+    }
 }

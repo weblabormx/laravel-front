@@ -7,13 +7,14 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-
-    public function page($page)
+    public function page($page, $action = null)
     {
         // Call page class
         $page_class = 'App\Front\Pages\\'.$page;
         $page = (new $page_class)->setSource('index');
-        return view('front::page', compact('page'));
+        if(!is_null($action)) {
+        	$page = $page->changeFieldsFunction($action);
+        }
+        return view('front::page', compact('page', 'action'));
     }
-
 }

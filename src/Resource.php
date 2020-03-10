@@ -260,6 +260,12 @@ abstract class Resource
         return $this;
     }
     
+    public function setBaseUrl($base_url)
+    {
+        $this->base_url = $base_url;
+        return $this;
+    }
+
     /* 
 	 * Special functions
 	 */

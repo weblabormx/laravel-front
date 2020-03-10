@@ -65,6 +65,15 @@ class FrontServiceProvider extends ServiceProvider
             Route::get($route, function() use ($model) {
                 return (new PageController)->page($model);
             });
+            Route::post($route, function() use ($model) {
+                return (new PageController)->page($model, 'post');
+            });
+            Route::put($route, function() use ($model) {
+                return (new PageController)->page($model, 'put');
+            });
+            Route::delete($route, function() use ($model) {
+                return (new PageController)->page($model, 'delete');
+            });
         });
 
         Blade::directive('active', function ($route) {

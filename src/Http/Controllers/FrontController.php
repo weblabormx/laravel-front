@@ -5,6 +5,7 @@ namespace WeblaborMx\Front\Http\Controllers;
 use WeblaborMx\Front\Http\Repositories\FrontRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Jobs\StoreFront;
 
 class FrontController extends Controller
 {
@@ -47,13 +48,8 @@ class FrontController extends Controller
 	{
         $this->authorize('create', $this->front->getModel());
 
-        $model = $this->front->getModel();
         $front = $this->front->setSource('store');
-        $data = $front->processData($request->all());
-        $front->validate($data);
-
-        $object = $model::create($data);
-        $front->store($object, $request);
+        $object = StoreFront::dispatch($request, $front);
 
         $message = config('front.messages.crud_success_create');
         $message = str_replace('{title}', $front->label, $message);

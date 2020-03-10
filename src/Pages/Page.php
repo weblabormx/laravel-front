@@ -27,4 +27,19 @@ class Page
 	{
 		return;
 	}
+
+	public function post()
+	{
+		return;
+	}
+
+	public function put()
+	{
+		return;
+	}
+
+	public function delete()
+	{
+		return;
+	}
 }

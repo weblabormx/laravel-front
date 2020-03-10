@@ -21,6 +21,20 @@ php artisan vendor:publish --provider="WeblaborMx\Front\FrontServiceProvider" --
 
 - Execute `php artisan front:install` to install necessary files
 
+### Basics
+Laravel Front makes a use of different items that can be defined on the next way:
+
+- **Front Resources:** Basically is the front end information about a model and that is wanted to have a CRUD. The resources saves information about which fields show on the cruds.
+- **Actions:** Are actions that can be added to a resource, for example can be a resource for Reservations and there can be an action for "Mark as Paid" 
+- **Filters:** Filters works for filtering the data on the index page of a crud, for example for Reservations page you can filter the results to only show payed reservations
+- **Fields:** The resources can have fields to show information
+    - _Inputs:_ Are all the fields that add information as Text, Number, Select
+    - _Texts:_ Are fields that only shows information as Alert, Title
+    - _Components:_ Are more sophisticated fields that help on something like Panels, Line, FrontIndex
+- **Massives:** Define how a massive edition should work. For example you can have the users CRUD, each user have a lot of reservations, and you want to edit massively all reservations for this user, you can add more information on this classes, for example, adding a new button that says "Remove all" or "Send request"
+- **Pages:** Are information pages that only shows information, for example the Dashboard page
+- **Cards:** Are information cards that can be shown on pages, for example: The total money earned today, The total debt, etc
+
 ### Resources
 
 A resource is a class that allows you to configure all the information about the front end of a Laravel Model. Things as fields, url, buttons and more are configured on this file.
@@ -44,9 +58,9 @@ Route::front('Page');
 There are some basic variables that can be added on the resource
 
 ```
-public $title;		// Field name of the title (Name is the default value)
-public $label;		// Name of the resource (Generated automatically if empty)
-public $base_url;	// Url created on routes (Required)
+public $title;      // Field name of the title (Name is the default value)
+public $label;      // Name of the resource (Generated automatically if empty)
+public $base_url;   // Url created on routes (Required)
 ```
 
 #### Modifying query of results
@@ -190,7 +204,7 @@ All the fields available on front:
 - Table
 - Title
 
-#### Components
+#### Components
 
 - FrontCreate
 - FrontIndex

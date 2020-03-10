@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 trait HasInputs
 {
 	private $relations = ['HasMany', 'MorphMany', 'MorphToMany'];
+	public $fields_function = 'fields';
 
 	/* 
 	 * Functions
@@ -21,9 +22,10 @@ trait HasInputs
     // This need to be improved
 	private function filterFields($where, $flatten = false)
 	{
+		$fields_function = $this->fields_function;
 		$sum = [];
 		if($where=='index' || $flatten) {
-			$sum = collect($this->fields())->flatten()->filter(function($item) {
+			$sum = collect($this->$fields_function())->flatten()->filter(function($item) {
 				return is_object($item) && class_basename(get_class($item)) == 'Panel';
 			})->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
@@ -46,7 +48,7 @@ trait HasInputs
 				return $item->setResource($this)->setSource($where);
 			});
 		}
-		$return = collect($this->fields())->flatten()->filter(function($item) {
+		$return = collect($this->$fields_function())->flatten()->filter(function($item) {
 			return isset($item);
 		})->filter(function($item) use ($where) {
 			$field = 'show_on_'.$where;
@@ -92,6 +94,8 @@ trait HasInputs
 
 	private function addAtLeastOnePanel($type)
 	{
+		$fields_function = $this->fields_function;
+
 		// Get all fields that are not relationships
 		$fields = $this->filterFields($type)->filter(function($item) {
 			return !Str::contains(class_basename(get_class($item)), $this->relations);
@@ -100,8 +104,8 @@ trait HasInputs
 		// Get components or elements that dont need to have a panel
 		$components = $fields->filter(function($item) {
 			return class_basename(get_class($item)) == 'Panel' || !$item->needs_to_be_on_panel;
-		})->filter(function($item) {
-			return class_basename(get_class($item)) != 'Panel' || $item->fields()->count() > 0;
+		})->filter(function($item) use ($fields_function) {
+			return class_basename(get_class($item)) != 'Panel' || $item->$fields_function()->count() > 0;
 		});
 
 		// Get other fields that were not gotten on $components
@@ -145,5 +149,11 @@ trait HasInputs
 	public function createPanels()
 	{
 		return $this->addAtLeastOnePanel('create');
+	}
+
+	public function changeFieldsFunction($fields_function)
+	{
+		$this->fields_function = $fields_function;
+		return $this;
 	}
 }
