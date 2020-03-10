@@ -1,4 +1,4 @@
-@extends(isset($front) ? $front->layout : 'layouts.app')
+@extends(isset($front) ? $front->layout : (isset($page) ? $page->layout : 'layouts.app'))
 
 @section('after-nav')
 

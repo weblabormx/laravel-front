@@ -12,6 +12,8 @@ class Page
 	use HasInputs, HasLinks, HasBreadcrumbs, Sourceable;
 
 	public $title;
+	public $layout = 'layouts.app';
+	public $has_big_card = true;
 
 	public function __construct()
 	{
