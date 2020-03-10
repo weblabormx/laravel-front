@@ -192,6 +192,7 @@ All the fields available on front:
 
 #### Components
 
+- FrontCreate
 - FrontIndex
 - Line
 - Panel
