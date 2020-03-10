@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Workers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Validation\ValidationException;
 
 class Worker
 {
@@ -20,14 +21,15 @@ class Worker
 
 	public static function make($title = null, $column = null, $extra = null) 
 	{
-		$object = parent::make($title, $column, $extra);
+		$source = session('source');
+		$object = new static($title, $column, $extra, $source);
 		try {
 			return $object->handle();
-		} catch (\Exception $e) {
-			return $e->getMessage();
-		} catch (\Exception $e) {
+		} catch (ValidationException $e) {
         	return collect($e->errors())->flatten(1)->implode(' ');
-        }
+        } catch (\Exception $e) {
+			return $e->getMessage();
+		}
 		
 	}
 }

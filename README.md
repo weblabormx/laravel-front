@@ -31,6 +31,7 @@ Laravel Front makes a use of different items that can be defined on the next way
     - _Inputs:_ Are all the fields that add information as Text, Number, Select
     - _Texts:_ Are fields that only shows information as Alert, Title
     - _Components:_ Are more sophisticated fields that help on something like Panels, Line, FrontIndex
+    - _Workers_:_ Are helpers that executes something, this always return a value.
 - **Massives:** Define how a massive edition should work. For example you can have the users CRUD, each user have a lot of reservations, and you want to edit massively all reservations for this user, you can add more information on this classes, for example, adding a new button that says "Remove all" or "Send request"
 - **Pages:** Are information pages that only shows information, for example the Dashboard page
 - **Cards:** Are information cards that can be shown on pages, for example: The total money earned today, The total debt, etc
