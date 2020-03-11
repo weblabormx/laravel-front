@@ -22,14 +22,22 @@ class Worker
 	public static function make($title = null, $column = null, $extra = null) 
 	{
 		$source = session('source');
-		$object = new static($title, $column, $extra, $source);
+		return new static($title, $column, $extra, $source);
+	}
+
+	public function handle()
+	{
+		//
+	}
+
+	public function execute()
+	{
 		try {
-			return $object->handle();
+			return $this->handle();
 		} catch (ValidationException $e) {
         	return collect($e->errors())->flatten(1)->implode(' ');
         } catch (\Exception $e) {
 			return $e->getMessage();
 		}
-		
 	}
 }
