@@ -75,6 +75,11 @@ abstract class Resource
         // Do nothing
     }
 
+    public function indexResult($result)
+    {
+        return $result;
+    }
+    
 	/* 
 	 * Hidden functions
 	 */

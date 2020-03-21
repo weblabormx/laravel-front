@@ -5,10 +5,14 @@ namespace WeblaborMx\Front\Http\Controllers;
 use WeblaborMx\Front\Http\Repositories\FrontRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Traits\IsRunable;
 use WeblaborMx\Front\Jobs\StoreFront;
+use WeblaborMx\Front\Jobs\IndexFront;
 
 class FrontController extends Controller
 {
+    use IsRunable;
+
     private $repository;
     private $front;
 
@@ -24,15 +28,15 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('index');
-        $redirect_url = $front->redirects();
-        if(isset($redirect_url)) {
-            return redirect($redirect_url);
-        }
+        $base_url = $front->base_url;
 
-        $objects = $this->repository->index($front);
-        if(get_class($objects)!='Illuminate\Pagination\LengthAwarePaginator') {
-            return $objects;
+        $response = $this->run(new IndexFront($front, $base_url);
+        if($this->isResponse($response)) {
+            return $response;
         }
+        
+        // Show view
+        $objects = $response;
         return view('front::crud.index', compact('objects', 'front'));
     }
 
