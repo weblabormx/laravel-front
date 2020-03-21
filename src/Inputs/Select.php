@@ -16,7 +16,7 @@ class Select extends Input
 
 	public function form()
 	{
-		$this->attributes['placeholder'] = 'Pick one..';
+		$this->attributes['placeholder'] = __('Pick one..');
 		return \Form::select($this->column, $this->options, $this->default_value, $this->attributes);
 	}
 

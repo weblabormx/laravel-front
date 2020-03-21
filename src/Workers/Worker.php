@@ -35,7 +35,7 @@ class Worker
 		try {
 			return $this->handle();
 		} catch (ValidationException $e) {
-        	return collect($e->errors())->flatten(1)->implode(' ');
+        	return collect($e->errors())->flatten(1)->implode('<br />');
         } catch (\Exception $e) {
 			return $e->getMessage();
 		}

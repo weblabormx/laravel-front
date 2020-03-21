@@ -15,6 +15,6 @@ class PageController extends Controller
         if(!is_null($action)) {
         	$page = $page->changeFieldsFunction($action);
         }
-        return view('front::page', compact('page', 'action'));
+        return view($page->view, compact('page', 'action'));
     }
 }

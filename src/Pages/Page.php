@@ -13,6 +13,7 @@ class Page
 
 	public $title;
 	public $layout = 'layouts.app';
+	public $view = 'front::page';
 	public $has_big_card = true;
 
 	public function __construct()
