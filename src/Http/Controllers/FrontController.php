@@ -59,21 +59,27 @@ class FrontController extends Controller
             return $response;
         }
         
-        // Rredirect to index page
+        // Redirect to index page
         return redirect($front->base_url);
     }
 
-    public function show($object) 
+    public function show($object)
     {
+        // Get object
         $model = $this->front->getModel();
         $object = $model::find($object);
         if(!is_object($object)) {
             abort(404);
         }
         
+        // Validate policy
         $this->authorize('view', $object);
+
+        // Front code
         $front = $this->front->setSource('show')->setObject($object);
         $front->show($object);
+
+        // Show view
         return view('front::crud.show', compact('object', 'front'));
     }
 
