@@ -36,7 +36,7 @@ class IndexFront
         // Get results
         $objects = $this->front->globalIndexQuery();
 
-        // Detect if crud is just for 1 item
+        // Detect if crud is just for 1 item and redirects
         if(!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
             $url = $this->base.'/'.$objects->getKey().'/edit';
             return redirect($url);

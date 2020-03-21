@@ -30,7 +30,7 @@ class FrontController extends Controller
         $front = $this->front->setSource('index');
         $base_url = $front->base_url;
 
-        $response = $this->run(new IndexFront($front, $base_url);
+        $response = $this->run(new IndexFront($front, $base_url));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -52,18 +52,15 @@ class FrontController extends Controller
 	{
         $this->authorize('create', $this->front->getModel());
 
+        // Front code
         $front = $this->front->setSource('store');
-        $object = StoreFront::dispatch($request, $front);
-
-        $message = config('front.messages.crud_success_create');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
-
-        $redirect_url = $front->base_url;
-        if($request->filled('redirect_url')) {
-            $redirect_url = $request->redirect_url;
+        $response = $this->run(new StoreFront($request, $front));
+        if($this->isResponse($response)) {
+            return $response;
         }
-        return redirect($redirect_url);
+        
+        // Rredirect to index page
+        return redirect($front->base_url);
     }
 
     public function show($object) 

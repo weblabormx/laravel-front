@@ -2,12 +2,8 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-use Illuminate\Queue\SerializesModels;
-
 class StoreFront
 {
-    use DispatchAndReturn, SerializesModels;
-
     public $request;
     public $front;
 
@@ -29,12 +25,28 @@ class StoreFront
      */
     public function handle()
     {
+        // Get data to be saved
         $data = $this->front->processData($this->request->all());
+
+        // Validate
         $this->front->validate($data);
 
+        // Create the object
         $model = $this->front->getModel();
         $object = $model::create($data);
+
+        // Call the action to be done after is created
         $this->front->store($object, $this->request);
-        return $this->addResponse($object);
+
+        // Show success message
+        flash(__(':name created successfully', ['name' => $this->front->label]))->success();
+        
+        // Redirect if there was a redirect value on the form
+        if($this->request->filled('redirect_url')) {
+            return redirect($this->request->redirect_url);
+        }
+
+        // Return the created object
+        return $object;
     }
 }

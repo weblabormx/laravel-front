@@ -41,38 +41,46 @@ abstract class Resource
         $this->load();
 	}
 
+    /* 
+     * Functions that can be modified
+     */
+
+    // Function that is called after the constructor is called
+
     public function load()
     {
         //
     }
 
-	/* 
-	 * Functions that can be modified
-	 */
+    // Modify how to return results
 
 	public function indexQuery($query)
 	{
 		return $query->latest();
 	}
 
+    // To execute when seeing a show view
+
     public function show($object, $extra = [])
     {
-        // Do nothing
+        //
     }
+
+    // To execute after storing an object
 
     public function store($object, $request, $extra = [])
     {
-        // Do nothing
+        //
     }
 
     public function update($object, $request, $extra = [])
     {
-        // Do nothing
+        //
     }
 
     public function destroy($object, $extra = [])
     {
-        // Do nothing
+        //
     }
 
     public function indexResult($result)
