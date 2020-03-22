@@ -116,9 +116,7 @@ class FrontController extends Controller
             return redirect($request->redirect);
         }
 
-        $message = config('front.messages.crud_sucesss_update');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
+        flash('Updated correctly')->success();
 
         return back();
     }

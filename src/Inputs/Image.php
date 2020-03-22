@@ -4,10 +4,12 @@ namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image as Intervention;
 
 class Image extends Input
 {
 	public $directory = 'images';
+	public $view_size = '';
 
 	public function form()
 	{
@@ -27,8 +29,22 @@ class Image extends Input
 		if(!isset($data[$this->column.'_new'])) {
 			return $data;
 		}
-		$file = Storage::putFile($this->directory, $data[$this->column.'_new']);
-		$url = Storage::url($file);
+		$file = $data[$this->column.'_new'];
+
+		// Save original file
+		$storage_file = Storage::putFile($this->directory, $file);
+		$file_name = class_basename($storage_file);
+		$url = Storage::url($storage_file);
+
+		// New sizes 
+		$this->saveNewSize($file, $file_name, 90, 's', true); // Small Square
+		$this->saveNewSize($file, $file_name, 160, 'b', true); // Big Square
+		$this->saveNewSize($file, $file_name, 160, 't'); // Small Thumbnail
+		$this->saveNewSize($file, $file_name, 320, 'm'); // Medium Thumbnail
+		$this->saveNewSize($file, $file_name, 640, 'l'); // Large Thumbnail
+		$this->saveNewSize($file, $file_name, 1024, 'h'); // Huge Thumbnail
+		
+		// Assign data to request
 		$data[$this->column] = $url;
 		unset($data[$this->column.'_new']);
 		return $data;
@@ -37,8 +53,14 @@ class Image extends Input
 	public function getValue($object)
 	{
 		$name = $this->column;
-		$value = $object->$name;
+		$value = $this->changeFileName($object->$name, $this->view_size);
 		return view('front::inputs.image', compact('value'));
+	}
+
+	public function sizeToShow($size)
+	{
+		$this->view_size = $size;
+		return $this;
 	}
 
 	public function validate($data)
@@ -52,5 +74,24 @@ class Image extends Input
 			$name => $attribute_name
 		];
 		\Validator::make($data, $rules, [], $attributes)->validate();
+	}
+
+	public function changeFileName($full_name, $prefix)
+	{
+		return getThumb($full_name, $prefix)
+	}
+
+	public function saveNewSize($file, $file_name, $size, $prefix, $is_fit = false)
+	{
+		$new_file = Intervention::make($file);
+		if($is_fit) {
+			$new_file = $new_file->fit($size, $size);	
+		} else {
+			$new_file = $new_file->resize($size, $size, function($constraint) {
+			    $constraint->aspectRatio();
+			});
+		}
+		$new_name = $this->changeFileName($file_name, $prefix);
+		Storage::put($this->directory.'/'.$new_name, $new_file->encode());
 	}
 }
