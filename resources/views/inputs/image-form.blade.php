@@ -2,7 +2,7 @@
   	<div class="card-body">
 		@php $column = $input->column; @endphp
 		@if(isset($input->resource) && isset($input->resource->object) && isset($input->resource->object->$column))
-			<img src="{{$input->changeFileName($input->resource->object->$column, 'm')}}"><br /><br />
+			<img src="{{getThumb($input->resource->object->$column, 'm')}}"><br /><br />
 		@endif
 		<button type="button" class="btn btn-secondary" onclick="executeFile('{{$id}}')">{{ __('Upload Image') }}</button>
 		{!! Form::hidden($input->column, null) !!}

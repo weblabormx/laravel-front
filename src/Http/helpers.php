@@ -1,6 +1,6 @@
 <?php
 
-public function getThumb($full_name, $prefix)
+function getThumb($full_name, $prefix)
 {
     $full_name = explode('/', $full_name);
     $key = count($full_name)-1;

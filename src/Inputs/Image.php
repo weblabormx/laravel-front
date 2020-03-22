@@ -53,7 +53,7 @@ class Image extends Input
 	public function getValue($object)
 	{
 		$name = $this->column;
-		$value = $this->changeFileName($object->$name, $this->view_size);
+		$value = getThumb($object->$name, $this->view_size);
 		return view('front::inputs.image', compact('value'));
 	}
 
@@ -76,11 +76,6 @@ class Image extends Input
 		\Validator::make($data, $rules, [], $attributes)->validate();
 	}
 
-	public function changeFileName($full_name, $prefix)
-	{
-		return getThumb($full_name, $prefix)
-	}
-
 	public function saveNewSize($file, $file_name, $size, $prefix, $is_fit = false)
 	{
 		$new_file = Intervention::make($file);
@@ -91,7 +86,7 @@ class Image extends Input
 			    $constraint->aspectRatio();
 			});
 		}
-		$new_name = $this->changeFileName($file_name, $prefix);
+		$new_name = getThumb($file_name, $prefix);
 		Storage::put($this->directory.'/'.$new_name, $new_file->encode());
 	}
 }
