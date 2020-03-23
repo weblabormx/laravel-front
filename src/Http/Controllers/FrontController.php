@@ -24,6 +24,10 @@ class FrontController extends Controller
         $this->front = $this->getFront();
     }
 
+    /*
+     * CRUD Functions
+     */
+
     public function index()
     {
         $this->authorize('viewAny', $this->front->getModel());
@@ -68,11 +72,7 @@ class FrontController extends Controller
     public function show($object)
     {
         // Get object
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        $object = $this->getObject($object);
         
         // Validate policy
         $this->authorize('view', $object);
@@ -88,11 +88,7 @@ class FrontController extends Controller
     public function edit($object)
     {
         // Get object
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        $object = $this->getObject($object);
 
         // Validate policy
         $this->authorize('update', $object);
@@ -107,11 +103,7 @@ class FrontController extends Controller
     public function update($object, Request $request)
     {
         // Get object
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        $object = $this->getObject($object);
         
         // Validate policy
         $this->authorize('update', $object);
@@ -130,11 +122,7 @@ class FrontController extends Controller
     public function destroy($object)
     {
         // Get object
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        $object = $this->getObject($object);
 
         // Validate Policy
         $this->authorize('delete', $object);
@@ -149,6 +137,10 @@ class FrontController extends Controller
         // Redirect
         return redirect($this->front->base_url);
     }
+
+    /*
+     * Actions
+     */
 
     public function indexActionShow($action) 
     {
@@ -250,6 +242,10 @@ class FrontController extends Controller
         return back();
     }
 
+    /*
+     * More features
+     */
+
     public function lenses($lense, Request $request)
     {
         $this->authorize('viewAny', $this->front->getModel());
@@ -304,4 +300,13 @@ class FrontController extends Controller
         return new $class;
     }
 
+    private function getObject($object)
+    {
+        $model = $this->front->getModel();
+        $object = $model::find($object);
+        if(!is_object($object)) {
+            abort(404);
+        }
+        return $object;
+    }
 }
