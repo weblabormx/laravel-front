@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Workers;
 
 use WeblaborMx\Front\Front;
-use WeblaborMx\Front\Jobs\StoreFront;
+use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Traits\IsRunable;
 
 class FrontStore extends Worker
@@ -19,7 +19,7 @@ class FrontStore extends Worker
         if(isset($this->lense)) {
 			$front = $front->getLense($this->lense);
 		}
-        return $this->run(new StoreFront(request(), $front));
+        return $this->run(new FrontStore(request(), $front));
 	}
 
 	public function setLense($lense)

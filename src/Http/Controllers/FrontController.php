@@ -2,25 +2,22 @@
 
 namespace WeblaborMx\Front\Http\Controllers;
 
-use WeblaborMx\Front\Http\Repositories\FrontRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\IsRunable;
-use WeblaborMx\Front\Jobs\StoreFront;
-use WeblaborMx\Front\Jobs\IndexFront;
-use WeblaborMx\Front\Jobs\UpdateFront;
-use WeblaborMx\Front\Jobs\DestroyFront;
+use WeblaborMx\Front\Jobs\FrontStore;
+use WeblaborMx\Front\Jobs\FrontIndex;
+use WeblaborMx\Front\Jobs\FrontUpdate;
+use WeblaborMx\Front\Jobs\FrontDestroy;
 
 class FrontController extends Controller
 {
     use IsRunable;
 
-    private $repository;
     private $front;
 
-    public function __construct(FrontRepository $repository)
+    public function __construct()
 	{
-        $this->repository = $repository;
         $this->front = $this->getFront();
     }
 
@@ -36,7 +33,7 @@ class FrontController extends Controller
         $front = $this->front->setSource('index');
         $base_url = $front->base_url;
 
-        $response = $this->run(new IndexFront($front, $base_url));
+        $response = $this->run(new FrontIndex($front, $base_url));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -60,7 +57,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('store');
-        $response = $this->run(new StoreFront($request, $front));
+        $response = $this->run(new FrontStore($request, $front));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -110,7 +107,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('update')->setObject($object);
-        $response = $this->run(new UpdateFront($request, $front, $object));
+        $response = $this->run(new FrontUpdate($request, $front, $object));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -129,7 +126,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
-        $response = $this->run(new DestroyFront($front, $object));
+        $response = $this->run(new FrontDestroy($front, $object));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -141,42 +138,6 @@ class FrontController extends Controller
     /*
      * Actions
      */
-
-    public function indexActionShow($action) 
-    {
-        $this->authorize('update', $this->front->getModel());
-        
-        $sport = $this->repository->findSport($sport);
-        $sportable = $this->sportable;
-
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        
-        return view('front::crud.index-action', compact('action', 'front', 'sportable'));
-    }
-
-    public function indexActionStore($action, Request $request)
-    {
-        $this->authorize('update', $this->front->getModel());
-
-        $sport = $this->repository->findSport($sport);
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        $action->validate();
-
-        $result = $action->handle($request);
-        if(!isset($result)) {
-            $message = config('front.messages.action_sucess');
-            $message = str_replace('{title}', $action->title, $message);
-            flash($message)->success();
-        } else {
-            $request->flash();
-        }
-        
-        return back();
-    }
 
     public function actionShow($object, $action) 
     {
@@ -231,6 +192,42 @@ class FrontController extends Controller
             $request->flash();
             return $result;
         }
+        if(!isset($result)) {
+            $message = config('front.messages.action_sucess');
+            $message = str_replace('{title}', $action->title, $message);
+            flash($message)->success();
+        } else {
+            $request->flash();
+        }
+        
+        return back();
+    }
+
+    public function indexActionShow($action) 
+    {
+        $this->authorize('update', $this->front->getModel());
+        
+        $sport = $this->repository->findSport($sport);
+        $sportable = $this->sportable;
+
+        $class = $sport->getClass($this->sportable->db_class);
+        $front = getFront($class, 'create')->addData(compact('sport'));
+        $action = $this->repository->getIndexAction($action, $front);
+        
+        return view('front::crud.index-action', compact('action', 'front', 'sportable'));
+    }
+
+    public function indexActionStore($action, Request $request)
+    {
+        $this->authorize('update', $this->front->getModel());
+
+        $sport = $this->repository->findSport($sport);
+        $class = $sport->getClass($this->sportable->db_class);
+        $front = getFront($class, 'create')->addData(compact('sport'));
+        $action = $this->repository->getIndexAction($action, $front);
+        $action->validate();
+
+        $result = $action->handle($request);
         if(!isset($result)) {
             $message = config('front.messages.action_sucess');
             $message = str_replace('{title}', $action->title, $message);
