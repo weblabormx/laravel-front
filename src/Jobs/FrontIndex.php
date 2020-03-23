@@ -4,7 +4,7 @@ namespace WeblaborMx\Front\Jobs;
 
 use Illuminate\Support\Str;
 
-class IndexFront
+class FrontIndex
 {
     public $front;
     public $base;

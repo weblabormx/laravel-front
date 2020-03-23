@@ -2,20 +2,22 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-class StoreFront
+class FrontUpdate
 {
     public $request;
     public $front;
+    public $object;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request, $front)
+    public function __construct($request, $front, $object)
     {
         $this->request = $request;
         $this->front = $front;
+        $this->object = $object;
     }
 
     /**
@@ -30,23 +32,22 @@ class StoreFront
 
         // Validate
         $this->front->validate($data);
-
-        // Create the object
-        $model = $this->front->getModel();
-        $object = $model::create($data);
-
-        // Call the action to be done after is created
-        $this->front->store($object, $this->request);
-
-        // Show success message
-        flash(__(':name created successfully', ['name' => $this->front->label]))->success();
         
+        // Update the object
+        $this->object->update($data);
+
+        // Call the action to be done after is updated
+        $this->front->update($this->object, $this->request);
+        
+        // Show success message
+        flash(__(':name updated successfully', ['name' => $this->front->label]))->success();
+
         // Redirect if there was a redirect value on the form
         if($this->request->filled('redirect_url')) {
             return redirect($this->request->redirect_url);
         }
 
         // Return the created object
-        return $object;
+        return $this->object;
     }
 }
