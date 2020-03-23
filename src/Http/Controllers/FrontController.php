@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\IsRunable;
 use WeblaborMx\Front\Jobs\StoreFront;
 use WeblaborMx\Front\Jobs\IndexFront;
+use WeblaborMx\Front\Jobs\UpdateFront;
+use WeblaborMx\Front\Jobs\DestroyFront;
 
 class FrontController extends Controller
 {
@@ -85,59 +87,66 @@ class FrontController extends Controller
 
     public function edit($object)
     {
+        // Get object
         $model = $this->front->getModel();
         $object = $model::find($object);
         if(!is_object($object)) {
             abort(404);
         }
 
+        // Validate policy
         $this->authorize('update', $object);
+
+        // Front code
         $front = $this->front->setSource('edit')->setObject($object);
+
+        // Show view
         return view('front::crud.edit', compact('object', 'front'));
     }
 
     public function update($object, Request $request)
     {
+        // Get object
         $model = $this->front->getModel();
         $object = $model::find($object);
         if(!is_object($object)) {
             abort(404);
         }
         
+        // Validate policy
         $this->authorize('update', $object);
-        $front = $this->front->setSource('update')->setObject($object);
-        $data = $front->processData($request->all());
-        $front->validate($data);
-        
-        $front->update($object, $request);
-        $object->update($data);
 
-        if($request->filled('redirect')) {
-            return redirect($request->redirect);
+        // Front code
+        $front = $this->front->setSource('update')->setObject($object);
+        $response = $this->run(new UpdateFront($request, $front, $object));
+        if($this->isResponse($response)) {
+            return $response;
         }
 
-        flash('Updated correctly')->success();
-
+        // Redirect
         return back();
     }
 
     public function destroy($object)
     {
+        // Get object
         $model = $this->front->getModel();
         $object = $model::find($object);
         if(!is_object($object)) {
             abort(404);
         }
 
+        // Validate Policy
         $this->authorize('delete', $object);
-        $front = $this->front->setSource('show')->setObject($object);
-        $front->destroy($object);
-        $object->delete();
-        
-        $message = config('front.messages.crud_sucesss_destroy');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
 
+        // Front code
+        $front = $this->front->setSource('show')->setObject($object);
+        $response = $this->run(new DestroyFront($front, $object));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Redirect
         return redirect($this->front->base_url);
     }
 

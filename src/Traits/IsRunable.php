@@ -11,6 +11,9 @@ trait IsRunable
 
     public function isResponse($response)
     {
+        if(!is_object($response)) {
+            return false;
+        }
     	$class = get_class($response);
     	$classes = [$class];
     	while (true) {

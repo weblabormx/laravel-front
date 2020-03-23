@@ -61,24 +61,24 @@ abstract class Resource
 
     // To execute when seeing a show view
 
-    public function show($object, $extra = [])
+    public function show($object)
     {
         //
     }
 
     // To execute after storing an object
 
-    public function store($object, $request, $extra = [])
+    public function store($object, $request)
     {
         //
     }
 
-    public function update($object, $request, $extra = [])
+    public function update($object, $request)
     {
         //
     }
 
-    public function destroy($object, $extra = [])
+    public function destroy($object)
     {
         //
     }
