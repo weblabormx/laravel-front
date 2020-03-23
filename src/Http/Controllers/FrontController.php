@@ -141,30 +141,18 @@ class FrontController extends Controller
 
     public function actionShow($object, $action) 
     {
-        $original_object = $object;
-        $original_action = $action;
-        
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        // Get object
+        $object = $this->getObject($object);
 
+        // Front code
         $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front);
-        if(!is_object($action)) {
-            abort(406, "Action wasn't found: {$original_action}");
-        }
-        if(!$action->show) {
-            abort(404);
-        }
-        $action = $action->setObject($object);
-
-        // Detect if dont have fields process inmediately
-        if(count($action->fields())==0) {
-            return $this->actionStore($original_object, $original_action, request());
+        $response = $this->run(new ActionShow($front, $object, $action, $this));
+        if($this->isResponse($response)) {
+            return $response;
         }
 
+        // Show view
+        $action = $response;
         return view('front::crud.action', compact('action', 'front', 'object'));
     }
 

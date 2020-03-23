@@ -47,23 +47,15 @@ trait HasActions
 
     public function searchIndexAction($slug)
     {
-        $action = collect($this->getIndexActions(true))->filter(function($item) use ($slug) {
+        return collect($this->getIndexActions(true))->filter(function($item) use ($slug) {
             return $item->slug == $slug;
         })->first();
-        if(!is_object($action)) {
-            abort(404);
-        }
-        return $action;
     }
 
     public function searchAction($slug)
     {
-        $action = collect($this->getActions(true))->filter(function($item) use ($slug) {
+        return collect($this->getActions(true))->filter(function($item) use ($slug) {
             return $item->slug == $slug;
         })->first();
-        if(!is_object($action)) {
-            abort(404);
-        }
-        return $action;
     }
 }
