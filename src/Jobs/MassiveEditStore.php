@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Jobs;
 
+use Illuminate\Support\Str;
+
 class MassiveEditStore
 {
     public $front;
@@ -52,7 +54,7 @@ class MassiveEditStore
         }
 
         // Save data on table
-        $this->saveData($data, $input, $object, $basic_data, $input_front);
+        $this->saveData($data, $input, $this->object, $basic_data, $input_front);
 
         // Declare it as null
         $return = null;
@@ -60,7 +62,7 @@ class MassiveEditStore
         // If another button is pressed is because the presence of massive class
         if(isset($this->request->submitName) && is_object($input->massive_class)) {
             $function = $this->request->submitName;
-            $return = $input->massive_class->$function($object, $data);
+            $return = $input->massive_class->$function($this->object, $data);
         }
 
         // Show successfull message
