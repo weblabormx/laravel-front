@@ -56,6 +56,8 @@ class FrontServiceProvider extends ServiceProvider
                 Route::delete('{'.$singular.'}', 'FrontController@destroy');
                 Route::get('{'.$singular.'}/action/{action}', 'FrontController@actionShow');
                 Route::post('{'.$singular.'}/action/{action}', 'FrontController@actionStore');
+                Route::get('{'.$singular.'}/masive_edit/{key}', 'FrontController@massiveEditShow');
+                Route::post('{'.$singular.'}/masive_edit/{key}', 'FrontController@massiveEditStore');
             });
         });
 

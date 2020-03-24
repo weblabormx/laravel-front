@@ -11,6 +11,8 @@ use WeblaborMx\Front\Jobs\FrontUpdate;
 use WeblaborMx\Front\Jobs\FrontDestroy;
 use WeblaborMx\Front\Jobs\ActionShow;
 use WeblaborMx\Front\Jobs\ActionStore;
+use WeblaborMx\Front\Jobs\MassiveEditShow;
+use WeblaborMx\Front\Jobs\MassiveEditStore;
 
 class FrontController extends Controller
 {
@@ -197,6 +199,49 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create');
         $response = $this->run(new ActionStore($front, null, $action, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Return
+        return back();
+    }
+
+    /*
+     * Massive Edition
+     */
+
+    public function massiveEditShow($object, $key) 
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate Policy
+        $this->authorize('update', $object);
+        
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new MassiveEditShow($front, $object, $key));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $data = collect(compact('object', 'front'))->merge($response)->all();
+        return view('front::masive_edit', $data);
+    }
+
+    public function massiveEditStore($object, $key, Request $request)
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate Policy
+        $this->authorize('update', $this->sportable->class);
+
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new MassiveEditStore($front, $object, $key, $request));
         if($this->isResponse($response)) {
             return $response;
         }
