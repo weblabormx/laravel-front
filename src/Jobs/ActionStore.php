@@ -34,7 +34,13 @@ class ActionStore
     public function handle()
     {
         // Search the individual action
-        $action = $this->front->searchAction($this->action);
+        if(isset($this->object)) {
+            $action = $this->front->searchAction($this->action);
+        } else {
+            $action = $this->front->searchIndexAction($this->action);
+        }
+
+        // Show message if wasn't found
         if(!is_object($action)) {
             abort(406, "Action wasn't found: {$this->action}");
         }
@@ -45,10 +51,19 @@ class ActionStore
         }
 
         // Set object to action and validate
-        $action = $action->setObject($this->object)->validate();
+        if(isset($this->object)) {
+            $action = $action->setObject($this->object);
+        }
+
+        // Validate object
+        $action->validate();
 
         // Execute action
-        $result = $action->handle($this->object, $this->request);
+        if(isset($this->object)) {
+            $result = $action->handle($this->object, $this->request);
+        } else {
+            $result = $action->handle($this->request);
+        }
 
         // If returns a response so dont do any more
         if($this->isResponse($result)) {

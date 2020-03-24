@@ -30,7 +30,13 @@ class ActionShow
     public function handle()
     {
         // Search the individual action
-        $action = $this->front->searchAction($this->action);
+        if(isset($this->object)) {
+            $action = $this->front->searchAction($this->action);
+        } else {
+            $action = $this->front->searchIndexAction($this->action);
+        }
+
+        // Show message if wasn't found
         if(!is_object($action)) {
             abort(406, "Action wasn't found: {$this->action}");
         }
@@ -41,7 +47,9 @@ class ActionShow
         }
 
         // Set object to action
-        $action = $action->setObject($this->object);
+        if(isset($this->object)) {
+            $action = $action->setObject($this->object);    
+        }
 
         // Detect if dont have fields process inmediately
         if(count($action->fields())==0) {

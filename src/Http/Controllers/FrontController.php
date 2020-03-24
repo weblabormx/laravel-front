@@ -150,7 +150,7 @@ class FrontController extends Controller
         $front = $this->front->setSource('create')->setObject($object);
         $response = $this->run(new ActionShow($front, $object, $action, function() use ($object, $action) {
             return $this->actionStore($object->getKey(), $action, request());
-        })));
+        }));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -178,37 +178,30 @@ class FrontController extends Controller
 
     public function indexActionShow($action) 
     {
-        $this->authorize('update', $this->front->getModel());
-        
-        $sport = $this->repository->findSport($sport);
-        $sportable = $this->sportable;
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new ActionShow($front, null, $action, function() use ($action) {
+            return $this->indexActionStore($action, request());
+        }));
+        if($this->isResponse($response)) {
+            return $response;
+        }
 
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        
+        // Show view
+        $action = $response;
         return view('front::crud.index-action', compact('action', 'front', 'sportable'));
     }
 
     public function indexActionStore($action, Request $request)
     {
-        $this->authorize('update', $this->front->getModel());
-
-        $sport = $this->repository->findSport($sport);
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        $action->validate();
-
-        $result = $action->handle($request);
-        if(!isset($result)) {
-            $message = config('front.messages.action_sucess');
-            $message = str_replace('{title}', $action->title, $message);
-            flash($message)->success();
-        } else {
-            $request->flash();
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new ActionStore($front, null, $action, $request));
+        if($this->isResponse($response)) {
+            return $response;
         }
-        
+
+        // Return
         return back();
     }
 
