@@ -7,19 +7,19 @@ class ActionShow
     public $front;
     public $object;
     public $action;
-    public $controller;
+    public $store;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($front, $object, $action, $controller)
+    public function __construct($front, $object, $action, $store)
     {
         $this->front = $front;
         $this->object = $object;
         $this->action = $action;
-        $this->controller = $controller;
+        $this->store = $store; // Function to execute in case there aren't any fields
     }
 
     /**
@@ -45,7 +45,8 @@ class ActionShow
 
         // Detect if dont have fields process inmediately
         if(count($action->fields())==0) {
-            return $this->controller->actionStore($this->object->getKey(), $this->action, request());
+            $function = $this->store;
+            return $function();
         }
 
         // Returns action

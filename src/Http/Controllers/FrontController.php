@@ -9,6 +9,8 @@ use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Jobs\FrontUpdate;
 use WeblaborMx\Front\Jobs\FrontDestroy;
+use WeblaborMx\Front\Jobs\ActionShow;
+use WeblaborMx\Front\Jobs\ActionStore;
 
 class FrontController extends Controller
 {
@@ -146,7 +148,9 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
-        $response = $this->run(new ActionShow($front, $object, $action, $this));
+        $response = $this->run(new ActionShow($front, $object, $action, function() use ($object, $action) {
+            return $this->actionStore($object->getKey(), $action, request());
+        })));
         if($this->isResponse($response)) {
             return $response;
         }
@@ -158,36 +162,17 @@ class FrontController extends Controller
 
     public function actionStore($object, $action, Request $request)
     {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
+        // Get object
+        $object = $this->getObject($object);
 
+        // Front code
         $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front);
-        if(!is_object($action)) {
-            abort(406, "Action wasn't found: {$original_action}");
+        $response = $this->run(new ActionStore($front, $object, $action, $request));
+        if($this->isResponse($response)) {
+            return $response;
         }
-        if(!$action->show) {
-            abort(404);
-        }
-        $action = $action->setObject($object);
-        $action->validate();
 
-        $result = $action->handle($object, $request);
-        if(is_object($result) && get_class($result)=='Illuminate\Http\RedirectResponse') {
-            $request->flash();
-            return $result;
-        }
-        if(!isset($result)) {
-            $message = config('front.messages.action_sucess');
-            $message = str_replace('{title}', $action->title, $message);
-            flash($message)->success();
-        } else {
-            $request->flash();
-        }
-        
+        // Redirect back
         return back();
     }
 

@@ -58,6 +58,7 @@ class IndexAction
             return [$item->column => $item->getRules()];
         })->toArray();
     	\Validator::make(request()->all(), $rules)->validate();
+        return $this;
     }
 
     public function getFieldsWithPanel()
