@@ -12,9 +12,9 @@
                 </div>
             @endisset
             <div class="d-inline-block">
-                <nav class="nav">
+                <ul class="nav">
                     @include('front.sidebar')
-                </nav>
+                </ul>
             </div>
         </div>
     </div>

@@ -9,7 +9,15 @@ use Intervention\Image\Facades\Image as Intervention;
 class Image extends Input
 {
 	public $directory = 'images';
-	public $view_size = '';
+	public $view_size = 'm';
+	public $thumbnails = [
+		['prefix' => 's', 'size' => 90,   'fit' => true],  // Small Square
+		['prefix' => 'b', 'size' => 160,  'fit' => true],  // Big Square
+		['prefix' => 't', 'size' => 160,  'fit' => false], // Small Thumbnail
+		['prefix' => 'm', 'size' => 320,  'fit' => false], // Medium Thumbnail
+		['prefix' => 'l', 'size' => 640,  'fit' => false], // Large Thumbnail
+		['prefix' => 'h', 'size' => 1024, 'fit' => false], // Huge Thumbnail
+	];
 
 	public function form()
 	{
@@ -21,6 +29,12 @@ class Image extends Input
 	public function setDirectory($directory)
 	{
 		$this->directory = $directory;
+		return $this;
+	}
+
+	public function addThumb($prefix, $size, $fit)
+	{
+		$this->thumbnails[] = ['prefix' => $prefix, 'size' => $size, 'fit' => $fit];
 		return $this;
 	}
 
@@ -36,13 +50,10 @@ class Image extends Input
 		$file_name = class_basename($storage_file);
 		$url = Storage::url($storage_file);
 
-		// New sizes 
-		$this->saveNewSize($file, $file_name, 90, 's', true); // Small Square
-		$this->saveNewSize($file, $file_name, 160, 'b', true); // Big Square
-		$this->saveNewSize($file, $file_name, 160, 't'); // Small Thumbnail
-		$this->saveNewSize($file, $file_name, 320, 'm'); // Medium Thumbnail
-		$this->saveNewSize($file, $file_name, 640, 'l'); // Large Thumbnail
-		$this->saveNewSize($file, $file_name, 1024, 'h'); // Huge Thumbnail
+		// New sizes
+		foreach ($this->thumbnails as $thumbnail) {
+			$this->saveNewSize($file, $file_name, $thumbnail['size'], $thumbnail['prefix'], $thumbnail['fit']); 
+		}
 		
 		// Assign data to request
 		$data[$this->column] = $url;

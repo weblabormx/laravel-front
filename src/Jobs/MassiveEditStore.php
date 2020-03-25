@@ -67,7 +67,7 @@ class MassiveEditStore
 
         // Show successfull message
         if(is_null($return)) {
-            flash(__(':name edited successfully', ['name' => $this->front->plural_label]))->success();
+            flash(__(':name updated successfully', ['name' => $this->front->plural_label]))->success();
         }
     }
 
