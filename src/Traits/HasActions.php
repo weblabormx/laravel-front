@@ -9,14 +9,14 @@ trait HasActions
         return [];
     }
 
-    public function indexActions()
+    public function index_actions()
     {
         return [];
     }
 
     public function getIndexActions($all = false)
     {
-    	$actions = collect($this->indexActions());
+    	$actions = collect($this->index_actions());
     	if($all) {
     		$actions = collect($this->fields())->filter(function($item) {
 	    		return isset($item->actions) && count($item->actions)>0;
