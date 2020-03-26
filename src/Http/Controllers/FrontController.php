@@ -192,7 +192,7 @@ class FrontController extends Controller
 
         // Show view
         $action = $response;
-        return view('front::crud.index-action', compact('action', 'front', 'sportable'));
+        return view('front::crud.action', compact('action', 'front'));
     }
 
     public function indexActionStore($action, Request $request)

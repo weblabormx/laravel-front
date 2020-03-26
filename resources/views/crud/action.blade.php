@@ -2,16 +2,8 @@
 
 @section('content')
     
+    @include('front::elements.breadcrumbs')
     @include ('front::elements.errors')
-    @php $title_field = $front->title; @endphp
-    @component('front::elements.breadcrumbs')
-        @foreach($front->breadcrumbs() as $link => $title)
-            <li class="breadcrumb-item"><a href="{{$link}}">{{$title}}</a></li>
-        @endforeach
-        <li class="breadcrumb-item"><a href="{{$front->base_url}}">{{$front->plural_label}}</a></li>
-        <li class="breadcrumb-item"><a href="{{$front->base_url}}/{{$object->getKey()}}">{{ strip_tags($object->$title_field) }}</a></li>
-        <li class="breadcrumb-item active">{{ $action->title }}</li>
-    @endcomponent
 
     <h4 class="d-flex align-items-center font-weight-bold py-3 mb-4">
         <div>{{ $action->title }}</div>

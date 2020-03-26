@@ -22,7 +22,7 @@ trait HasLinks
 
         // Show index actions
         foreach($this->getActions() as $action) {
-            $link[] = Button::make($action->button_text)->addLink($this->base_url."/{$object->getKey()}/action/{$action->slug}");
+            $links[] = Button::make($action->button_text)->addLink($this->base_url."/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
@@ -50,11 +50,6 @@ trait HasLinks
     {
     	$links = [];
 
-    	// Show create button
-    	if($this->show_create_button_on_index && \Auth::user()->can('create', $this->getModel())) {
-            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->base_url.'/create');
-    	}
-
     	// Show index actions
 	    foreach($this->getIndexActions() as $action) {
             $links[] = Button::make($action->button_text)->addLink($this->base_url."/action/{$action->slug}");
@@ -63,6 +58,11 @@ trait HasLinks
         // Show links added manually
         foreach($this->index_links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);
+        }
+
+        // Show create button
+        if($this->show_create_button_on_index && \Auth::user()->can('create', $this->getModel())) {
+            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->base_url.'/create');
         }
 	    return $links;
     }
