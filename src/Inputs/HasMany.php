@@ -98,19 +98,19 @@ class HasMany extends Input
 		$relation = $this->relationship;
 
 		$pagination_name = $relation.'_page';
-		$objects = $object->$relation()->with($this->with);
-		$objects = $this->front->globalIndexQuery($objects);
+		$result = $object->$relation()->with($this->with);
+		$result = $this->front->globalIndexQuery($result);
 		if(isset($this->filter_query)) {
 			$filter_query = $this->filter_query;
-			$objects = $filter_query($objects);
+			$result = $filter_query($result);
 		}
-		$objects = $objects->paginate(50, ['*'], $pagination_name);
+		$result = $result->paginate(50, ['*'], $pagination_name);
 		
 		$front = $this->front;
 		$edit_link = $this->edit_link;
 		$show_link = $this->show_link;
 
-		return view('front::crud.partial-index', compact('objects', 'front', 'pagination_name', 'edit_link', 'show_link'))->render();
+		return view('front::crud.partial-index', compact('result', 'front', 'pagination_name', 'edit_link', 'show_link'))->render();
 	}
 
 	/*

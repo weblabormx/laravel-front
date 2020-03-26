@@ -22,7 +22,12 @@ trait HasActions
 	    		return isset($item->actions) && count($item->actions)>0;
 	    	})->pluck('actions')->flatten(1)->merge($actions);
     	}
-    	return $actions->map(function($item) {
+    	return $actions->filter(function($item) use ($all) {
+            if($all) {
+                return true;
+            }
+            return $item->show && $item->show_button;
+        })->map(function($item) {
     		return $item->addData($this->data);
     	});
     }
@@ -39,7 +44,7 @@ trait HasActions
     		if($all) {
     			return true;
     		}
-    		return $item->show;
+    		return $item->show && $item->show_button;
     	})->map(function($item) {
     		return $item->addData($this->data);
     	});

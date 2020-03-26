@@ -21,17 +21,17 @@
     
     @include('front::elements.breadcrumbs')
 
-    <h4 class="justify-content-between align-items-center mb-4">
-        <div class="float-right">
-            @foreach($front->all_index_links() as $link => $button)
-                <a href="{{$link}}" class="btn btn-primary rounded-pill">{!! $button !!}</a>
+    <h4 class="d-flex justify-content-between align-items-center mb-4">
+        <div>{{$front->plural_label}}</div>
+        <div>
+            @foreach($front->getIndexLinks() as $button)
+                {!! $button->form() !!}
             @endforeach
         </div>
-        <div>{{$front->plural_label}}</div>
     </h4>
 
     @include ('front::components.cards', ['cards' => $front->cards()])
-    @include ('front::crud.partial-index', ['object' => $objects])
+    @include ('front::crud.partial-index')
 
 @endsection
 

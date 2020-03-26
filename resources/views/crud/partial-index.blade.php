@@ -1,14 +1,14 @@
-@if($objects->count() > 0)
+@if($result->count() > 0)
     @php $appends = isset($pagination_name) ? request()->except($pagination_name) : request()->except('page'); @endphp
     <div class="card" @isset($style) style="{{$style}}" @endisset>
-        @if($objects instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $objects->appends($appends)->links() }}
+        @if($result instanceof \Illuminate\Pagination\LengthAwarePaginator )
+            {{ $result->appends($appends)->links() }}
         @endif
         <div class="card-datatable table-responsive">
             <table class="table table-striped table-bordered mb-0">
                 <thead>
                     <tr>
-                        @php $front->setObject($objects->first()); @endphp
+                        @php $front->setObject($result->first()); @endphp
                         @foreach($front->indexFields() as $field)
                             <th class="{{$field->data_classes}}">{{$field->title}}</th>
                         @endforeach
@@ -16,7 +16,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($objects as $object)
+                    @foreach($result as $object)
                         @php $front->setObject($object); @endphp
                         <tr>
                             @foreach($front->indexFields() as $field)
@@ -30,8 +30,8 @@
                 </tbody>
             </table>
         </div>
-        @if($objects instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $objects->appends($appends)->links() }}
+        @if($result instanceof \Illuminate\Pagination\LengthAwarePaginator )
+            {{ $result->appends($appends)->links() }}
         @endif
     </div>
 @else

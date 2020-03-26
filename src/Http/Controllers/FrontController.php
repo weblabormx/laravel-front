@@ -44,8 +44,8 @@ class FrontController extends Controller
         }
         
         // Show view
-        $objects = $response;
-        return view('front::crud.index', compact('objects', 'front'));
+        $result = $response;
+        return view('front::crud.index', compact('result', 'front'));
     }
 
     public function create()
