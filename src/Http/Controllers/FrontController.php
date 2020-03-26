@@ -9,6 +9,7 @@ use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Jobs\FrontUpdate;
 use WeblaborMx\Front\Jobs\FrontDestroy;
+use WeblaborMx\Front\Jobs\FrontSearch;
 use WeblaborMx\Front\Jobs\ActionShow;
 use WeblaborMx\Front\Jobs\ActionStore;
 use WeblaborMx\Front\Jobs\MassiveEditShow;
@@ -259,35 +260,29 @@ class FrontController extends Controller
         $this->authorize('viewAny', $this->front->getModel());
 
         // Front code
-        $front = $this->front->setSource('index');
-        $objects = $this->repository->index($front)->getLense($lense);
-        if(get_class($objects)!='Illuminate\Pagination\LengthAwarePaginator') {
-            return $objects;
+        $front = $this->front->setSource('index')->getLense($lense);
+        $base_url = $front->base_url;
+
+        $response = $this->run(new FrontIndex($front, $base_url));
+        if($this->isResponse($response)) {
+            return $response;
         }
+        
+        // Show view
+        $objects = $response;
         return view('front::crud.index', compact('objects', 'front'));
     }
 
     public function search(Request $request)
     {
-        $title = $this->front->title;
-        $result = $this->front->globalIndexQuery();
+        $this->authorize('viewAny', $this->sportable->class);
 
-        // Get query if sent
-        if($request->filled('filter_query')) {
-            $query = json_decode($request->filter_query);
-            $query = unserialize($query);
-            $query = $query->getClosure();
-            $result = $query($result);
+        // Front code
+        $front = $this->front->setSource('index');
+        $response = $this->run(new FrontSearch($front, $request));
+        if($this->isResponse($response)) {
+            return $response;
         }
-        
-        $result  = $result->search($request->term)->limit(10)->get()->map(function($item) use ($title) {
-            return [
-                'label' => $item->$title, 
-                'id' => $item->getKey(), 
-                'value' => $item->$title 
-            ];
-        })->sortBy('label');
-        print json_encode($result);
     }
 
     /*
