@@ -229,7 +229,7 @@ class FrontController extends Controller
 
         // Show view
         $data = collect(compact('object', 'front'))->merge($response)->all();
-        return view('front::masive_edit', $data);
+        return view('front::crud.massive-edit', $data);
     }
 
     public function massiveEditStore($object, $key, Request $request)
@@ -238,7 +238,7 @@ class FrontController extends Controller
         $object = $this->getObject($object);
 
         // Validate Policy
-        $this->authorize('update', $this->sportable->class);
+        $this->authorize('update', $object);
 
         // Front code
         $front = $this->front->setSource('create')->setObject($object);

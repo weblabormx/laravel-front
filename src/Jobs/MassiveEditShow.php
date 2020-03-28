@@ -37,12 +37,12 @@ class MassiveEditShow
         $input_front = $input->front->addData($this->front->data);
 
         // Get relationship data
-        $objects = $input->getResults($this->object);
-        if(get_class($objects) != 'Illuminate\Support\Collection') {
-            $objects = $objects->get();
+        $result = $input->getResults($this->object);
+        if(get_class($result) != 'Illuminate\Support\Collection') {
+            $result = $result->get();
         }
 
         // Return generated data
-        return compact('input', 'input_front', 'objects');
+        return compact('input', 'input_front', 'result');
     }
 }

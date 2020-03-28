@@ -32,6 +32,7 @@ class HasMany extends Input
 		
 		$this->create_link = $this->front->base_url.'/create';
 		$this->show_before = \Auth::check() ? \Auth::user()->can('viewAny', $this->front->getModel()) : false;
+		$this->masive_edit_link = '';
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 
@@ -95,22 +96,40 @@ class HasMany extends Input
 			});
 		}
 
-		$relation = $this->relationship;
-
-		$pagination_name = $relation.'_page';
-		$result = $object->$relation()->with($this->with);
-		$result = $this->front->globalIndexQuery($result);
-		if(isset($this->filter_query)) {
-			$filter_query = $this->filter_query;
-			$result = $filter_query($result);
+		// Get results
+		$pagination_name = $this->relationship.'_page';
+		$result = $this->getResults($object);
+		if(get_class($result) != 'Illuminate\Support\Collection') {
+			$result = $result->paginate($this->front->pagination, ['*'], $pagination_name);
 		}
-		$result = $result->paginate(50, ['*'], $pagination_name);
-		
+
 		$front = $this->front;
 		$edit_link = $this->edit_link;
 		$show_link = $this->show_link;
 
 		return view('front::crud.partial-index', compact('result', 'front', 'pagination_name', 'edit_link', 'show_link'))->render();
+	}
+
+	public function getResults($object)
+	{
+		// Get objects
+		$relationship = $this->relationship;
+		$objects = $object->$relationship()->with($this->with);;
+
+		// Force query if set
+		if(isset($this->force_query)) {
+			$force_query = $this->force_query;
+			$objects = $force_query($objects);
+		} else {
+			$objects = $this->front->globalIndexQuery($objects);	
+		}
+
+		// Filter query
+		if(isset($this->filter_query)) {
+			$filter_query = $this->filter_query;
+			$objects = $filter_query($objects);
+		}
+		return $objects;
 	}
 
 	/*

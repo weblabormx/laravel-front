@@ -4,12 +4,10 @@
     @if(count($front->filters())>0)
         <div class="sidenav-header small font-weight-semibold mb-2">{{ __('FILTER :name', ['name' => strtoupper($front->plural_label)]) }}</div>
         {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
-            <div class="card pt-3">
+            <div class="card pt-3 sidenav-forms">
                 {!! Form::hidden('search') !!}
                 @foreach($front->getFilters() as $filter)
-                    <div class="sidenav-forms">
-                        {!! $filter->formHtml() !!}
-                    </div>
+                    {!! $filter->formHtml() !!}
                 @endforeach
             </div>
             {!! Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}

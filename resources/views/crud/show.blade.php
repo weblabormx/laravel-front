@@ -25,7 +25,7 @@
                 <h4 class="d-flex justify-content-between align-items-center">
                     <div>{{$relation->title}}</div>
                     <div>
-                        @foreach($relation->getLinks($object, $key) as $button)
+                        @foreach($relation->getLinks($object, $key, $front) as $button)
                             {!! $button->form() !!}
                         @endforeach
                     </div>

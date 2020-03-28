@@ -21,7 +21,7 @@ trait InputWithLinks
 		return $this;
 	}
 
-	public function getLinks($object, $key)
+	public function getLinks($object, $key, $front)
     {
         $links = [];
 
@@ -39,14 +39,14 @@ trait InputWithLinks
         }
 
         // Add massive edit link
-        if(isset($this->masive_edit_link)) {
+        if(isset($this->masive_edit_link) && $this->show_massive) {
         	$links[] = Button::make("<i class='fa fa-edit'></i> ".__('Edit')." {$this->front->plural_label}")
-        		->addLink("{$this->front->base_url}/{$object->getKey()}/masive_edit/{$key}{$this->masive_edit_link}");
+        		->addLink("{$front->base_url}/{$object->getKey()}/masive_edit/{$key}{$this->masive_edit_link}");
         }
         
         // Add create link
         if( \Auth::user()->can('create', $this->front->getModel()) && isset($this->create_link)) {
-        	$links[] = Button::make("<span class='ion ion-md-add'></span> ".__('Add')." {$this->front->label}")
+        	$links[] = Button::make("<span class='fa fa-plus'></span> ".__('Add')." {$this->front->label}")
         		->addLink($this->create_link);
         }
 

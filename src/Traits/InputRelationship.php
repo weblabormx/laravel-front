@@ -2,6 +2,9 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use WeblaborMx\Front\Inputs\Text;
+use WeblaborMx\Front\Inputs\Hidden;
+
 trait InputRelationship
 {
 	public $create_link;
@@ -14,6 +17,7 @@ trait InputRelationship
 	public $lense;
 	public $hide_columns;
 	public $massive_class;
+	public $show_massive = false;
 
 	public function setCreateLink($function)
 	{
@@ -22,6 +26,7 @@ trait InputRelationship
 		}
 		$this->create_link_accessed = true;
 		$this->create_link = $function($this->create_link);
+		$this->masive_edit_link = $function($this->masive_edit_link);
 		return $this;
 	}
 
@@ -82,7 +87,7 @@ trait InputRelationship
 		return $this;
 	}
 
-	// Same that filtelQuery but now dont access to the globalIndexQuery
+	// Same that filterQuery but now dont access to the globalIndexQuery
 
 	public function forceQuery($query)
 	{
@@ -109,5 +114,111 @@ trait InputRelationship
 		}
 		$this->massive_class = $class;
 		return $this;
+	}
+
+	public function enableMassive()
+	{
+		$this->show_massive = true;
+		return $this;
+	}
+
+	/*
+	 * Helpers
+	 */
+
+	public function getMassiveForms()
+	{
+		$forms = [];
+		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
+			$forms[] = Text::make(__('New rows'), 'rows');
+		}
+        foreach(request()->except('rows') as $key => $value) {
+        	$forms[] = Hidden::make($key)->setValue($value);
+        }
+        return $forms;
+	}
+
+	public function getTableHeadings($object)
+	{
+		// Always show ID column
+		$headings = ['ID'];
+
+		// Get front 
+		$input_front = $this->front->setObject($this->getResults($object)->first());
+
+		// Show fields that are on index and that can be edited
+		$fields = $input_front->indexFields()->filter(function($item) {
+			return $item->show_on_edit;
+		});
+
+		// Save titles to the result
+        foreach($fields as $field) {
+            $headings[] = $field->title;
+        }
+
+        // Return the headings
+        return $headings;
+	}
+
+	public function getTableValues($object)
+	{
+		// Get front
+		$input_front = $this->front->setObject($object);
+
+		// Get id value
+        $id = get_class($object)=='Illuminate\Database\Eloquent\Model' ? $object->getKey() : $object->id;
+
+        // Start the result with the id result
+		$values = [$id];
+
+		// Show fields that are on index and that can be edited
+		$fields = $input_front->indexFields()->filter(function($item) {
+			return $item->show_on_edit;
+		});
+
+		// Save values to the result
+        foreach($fields as $field) {
+            $column = $field->column;
+            $field = $field->setColumn($id.'['.$field->column.']')->default($object->$column, true);
+            $values[] = $field->form($object);
+        }
+
+        // Return result
+        return $values;
+	}
+
+	public function getExtraTableValues($object)
+	{
+		$result = [];
+
+		// Show fields that are on index and that can be edited
+		$fields = $this->front->indexFields()->filter(function($item) {
+			return $item->show_on_edit;
+		});
+
+		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
+            for($i = 0; $i < (request()->rows ?? 0); $i++) {
+            	$values = [''];
+            	foreach($fields as $field) {
+                    $column = $field->column; 
+                    $field = $field->setColumn('new'.$i.'['.$field->column.']');
+                    $values[] = $field->form($object);
+            	}
+        		$result[] = $values;
+            }
+		}
+        return $result;
+	}
+
+	public function getTableButtons()
+	{
+		$buttons = [];
+		if(isset($this->massive_class)) {
+            foreach($this->massive_class->buttons as $function => $title) {
+            	$buttons[$function] = $title;
+            }
+        }
+        $buttons[null] = __('Edit');
+        return $buttons;
 	}
 }	

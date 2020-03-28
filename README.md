@@ -259,6 +259,14 @@ public function actions()
 }
 ```
 
+### Massive editions
+
+If you want to a relationship resource to be edited massively just add `enableMassive()` function.
+
+```
+HasMany::make('Reservation')->enableMassive(),
+```
+
 ### Sidebar
 
 You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar`

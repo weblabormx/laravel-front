@@ -93,9 +93,9 @@ class MassiveEditStore
             $results = $input->getResults($object);
 
             // If results is not a query get it individually
-            if(method_exists($results, 'find')) {
+            try {
                 $item = $results->find($key);    
-            } else {
+            } catch (\Exception $e) {
                 $model = $input_front->model;
                 $item = $model::find($key);
             }
