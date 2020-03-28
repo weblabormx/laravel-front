@@ -83,6 +83,15 @@ By default a pagination is created with 50 elements, if you want to modify the q
 public $pagination = 50;
 ```
 
+### Actions to be executed after a crud action is done
+
+You can add to any resource some actions to be done after something is done adding the next functions on the Front File
+
+- `show($object)`
+- `store($object, $request)`
+- `update($object, $request)`
+- `destroy($object)`
+
 ### Fields
 
 Each resource contains a `fields` method, where it returns an array with the list of all the fields that the resource should have.
@@ -214,14 +223,14 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
-### Actions to be executed after a crud action is done
 
-You can add to any resource some actions to be done after something is done adding the next functions on the Front File
+#### Massive editions
 
-- `show($object)`
-- `store($object, $request)`
-- `update($object, $request)`
-- `destroy($object)`
+If you want to a relationship resource to be edited massively just add `enableMassive()` function.
+
+```
+HasMany::make('Reservation')->enableMassive(),
+```
 
 ### Actions
 
@@ -261,14 +270,6 @@ public function actions()
         new ResendEmail
     ];
 }
-```
-
-### Massive editions
-
-If you want to a relationship resource to be edited massively just add `enableMassive()` function.
-
-```
-HasMany::make('Reservation')->enableMassive(),
 ```
 
 ## Pages
