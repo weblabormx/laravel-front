@@ -1,6 +1,7 @@
 @extends('front::layout')
 
 @section('sidebar')
+
     @if(count($front->filters())>0)
         <div class="sidenav-header small font-weight-semibold mb-2">{{ __('FILTER :name', ['name' => strtoupper($front->plural_label)]) }}</div>
         {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
@@ -13,6 +14,7 @@
             {!! Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
         {!! Form::close() !!}
     @endif
+    
 @endsection
     
 @section('content')

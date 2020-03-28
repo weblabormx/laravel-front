@@ -214,10 +214,14 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
-### Pages
-You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
+### Actions to be executed after a crud action is done
 
-You will able to change the data on `app/Front/PageName`
+You can add to any resource some actions to be done after something is done adding the next functions on the Front File
+
+- `show($object)`
+- `store($object, $request)`
+- `update($object, $request)`
+- `destroy($object)`
 
 ### Actions
 
@@ -266,6 +270,13 @@ If you want to a relationship resource to be edited massively just add `enableMa
 ```
 HasMany::make('Reservation')->enableMassive(),
 ```
+
+## Pages
+You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
+
+You will able to change the data on `app/Front/PageName`
+
+## Customizing the theme
 
 ### Sidebar
 
