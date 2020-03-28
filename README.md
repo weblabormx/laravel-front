@@ -83,7 +83,7 @@ By default a pagination is created with 50 elements, if you want to modify the q
 public $pagination = 50;
 ```
 
-### Actions to be executed after a crud action is done
+#### Actions to be executed after a crud action is done
 
 You can add to any resource some actions to be done after something is done adding the next functions on the Front File
 
