@@ -280,6 +280,18 @@ abstract class Resource
         return $this;
     }
 
+    public function setLabel($label)
+    {
+        $this->label = $label;
+        return $this;
+    }
+
+    public function setPluralLabel($plural_label)
+    {
+        $this->plural_label = $plural_label;
+        return $this;
+    }
+
     /* 
 	 * Special functions
 	 */
