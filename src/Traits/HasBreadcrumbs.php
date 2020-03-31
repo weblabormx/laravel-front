@@ -53,7 +53,7 @@ trait HasBreadcrumbs
                 $title = $front->title;
                 $breadcrumbs[] = ['title' => $front->$title, 'url' => $front->base_url.'/'.$front->object->getKey()];
             }
-            $breadcrumbs[] = ['title' => strip_tags($action->title), 'active' => true];
+            $breadcrumbs[] = ['title' => strip_tags($data['action']->title), 'active' => true];
             return $breadcrumbs;
         }
 
