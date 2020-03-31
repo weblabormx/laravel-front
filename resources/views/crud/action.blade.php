@@ -3,7 +3,7 @@
 @section('content')
     
     @include('front::elements.breadcrumbs', ['data' => ['action' => $action]])
-    @include ('front::elements.errors')
+    @include('front::elements.errors')
 
     <h4 class="d-flex align-items-center font-weight-bold py-3 mb-4">
         <div>{{ $action->title }}</div>
