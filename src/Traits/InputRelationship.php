@@ -180,6 +180,9 @@ trait InputRelationship
         foreach($fields as $field) {
             $column = $field->column;
             $field = $field->setColumn($id.'['.$field->column.']')->default($object->$column, true);
+            if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
+            	$field = $field->size(50);
+            }
             $values[] = $field->form($object);
         }
 
@@ -218,7 +221,7 @@ trait InputRelationship
             	$buttons[$function] = $title;
             }
         }
-        $buttons[null] = __('Edit');
+        $buttons[null] = '<i class="fa fa-save"></i> '.__('Save');
         return $buttons;
 	}
 }	
