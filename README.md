@@ -245,6 +245,33 @@ If you want to a relationship resource to be edited massively just add `enableMa
 ```php
 HasMany::make('Reservation')->enableMassive(),
 ```
+### Filters
+
+You can add filters to a resource to filter the data, the filters are stored on `App\Front\Filters` folder. You can add filters by executing the command `php artisan front:filter FilterName`
+
+Once you execute the command by first time the folder will be generated and the filter `SearchFilter` will be added automatically.
+
+Once is created you need to add it on the resource page
+
+```php 
+public function filters()
+{
+    return [
+        new SearchFilter,
+    ];
+}
+```
+
+#### Adding a default value
+
+You can add a default value to the filter by adding the attribute default 
+
+```php
+class ActiveFilter extends Filter
+{
+    public $default = 1;
+}
+```
 
 ### Actions
 
