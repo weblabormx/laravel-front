@@ -4,11 +4,12 @@ namespace App\Front;
 
 use WeblaborMx\Front\Inputs\ID;
 use WeblaborMx\Front\Inputs\Text;
+use {model_folder}\{name} as Model;
 
 class {name} extends Resource
 {
     public $base_url = '/admin/{slug}';
-    public $model = 'App\{name}';
+    public $model = Model::class;
     public $title = 'id';
 
     public function fields()

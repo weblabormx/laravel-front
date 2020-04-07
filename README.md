@@ -18,6 +18,7 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 **If you have already code and views and you want to continue using the same design as you were using before:** 
 - The fields for this package requires of the "Easy JS Library", so please add on the layout on the script section `https://weblabormx.github.io/Easy-JS-Library/library/script.js` (It requires of jquery)
 - Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
+- Add on your layout the code `@yield('sidebar')` as there is where Laravel Front shows the filters on the menu
 - After creating the first front resource using the command `php artisan front:resource {name}`, edit the `App\Front\Resource.php` file and configure the layout view name with the view you are currently using, by default it will show the default front layout. This change
 
 ```php
@@ -136,7 +137,7 @@ public function fields()
 
 As noted above, Front will "snake case" the displayable name of the field to determine the underlying database column. However, if necessary, you may pass the column name as the second argument to the field's make method:
 
-```
+```php
 Text::make('Name', 'name_column')
 ```
 
@@ -155,7 +156,7 @@ Text::make('Name', 'name_column')
 
 You may chain any of these methods onto your field's definition in order to instruct Frpmt where the field should be displayed:
 
-```
+```php
 Text::make('Name')->hideFromIndex()
 ```
 
