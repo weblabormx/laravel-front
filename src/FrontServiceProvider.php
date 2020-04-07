@@ -11,6 +11,7 @@ use Opis\Closure\SerializableClosure;
 use WeblaborMx\Front\Console\Commands\CreateResource;
 use WeblaborMx\Front\Console\Commands\CreatePage;
 use WeblaborMx\Front\Console\Commands\Install;
+use WeblaborMx\Front\Console\Commands\CreateFilter;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -108,7 +109,8 @@ class FrontServiceProvider extends ServiceProvider
             $this->commands([
                 CreateResource::class,
                 CreatePage::class,
-                Install::class
+                Install::class,
+                CreateFilter::class
             ]);
         }
     }
