@@ -15,12 +15,12 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 - Install via composer executing `composer require weblabormx/laravel-front`
 - Execute `php artisan front:install` to install all necessary files (Will install configuration file and views)
 
-** If you have already code and views and you want to continue using the same design as you were using before: **
+**If you have already code and views and you want to continue using the same design as you were using before:** 
 - The fields for this package requires of the "Easy JS Library", so please add on the layout on the script section `https://weblabormx.github.io/Easy-JS-Library/library/script.js` (It requires of jquery)
 - Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
 - After creating the first front resource using the command `php artisan front:resource {name}`, edit the `App\Front\Resource.php` file and configure the layout view name with the view you are currently using, by default it will show the default front layout. This change
 
-```
+```php
 namespace App\Front;
 
 use WeblaborMx\Front\Resource as Base;
@@ -63,7 +63,7 @@ php artisan front:resource Page
 
 And then you will need to add the route. This will generate a access on `/pages` (It uses the plural name)
 
-```
+```php
 Route::front('Page');
 ```
 
@@ -71,7 +71,7 @@ Route::front('Page');
 
 There are some basic variables that can be added on the resource
 
-```
+```php
 public $title;      // Field name of the title (Name is the default value)
 public $label;      // Name of the resource (Generated automatically if empty)
 public $base_url;   // Url created on routes (Required)
@@ -81,7 +81,7 @@ public $base_url;   // Url created on routes (Required)
 
 If you want to modify the results of CRUD you are able to modify it with `indexQuery` function
 
-```
+```php
 public function indexQuery($query)
 {
     return $query->where('team_id', 1)->with(['user'])->latest();
@@ -92,7 +92,7 @@ public function indexQuery($query)
 
 By default a pagination is created with 50 elements, if you want to modify the quantity you can add a new attribute called `pagination` on the resource
 
-```
+```php
 public $pagination = 50;
 ```
 
@@ -109,7 +109,7 @@ You can add to any resource some actions to be done after something is done addi
 
 Each resource contains a `fields` method, where it returns an array with the list of all the fields that the resource should have.
 
-```
+```php
 use WeblaborMx\Front\Inputs\ID;
 use WeblaborMx\Front\Inputs\Text;
 use WeblaborMx\Front\Inputs\HasMany;
@@ -165,7 +165,7 @@ If your resource contains many fields, your resource "detail" screen can become 
 
 You may do this by creating a new Panel instance within the fields method of a resource. Each panel requires a name and an array of fields that belong to that panel:
 
-```
+```php
 use WeblaborMx\Front\Inputs\ID;
 use WeblaborMx\Front\Inputs\Text;
 use WeblaborMx\Front\Components\Panel;
@@ -241,7 +241,7 @@ All the fields available on front:
 
 If you want to a relationship resource to be edited massively just add `enableMassive()` function.
 
-```
+```php
 HasMany::make('Reservation')->enableMassive(),
 ```
 
@@ -251,7 +251,7 @@ You can add actions buttons to any resource, so for example if you want to resen
 
 Just create a action on `App\Front\Actions`, the structure is similar to the next file
 
-```
+```php
 namespace App\Front\Actions;
 
 use WeblaborMx\Front\Inputs\Text;
@@ -276,7 +276,7 @@ class ResendEmail extends Action
 
 Then add on the front resource (Reservation on this case) the next function
 
-```
+```php
 public function actions()
 {
     return [
