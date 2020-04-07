@@ -13,13 +13,26 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 ## Documentation
 ### Installation
 - Install via composer executing `composer require weblabormx/laravel-front`
+- Execute `php artisan front:install` to install all necessary files (Will install configuration file and views)
 
-You can optionally publish the config file with:
-```bash
-php artisan vendor:publish --provider="WeblaborMx\Front\FrontServiceProvider" --tag="config"
+** If you have already code and views and you want to continue using the same design as you were using before: **
+- The fields for this package requires of the "Easy JS Library", so please add on the layout on the script section `https://weblabormx.github.io/Easy-JS-Library/library/script.js` (It requires of jquery)
+- Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
+- After creating the first front resource using the command `php artisan front:resource {name}`, edit the `App\Front\Resource.php` file and configure the layout view name with the view you are currently using, by default it will show the default front layout. This change
+
+```
+namespace App\Front;
+
+use WeblaborMx\Front\Resource as Base;
+
+abstract class Resource extends Base
+{
+    public $layout = 'layout.master'; // This is the name of your layout
+}
+
 ```
 
-- Execute `php artisan front:install` to install necessary files if is a new project
+- You can edit anything on the views published on `views/vendor/front` to adapt to your previous desing.
 
 ### Basics
 Laravel Front makes a use of different items that can be defined on the next way:

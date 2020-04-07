@@ -29,6 +29,12 @@ class Install extends Command
      */
     public function handle()
     {
+        // Publish configuration
+        \Log::info(\Artisan::call('vendor:publish', [
+            '--provider' => "WeblaborMx\Front\FrontServiceProvider",
+        ]));
+        $this->line('Configuration files published: <info>✔</info>');
+
         $directory = WLFRONT_PATH.'/install-stubs';
 
         // Create Front Folder if doesnt exist
