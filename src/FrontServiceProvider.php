@@ -22,6 +22,10 @@ class FrontServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([__DIR__.'/../config/front.php' => config_path('front.php')], 'config');
+        $this->publishes([
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/front'),
+        ]);
+
         $this->mergeConfigFrom(__DIR__.'/../config/front.php', 'front');
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'front');

@@ -1,3 +1,0 @@
-$(function() {
-  $('.datatables-demo').dataTable();
-});

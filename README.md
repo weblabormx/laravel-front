@@ -19,7 +19,7 @@ You can optionally publish the config file with:
 php artisan vendor:publish --provider="WeblaborMx\Front\FrontServiceProvider" --tag="config"
 ```
 
-- Execute `php artisan front:install` to install necessary files
+- Execute `php artisan front:install` to install necessary files if is a new project
 
 ### Basics
 Laravel Front makes a use of different items that can be defined on the next way:
