@@ -8,7 +8,7 @@ use {model_folder}\{name} as Model;
 
 class {name} extends Resource
 {
-    public $base_url = '/admin/{slug}';
+    public $base_url = '{default_base_url}/{slug}';
     public $model = Model::class;
     public $title = 'id';
 

@@ -54,6 +54,7 @@ class CreateResource extends Command
         FileModifier::file($file_name)
             ->replace('{name}', $name)
             ->replace('{model_folder}', config('front.models_folder'))
+            ->replace('{default_base_url}', config('front.default_base_url'))
             ->replace('{slug}', Str::slug(Str::plural($name)))
             ->execute();
 

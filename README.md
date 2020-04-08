@@ -1,3 +1,4 @@
+
 # Front
 
 _This package was inspired on Laravel Nova._
