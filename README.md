@@ -79,7 +79,7 @@ There are some basic variables that can be added on the resource
 
 ```php
 public $title;      // Field name of the title (Name is the default value)
-public $label;      // Name of the resource (Generated automatically if empty)
+public $model;      // Direction of the model
 public $base_url;   // Url created on routes (Required)
 ```
 
