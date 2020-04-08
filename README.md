@@ -63,11 +63,15 @@ The front resources are saved by default on `App\Front` folder. You can generate
 php artisan front:resource Page
 ```
 
+A new file on `App\Front\` will be added, you need to configure there the fields, base url and model direction.
+
 And then you will need to add the route. This will generate a access on `/pages` (It uses the plural name)
 
 ```php
 Route::front('Page');
 ```
+
+The front resources needs to have a Policy name, so please create a Policy for the model and be sure that are defined on the `AuthServiceProvider` (Just if you are using different folder for models as Laravel detects it automatically)
 
 #### Working with resources
 
