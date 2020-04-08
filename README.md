@@ -199,6 +199,7 @@ All the fields available on front:
 
 - Autocomplete
 - BelongsTo
+- BelongsToMany
 - Boolean
 - Check
 - Checkboxes
