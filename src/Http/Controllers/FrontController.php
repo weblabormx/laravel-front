@@ -275,7 +275,7 @@ class FrontController extends Controller
 
     public function search(Request $request)
     {
-        $this->authorize('viewAny', $this->sportable->class);
+        $this->authorize('viewAny', $this->front->getModel());
 
         // Front code
         $front = $this->front->setSource('index');

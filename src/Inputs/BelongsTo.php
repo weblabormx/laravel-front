@@ -34,8 +34,9 @@ class BelongsTo extends Input
 		$class = 'App\Front\\'.$this->model_name;
 		$this->relation_front = new $class($this->source);
 		$class = $this->relation_front->getModel();
-		$this->title = $this->relation_front->label;
-
+		if(!isset($this->title)) {
+			$this->title = $this->relation_front->label;
+		}
 	}
 
 	public function setResource($resource)
