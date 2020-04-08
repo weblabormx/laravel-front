@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 trait HasInputs
 {
-	private $relations = ['HasMany', 'MorphMany', 'MorphToMany'];
+	private $relations = ['HasMany', 'MorphMany', 'MorphToMany', 'BelongsToMany'];
 	public $fields_function = 'fields';
 
 	/* 
