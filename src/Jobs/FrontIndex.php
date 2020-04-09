@@ -51,6 +51,9 @@ class FrontIndex
         // If filter has different default values check who is not empty
         $result = $this->multipleRedirects($result);
 
+        // Call the action to be done after is accessed
+        $this->front->index();
+
         return $result;
     }
 

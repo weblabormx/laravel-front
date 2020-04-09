@@ -106,6 +106,7 @@ public $pagination = 50;
 
 You can add to any resource some actions to be done after something is done adding the next functions on the Front File
 
+- `index()`
 - `show($object)`
 - `store($object, $request)`
 - `update($object, $request)`

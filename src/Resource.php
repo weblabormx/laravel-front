@@ -84,6 +84,11 @@ abstract class Resource
         //
     }
 
+    public function index()
+    {
+        //
+    }
+
     public function indexResult($result)
     {
         return $result;
