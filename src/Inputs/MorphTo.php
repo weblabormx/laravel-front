@@ -38,13 +38,20 @@ class MorphTo extends Input
 			return '--';
 		}
 		$class = get_class($value);
+		if(!isset($this->types_models)) {
+			abort(405, 'Please defines the possible types for the polimorfic values of '.$this->column.' with types() function');
+		}
 		$result = $this->types_models->search($class);
 		if(!isset($result)) {
 			return '--';
 		}
 		$front = $this->getFrontOnClass($class);
+		if(is_null($front)) {
+			abort(405, $class.' front is not defined on the types');
+		}
 		$this->link = $front->base_url.'/'.$value->getKey();
-		return $result.' #'.$value->getKey();
+		$title_field = $front->title;
+		return $value->$title_field;
 	}
 
 	public function form()
