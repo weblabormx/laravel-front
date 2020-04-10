@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Str;
 
 class MorphTo extends Input
 {
@@ -75,18 +76,52 @@ class MorphTo extends Input
 
 	public function form()
 	{
+		// if is hidden
 		if( $this->hide && ((request()->filled($this->column.'_type') && request()->filled($this->column.'_id')) || $this->source=='edit') ) {
 			return collect([
 				Hidden::make($this->title, $this->column.'_type'),
-				Hidden::make($this->title.' Id', $this->column.'_id')
+				Hidden::make($this->title, $this->column.'_id')
 			])->map(function($item) {
 				return (string) $item->formHtml();
 			})->implode('');
 		}
-		return collect([
-			Select::make($this->title, $this->column.'_type')->options($this->types_models->flip()),
-			Text::make($this->title.' Id', $this->column.'_id')
-		])->map(function($item) {
+
+		// Get options for the type select
+		$options = $this->types_models->flip();
+
+		// Add type select to fields
+		$fields = collect([
+			Select::make($this->title.' '.__('Type'), $this->column.'_type')->options($options),
+		]);
+
+		// Add every type field
+		foreach ($this->types as $type) 
+		{
+			// Generate new field name
+			$column = $this->column.'_id_'.strtolower($type->label); 
+
+			// Get model
+			$model = $options->search($type->label);
+			$morph_field = $this->column;
+			$type_field = $this->column.'_type';
+			$id_field = $this->column.'_id';
+			$title = $type->title;
+
+			// Show autocomplete field
+			$field = Autocomplete::make($type->label, $column)
+				->setUrl($type->base_url.'/search')->conditional($type_field, $model);
+
+			// if we have a value set it and its for this type
+			if(isset($this->resource) && isset($this->resource->object) && $this->resource->object->$type_field == $model) {
+				$field = $field->setText($this->resource->object->$morph_field->$title)->setValue($this->resource->object->$id_field);
+			}
+
+			// Add to fields array
+			$fields[] = $field;
+		}
+
+		// Returns html
+		return $fields->map(function($item) {
 			return $item->formHtml();
 		})->implode('');
 	}
@@ -115,4 +150,25 @@ class MorphTo extends Input
 		$rules[$this->column.'_id'] = $rule;
 		return $rules;
 	}
+
+	public function processData($data)
+	{
+		$type_field = $this->column.'_type';
+		$id_field = $this->column.'_id';
+		if(!isset($data[$type_field])) {
+			return $data;
+		}
+
+		$type = strtolower($data[$type_field]);
+		$data[$id_field] = $data[$id_field.'_'.$type];
+
+		$ids_columns = collect($data)->keys()->filter(function($item) use ($id_field) {
+			return Str::contains($item, $id_field.'_');
+		});
+		foreach ($ids_columns as $column) {
+			unset($data[$column]);
+		}
+		return $data;
+	}
+
 }
