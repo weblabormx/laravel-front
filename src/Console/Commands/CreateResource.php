@@ -55,7 +55,7 @@ class CreateResource extends Command
             ->replace('{name}', $name)
             ->replace('{model_folder}', config('front.models_folder'))
             ->replace('{default_base_url}', config('front.default_base_url'))
-            ->replace('{slug}', Str::slug(Str::plural($name)))
+            ->replace('{slug}', Str::plural(Str::snake($name)))
             ->execute();
 
         $this->line('Resource created: <info>✔</info>');
