@@ -174,8 +174,12 @@ abstract class Resource
     	if($this->source != 'update' && $this->source != 'store') {
     		return;
     	}
+
+        // Get fields 
+        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true));
+
         // Get rules on inputs of the resource
-    	$rules = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+    	$rules = $fields->filter(function($item) {
     		return count($item->getRules($this->source))>0 && $item->shouldBeShown();
     	})->map(function($item) {
     		return $item->setResource($this);
@@ -186,19 +190,25 @@ abstract class Resource
     		return [$column => $item->getRules($this->source)];
     	})->toArray();
 
+        // Update rules on inputs
+        foreach ($fields as $field) {
+            $rules = $field->editRules($rules);
+        }
+        
         // Execute validator function on fields
-        collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->map(function($item) {
+        $fields->map(function($item) {
             return $item->setResource($this);
         })->each(function($item) use ($data) {
             return $item->validate($data);
         });
 
         // Validate all the rules
-        $attributes = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+        $attributes = $fields->filter(function($item) {
             return isset($item->column) && isset($item->title) && is_string($item->column) && is_string($item->title);
         })->mapWithKeys(function($item) {
             return [$item->column => $item->title];
         })->toArray();
+        
         \Validator::make($data, $rules, [], $attributes)->validate();
     	return $this;
     }

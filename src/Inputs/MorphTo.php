@@ -101,4 +101,18 @@ class MorphTo extends Input
 		$this->hide = true;
 		return $this;
 	}
+
+	public function editRules($rules)
+	{
+		// Dont do anything if there isnt any rule to this element
+		if(!isset($rules[$this->column])) {
+			return;
+		}
+
+		$rule = $rules[$this->column];
+		unset($rules[$this->column]);
+		$rules[$this->column.'_type'] = $rule;
+		$rules[$this->column.'_id'] = $rule;
+		return $rules;
+	}
 }

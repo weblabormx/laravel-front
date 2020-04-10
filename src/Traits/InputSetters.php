@@ -138,4 +138,9 @@ trait InputSetters
 		$this->class = $class;
 		return $this;
 	}
+
+	public function editRules($rules)
+	{
+		return $rules;
+	}
 }
