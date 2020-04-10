@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Inputs;
 
+use Illuminate\Foundation\AliasLoader;
+
 class MorphTo extends Input
 {
 	public $types;
@@ -10,12 +12,29 @@ class MorphTo extends Input
 
 	public function types($types)
 	{
+		// Create the types as front objects
 		$this->types = collect($types)->map(function($item) {
 			return new $item($this->source);
 		});
-		$this->types_models = $this->types->mapWithKeys(function($item) {
-			return [$item->label => $item->getModel()];
+
+		// Detect aliases
+		$loader = AliasLoader::getInstance();
+		$aliases = collect($loader->getAliases());
+
+		// Make a new array with all models of the types
+		$this->types_models = $this->types->mapWithKeys(function($item) use ($aliases) 
+		{
+			$alias = $item->getModel();
+
+			// If model has alias use alias instead of model
+			if($aliases->contains($item->getModel())) {
+				$alias = $aliases->search($item->getModel());
+			}
+
+			return [$item->label => $alias];
 		});
+
+		// Return object
 		return $this;
 	}
 
