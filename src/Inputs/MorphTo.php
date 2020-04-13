@@ -141,7 +141,7 @@ class MorphTo extends Input
 	{
 		// Dont do anything if there isnt any rule to this element
 		if(!isset($rules[$this->column])) {
-			return;
+			return $rules;
 		}
 
 		$rule = $rules[$this->column];
