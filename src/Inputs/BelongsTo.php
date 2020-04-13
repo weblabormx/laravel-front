@@ -16,27 +16,24 @@ class BelongsTo extends Input
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
-		parent::__construct($title, $column, $extra, $source);
-		$this->loadAttributes();
-	}
-
-	public function loadAttributes() 
-	{
+		$this->column = $column;
+		$this->extra = $extra;
+		$this->source = $source;
 		$this->relation = Str::snake($this->column);
 
 		if(!isset($this->extra)) {
 			$front = Str::singular($this->relation);
 			$front = ucfirst(Str::camel($front));
-			$this->extra = $this->title;
+			$this->extra = $title;
 		}
 
 		$this->model_name = $this->extra;
 		$class = 'App\Front\\'.$this->model_name;
 		$this->relation_front = new $class($this->source);
 		$class = $this->relation_front->getModel();
-		if(!isset($this->title)) {
-			$this->title = $this->relation_front->label;
-		}
+		$this->title = $this->relation_front->label;
+
+		$this->load();
 	}
 
 	public function setResource($resource)
