@@ -159,9 +159,14 @@ class MorphTo extends Input
 			return $data;
 		}
 
-		$type = strtolower($data[$type_field]);
-		$data[$id_field] = $data[$id_field.'_'.$type];
+		// Set the correct value
+		$model = $data[$type_field];				// Value on xx_type column gotten
+		$key = $this->types_models->search($model); // Find the label of the model
+		$type = strtolower($key); 					// Convert to lower case
+		$new_type_field = $id_field.'_'.$type;		// Get the field name of the type saved
+		$data[$id_field] = $data[$new_type_field];  // Set the id to the value on the new type field
 
+		// Remove the values of the unselected types
 		$ids_columns = collect($data)->keys()->filter(function($item) use ($id_field) {
 			return Str::contains($item, $id_field.'_');
 		});
