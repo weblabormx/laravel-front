@@ -154,15 +154,16 @@ abstract class Resource
 	    	}
     		return [$filter->slug => $default ?? null];
 		})->filter(function($item) {
-			return isset($item);
+			return isset($item) && strlen($item);
 		});
-		
-		$filters['is_redirect'] = true;
+
 		// If we dont have any value dont do anything
 		if($filters->count() <= 0) {
 			return;
 		}
+        
 		// Generate the url to be redirected
+        $filters['is_redirect'] = true;
 		$url = request()->url();
 		$url .= '?'.http_build_query($filters->toArray());
 		return $url;

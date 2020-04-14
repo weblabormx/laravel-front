@@ -59,14 +59,26 @@ class FrontIndex
 
     private function multipleRedirects($result)
     {
-        if(request()->filled('is_redirect') && $result->count() == 0) {
+        // If doesnt have results and is redirect
+        if(request()->filled('is_redirect') && $result->count() == 0) 
+        {
+            // Get url to send
             $redirect_url = $this->front->redirects(false);
+
+            // If there isn't any redirect url don't do anything
+            if(!isset($redirect_url)) {
+                return $result;
+            }
+
+            // Generate new url
             $current_query = request()->query();
             $new_query = explode('?', $redirect_url)[1];
             $new_query = collect(explode('&', $new_query))->mapWithKeys(function($item) {
                 $item = explode('=', $item);
                 return [$item[0] => $item[1]];
             })->toArray();
+
+            // Send to new url
             if(isset($redirect_url) && $current_query!=$new_query) {
                 return redirect($redirect_url);
             }
