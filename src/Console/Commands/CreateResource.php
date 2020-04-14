@@ -35,12 +35,14 @@ class CreateResource extends Command
         // Create Front Folder if doesnt exist
         if (! is_dir(app_path('Front'))) {
             mkdir(app_path('Front'));
+            $this->line('Front folder created: <info>✔</info>');
         }
 
         // Create resource base
         $file_name = app_path('Front/Resource.php');
         if(!FileModifier::file($file_name)->exists()) {
             copy($directory.'/base-resource.php', $file_name);
+            $this->line('Resource base class created: <info>✔</info>');
         }
 
         // Create resource
