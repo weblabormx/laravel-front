@@ -26,7 +26,7 @@ class FrontSearch
     public function handle()
     {
         // Get title column for element
-        $title = $this->front->title;
+        $title = $this->front->search_title;
 
         // Get results query
         $result = $this->front->globalIndexQuery();

@@ -19,6 +19,7 @@ abstract class Resource
 
 	public $data;
 	public $title = 'name';
+    public $search_title;
 	public $label;
 	public $base_url;
 	public $ignore_if_null = [];
@@ -38,6 +39,9 @@ abstract class Resource
 		$this->setSource($source);
         if(!isset($this->view_title)) {
             $this->view_title = $this->title;
+        }
+        if(!isset($this->search_title)) {
+            $this->search_title = $this->title;
         }
         $this->load();
 	}

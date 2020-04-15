@@ -128,7 +128,6 @@ class FrontServiceProvider extends ServiceProvider
     {
         \Form::macro('frontDatetime', function($name, $value = null, $options = [])
         {
-
             $value = \Form::getValueAttribute($name, $value);
             if(!is_null($value) && !$value instanceof DateTime) {
                 $value = Carbon::parse($value);
