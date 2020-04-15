@@ -111,9 +111,19 @@ class MorphTo extends Input
 			$field = Autocomplete::make($type->label, $column)
 				->setUrl($type->base_url.'/search')->conditional($type_field, $model);
 
-			// if we have a value set it and its for this type
+			// if we have an object and a value, set it and its for this type
 			if(isset($this->resource) && isset($this->resource->object) && $this->resource->object->$type_field == $model) {
 				$field = $field->setText($this->resource->object->$morph_field->$title)->setValue($this->resource->object->$id_field);
+			}
+
+			// if we have a prefiled value set 
+			else if(request()->filled($type_field) && request()->filled($id_field)) {
+				$type = request()->$type_field;
+				if($type == $model) {
+					$id = request()->$id_field;
+					$object = $type::find($id);
+					$field = $field->setText($object->$title)->setValue($id);
+				}
 			}
 
 			// Add to fields array
