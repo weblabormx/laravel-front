@@ -12,6 +12,8 @@ use WeblaborMx\Front\Console\Commands\CreateResource;
 use WeblaborMx\Front\Console\Commands\CreatePage;
 use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Console\Commands\CreateFilter;
+use Carbon\Carbon;
+use DateTime;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,8 @@ class FrontServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'front');
         $this->registerRoutes();
         SerializableClosure::addSecurityProvider(new SecurityProvider);
+        $this->loadInputs();
+        
     }
 
     /**
@@ -113,5 +117,23 @@ class FrontServiceProvider extends ServiceProvider
                 CreateFilter::class
             ]);
         }
+    }
+
+    /**
+     * Register the laravel collective created inputs
+     *
+     * @return void
+     */
+    public function loadInputs()
+    {
+        \Form::macro('frontDatetime', function($name, $value = null, $options = [])
+        {
+
+            $value = \Form::getValueAttribute($name, $value);
+            if(!is_null($value) && !$value instanceof DateTime) {
+                $value = Carbon::parse($value);
+            }
+            return \Form::datetimeLocal($name, $value, $options);;
+        });
     }
 }
