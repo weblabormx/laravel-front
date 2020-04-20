@@ -29,9 +29,9 @@ class FrontIndex extends Component
 			$function = $this->query;
 			$query = $function($query);
 		}
-		$objects = $query->get();
+		$result = $query->get();
 		$style = 'margin-bottom: 30px;';
-		return view('front::crud.partial-index', compact('objects', 'front', 'style'))->render();
+		return view('front::crud.partial-index', compact('result', 'front', 'style'))->render();
 	}
 
 	public function setRequest($request)
