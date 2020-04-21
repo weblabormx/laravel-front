@@ -112,6 +112,11 @@ class HasMany extends Input
 
 	public function getResults($object)
 	{
+		// Set lense
+		if(isset($this->lense)) {
+   			$this->front = $this->front->getLense($this->lense);
+   		}
+
 		// Get objects
 		$relationship = $this->relationship;
 		$objects = $object->$relationship()->with($this->with);;
