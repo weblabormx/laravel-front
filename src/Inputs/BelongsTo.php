@@ -75,7 +75,7 @@ class BelongsTo extends Input
 
 		// If searchable make a way to search
 		if($this->searchable) {
-			$title_field = $relation_front->title;
+			$title_field = $relation_front->search_title;
 			$value = isset($this->default_value) ? $this->default_value : \Form::getValueAttribute($this->column);
 			$title = null;
 			if(isset($value)) {
