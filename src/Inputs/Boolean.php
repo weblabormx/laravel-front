@@ -20,8 +20,8 @@ class Boolean extends Input
 			return '<span style="color: #e74344;">✘</span>';
 		}
 		if($value) {
-			return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> Yes';
+			return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> '.__('Yes');
 		}
-		return '<span style="color: #e74344; padding-right: 10px;">✘</span> No';
+		return '<span style="color: #e74344; padding-right: 10px;">✘</span> '.__('No');
 	}
 }
