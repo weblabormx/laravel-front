@@ -74,7 +74,7 @@ trait HasInputs
 			if(!is_array($columns)) {
 				$columns = [$columns];
 			}
-			return !collect($columns)->contains($item->column);
+			return !in_array($item->column, $columns);
 		});
 		$return = collect($return)->merge($sum);
 		return $return;
