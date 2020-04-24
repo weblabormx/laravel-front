@@ -13,6 +13,7 @@ class BelongsTo extends Input
 	public $relation;
 	public $relation_front;
 	public $searchable = false;
+	public $search_field;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
@@ -57,8 +58,7 @@ class BelongsTo extends Input
 			return '--';
 		}
 
-		$relation_front = $this->relation_front;
-		$title_field = $relation_front->title;
+		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
 		if(!isset($this->link)) {
 			$this->link = $this->relation_front->base_url.'/'.$object->$relation->getKey();	
@@ -75,7 +75,7 @@ class BelongsTo extends Input
 
 		// If searchable make a way to search
 		if($this->searchable) {
-			$title_field = $relation_front->search_title;
+			$title_field = $this->search_field ?? $this->relation_front->search_title;
 			$value = isset($this->default_value) ? $this->default_value : \Form::getValueAttribute($this->column);
 			$title = null;
 			if(isset($value)) {
@@ -113,7 +113,7 @@ class BelongsTo extends Input
 			$options = $filter_collection($options);
 		}
 
-		$title = $relation_front->title;
+		$title = $this->search_field ?? $this->relation_front->search_title;
 		$options = $options->pluck($title, $model->getKeyName());
 		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value);
 		return $select->form();
@@ -122,6 +122,12 @@ class BelongsTo extends Input
 	public function searchable($searchable = true)
 	{
 		$this->searchable = $searchable;
+		return $this;
+	}
+
+	public function setSearchField($field)
+	{
+		$this->search_field = $field;
 		return $this;
 	}
 }
