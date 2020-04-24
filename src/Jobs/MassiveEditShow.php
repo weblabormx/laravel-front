@@ -27,6 +27,9 @@ class MassiveEditShow
      */
     public function handle()
     {
+        // Set session
+        \Cache::store('array')->put('is_massive', true);
+
         // Check if relationship exists
         if(!isset($this->front->showRelations()[$this->key])) {
             abort(406, 'Key isnt correct');

@@ -25,6 +25,7 @@ class Input
 	public $extra;
 	public $source; 
 	public $value;
+	public $size;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -127,13 +128,22 @@ class Input
 		return $this;
 	}
 
-	public function size($size)
+	public function size($size = null)
 	{
-		if(isset($this->attributes['style'])) {
+		if(isset($this->attributes['style']) || is_null($size)) {
 			return $this;
 		}
+		$this->size = $size;
 		$this->attributes['style'] = 'width: '.$size.'px';
 		return $this;
+	}
+
+	public function massiveSize($size = null)
+	{
+		if(\Cache::store('array')->get('is_massive')!==true) {
+			return $this;
+		}
+		return $this->size($size);
 	}
 
 	// In case there default attributes for the model
