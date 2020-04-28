@@ -35,7 +35,7 @@ trait HasBreadcrumbs
         $breadcrumbs = collect($front->breadcrumbs())->map(function($item, $key) {
             return [
                 'title' => $item,
-                'link' => $key
+                'url' => $key
             ];
         });
 
