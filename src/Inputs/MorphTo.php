@@ -11,6 +11,11 @@ class MorphTo extends Input
 	public $types_models;
 	public $hide = false;
 
+	public function load()
+	{
+		$this->title = ucwords(str_replace('-', ' ', Str::kebab($this->title)));
+	}
+
 	public function types($types)
 	{
 		// Create the types as front objects
@@ -116,7 +121,7 @@ class MorphTo extends Input
 				$field = $field->setText($this->resource->object->$morph_field->$title)->setValue($this->resource->object->$id_field);
 			}
 
-			// if we have a prefiled value set 
+			// if we have a prefilled value set 
 			else if(request()->filled($type_field) && request()->filled($id_field)) {
 				$type = request()->$type_field;
 				if($type == $model) {
