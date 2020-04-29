@@ -170,8 +170,10 @@ class MorphTo extends Input
 	{
 		$type_field = $this->column.'_type';
 		$id_field = $this->column.'_id';
+
+		// If type doesnt have any value
 		if(!isset($data[$type_field])) {
-			return $data;
+			return $this->removeCreatedFields($data, $id_field);
 		}
 
 		// Set the correct value
@@ -181,7 +183,12 @@ class MorphTo extends Input
 		$new_type_field = $id_field.'_'.$type;		// Get the field name of the type saved
 		$data[$id_field] = $data[$new_type_field];  // Set the id to the value on the new type field
 
-		// Remove the values of the unselected types
+		return $this->removeCreatedFields($data, $id_field);
+	}
+
+	private function removeCreatedFields($data, $id_field)
+	{
+		// Remove the created fields from the array
 		$ids_columns = collect($data)->keys()->filter(function($item) use ($id_field) {
 			return Str::contains($item, $id_field.'_');
 		});
