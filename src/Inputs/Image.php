@@ -10,13 +10,15 @@ class Image extends Input
 {
 	public $directory = 'images';
 	public $view_size = 'm';
+	public $original_size;
+	public $file_name;
 	public $thumbnails = [
-		['prefix' => 's', 'size' => 90,   'fit' => true],  // Small Square
-		['prefix' => 'b', 'size' => 160,  'fit' => true],  // Big Square
-		['prefix' => 't', 'size' => 160,  'fit' => false], // Small Thumbnail
-		['prefix' => 'm', 'size' => 320,  'fit' => false], // Medium Thumbnail
-		['prefix' => 'l', 'size' => 640,  'fit' => false], // Large Thumbnail
-		['prefix' => 'h', 'size' => 1024, 'fit' => false], // Huge Thumbnail
+		['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
+		['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
+		['prefix' => 't', 'width' => 160,  'height' => 160,  'fit' => false], // Small Thumbnail
+		['prefix' => 'm', 'width' => 320,  'height' => 320,  'fit' => false], // Medium Thumbnail
+		['prefix' => 'l', 'width' => 640,  'height' => 640,  'fit' => false], // Large Thumbnail
+		['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
 	];
 
 	public function form()
@@ -32,9 +34,34 @@ class Image extends Input
 		return $this;
 	}
 
-	public function addThumb($prefix, $size, $fit)
+	public function setFileName($file_name)
 	{
-		$this->thumbnails[] = ['prefix' => $prefix, 'size' => $size, 'fit' => $fit];
+		$this->file_name = $file_name;
+		return $this;
+	}
+
+	public function addThumb($prefix, $width, $height, $fit)
+	{
+		$this->thumbnails[] = compact('prefix', 'width', 'height', 'fit');
+		return $this;
+	}
+
+	public function setThumbs($thumbnails)
+	{
+		$this->thumbnails = $thumbnails;
+		return $this;
+	}
+
+	public function withoutThumbs()
+	{
+		$this->setThumbs([]); // Dont have thumbs
+		$this->sizeToShow(''); // Show original file by default
+		return $this;
+	}
+
+	public function originalSize($width, $height, $fit = false)
+	{
+		$this->original_size = compact('width', 'height', 'fit');
 		return $this;
 	}
 
@@ -46,13 +73,13 @@ class Image extends Input
 		$file = $data[$this->column.'_new'];
 
 		// Save original file
-		$storage_file = Storage::putFile($this->directory, $file);
-		$file_name = class_basename($storage_file);
-		$url = Storage::url($storage_file);
+		$result = $this->saveOriginalFile($data, $file);
+		$url = $result['url'];
+		$file_name = $result['file_name'];
 
 		// New sizes
 		foreach ($this->thumbnails as $thumbnail) {
-			$this->saveNewSize($file, $file_name, $thumbnail['size'], $thumbnail['prefix'], $thumbnail['fit']); 
+			$this->saveNewSize($file, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']); 
 		}
 		
 		// Assign data to request
@@ -87,17 +114,54 @@ class Image extends Input
 		\Validator::make($data, $rules, [], $attributes)->validate();
 	}
 
-	public function saveNewSize($file, $file_name, $size, $prefix, $is_fit = false)
+	public function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
 	{
 		$new_file = Intervention::make($file);
 		if($is_fit) {
-			$new_file = $new_file->fit($size, $size);	
+			$new_file = $new_file->fit($width, $height);	
 		} else {
-			$new_file = $new_file->resize($size, $size, function($constraint) {
+			$new_file = $new_file->resize($width, $height, function($constraint) {
 			    $constraint->aspectRatio();
 			});
 		}
 		$new_name = getThumb($file_name, $prefix);
-		Storage::put($this->directory.'/'.$new_name, $new_file->encode());
+		$file_name = $this->directory.'/'.$new_name;
+		$storage_file = Storage::put($file_name, $new_file->encode());
+		return Storage::url($file_name);
+	}
+
+	private function getFileName($data, $file)
+	{
+		$file_name = $this->file_name;
+		if(is_callable($file_name)) {
+			$file_name = $file_name($data);
+		}
+		if(!is_null($file_name)) {
+			$file_name .= '.'.$file->guessExtension();
+		}
+		return $file_name;
+	}
+
+	private function saveOriginalFile($data, $file)
+	{
+		// Get File Name
+		$set_file_name = $this->getFileName($data, $file);
+
+		// If original sizes were defined then save as thumb
+		if(!is_null($this->original_size)) {
+			$url = $this->saveNewSize($file, $set_file_name, $this->original_size['width'], $this->original_size['height'], '', $this->original_size['fit']);
+			return ['file_name' => $set_file_name, 'url' => $url];
+		}
+
+		// Save original file
+		if(!is_null($set_file_name)) {
+			$storage_file = Storage::putFileAs($this->directory, $file, $set_file_name);
+		} else {
+			$storage_file = Storage::putFile($this->directory, $file);
+		}
+		
+		$file_name = class_basename($storage_file);
+		$url = Storage::url($storage_file);
+		return compact('file_name', 'url');
 	}
 }
