@@ -12,6 +12,7 @@ class Image extends Input
 	public $view_size = 'm';
 	public $original_size;
 	public $file_name;
+	public $url_returned;
 	public $thumbnails = [
 		['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
 		['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
@@ -20,6 +21,13 @@ class Image extends Input
 		['prefix' => 'l', 'width' => 640,  'height' => 640,  'fit' => false], // Large Thumbnail
 		['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
 	];
+
+	public function load()
+	{
+		$this->url_returned = function($file_name) {
+			return Storage::url($file_name);
+		};
+	}
 
 	public function form()
 	{
@@ -49,6 +57,12 @@ class Image extends Input
 	public function setThumbs($thumbnails)
 	{
 		$this->thumbnails = $thumbnails;
+		return $this;
+	}
+
+	public function setUrlReturned($url_returned)
+	{
+		$this->url_returned = $url_returned;
 		return $this;
 	}
 
@@ -127,7 +141,8 @@ class Image extends Input
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
 		$storage_file = Storage::put($file_name, $new_file->encode());
-		return Storage::url($file_name);
+		$url_returned = $this->url_returned;
+		return $url_returned($file_name);
 	}
 
 	private function getFileName($data, $file)
@@ -161,7 +176,8 @@ class Image extends Input
 		}
 		
 		$file_name = class_basename($storage_file);
-		$url = Storage::url($storage_file);
+		$url_returned = $this->url_returned;
+		$url = $url_returned($this->directory.'/'.$file_name);
 		return compact('file_name', 'url');
 	}
 }
