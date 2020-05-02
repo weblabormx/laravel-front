@@ -66,7 +66,10 @@ class CreateResource extends Command
         $model = trim(trim(str_replace('App', '', config('front.models_folder').'/'.$name), '/'), '\\');
         if($all) {
             \Artisan::call("make:model {$model} -m");
+            $this->line('Model created: <info>✔</info>');
+            $this->line('Migration created: <info>✔</info>');
             \Artisan::call("make:policy {$name}Policy --model={$model}");
+            $this->line('Policy created: <info>✔</info>');
         }
     }
 }
