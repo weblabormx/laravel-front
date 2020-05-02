@@ -2,22 +2,25 @@
 
 @section('after-nav')
 
-    <div class="bg-dark text-light navbar-team">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            @isset(\Auth::user()->currentTeam)
-                <div class="d-inline-block team-name">
-                    <img src="{{ \Auth::user()->currentTeam->photo_url }}" height="20" />
-                    <span class="font-weight-normal ml-2">{{ \Auth::user()->currentTeam->name }}</span>
-                    <a class="fa fa-arrow-left" href="/" title="Change of team" style="color:#aaa; margin-left: 10px;"></a>
-                </div>
-            @endisset
-            <div class="d-inline-block">
-                <ul class="nav">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarFrontMenu" aria-controls="navbarFrontMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarFrontMenu">
+                @isset(\Auth::user()->currentTeam)
+                    <div class="d-inline-block">
+                        <img src="{{ \Auth::user()->currentTeam->photo_url }}" height="20" />
+                        <span class="font-weight-normal ml-2">{{ \Auth::user()->currentTeam->name }}</span>
+                        <a class="fa fa-arrow-left" href="/" title="Change of team" style="color:#aaa; margin-left: 10px;"></a>
+                    </div>
+                @endisset
+                <ul class="navbar-nav">
                     @include('front.sidebar')
                 </ul>
             </div>
         </div>
-    </div>
+    </nav>
     
 @endsection
 
