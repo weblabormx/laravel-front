@@ -29,7 +29,7 @@ class Input
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
-		$this->title = $title;
+		$this->title = __($title);
 		$this->column = $column;
 		$this->extra = $extra;
 		$this->source = $source;
