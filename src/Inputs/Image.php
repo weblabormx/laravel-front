@@ -54,6 +54,14 @@ class Image extends Input
 		return $this;
 	}
 
+	public function useThumbs(array $thumbs)
+	{
+		$this->thumbnails = collect($this->thumbnails)->filter(function($item) use ($thumbs) {
+			return in_array($item['prefix'], $thumbs);
+		})->values()->toArray();
+		return $this;
+	}
+
 	public function setThumbs($thumbnails)
 	{
 		$this->thumbnails = $thumbnails;
@@ -133,14 +141,14 @@ class Image extends Input
 		$new_file = Intervention::make($file);
 		if($is_fit) {
 			$new_file = $new_file->fit($width, $height);	
-		} else {
+		} else if ($new_file->height() > $height && $new_file->width() > $width) {
 			$new_file = $new_file->resize($width, $height, function($constraint) {
 			    $constraint->aspectRatio();
 			});
 		}
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
-		$storage_file = Storage::put($file_name, $new_file->encode());
+		$storage_file = Storage::put($file_name, (string) $new_file->encode());
 		$url_returned = $this->url_returned;
 		return $url_returned($file_name);
 	}
