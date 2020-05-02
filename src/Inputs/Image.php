@@ -141,11 +141,12 @@ class Image extends Input
 		$new_file = Intervention::make($file);
 		if($is_fit) {
 			$new_file = $new_file->fit($width, $height);	
-		} else if ($new_file->height() > $height && $new_file->width() > $width) {
+		} else if ($new_file->height() > $height || $new_file->width() > $width) {
 			$new_file = $new_file->resize($width, $height, function($constraint) {
 			    $constraint->aspectRatio();
 			});
 		}
+
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
 		$storage_file = Storage::put($file_name, (string) $new_file->encode());
@@ -171,7 +172,7 @@ class Image extends Input
 		$set_file_name = $this->getFileName($data, $file);
 
 		// If original sizes were defined then save as thumb
-		if(!is_null($this->original_size)) {
+		if(!is_null($this->original_size) && is_array($this->original_size)) {
 			$url = $this->saveNewSize($file, $set_file_name, $this->original_size['width'], $this->original_size['height'], '', $this->original_size['fit']);
 			return ['file_name' => $set_file_name, 'url' => $url];
 		}
