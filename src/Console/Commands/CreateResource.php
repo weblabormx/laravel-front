@@ -13,7 +13,7 @@ class CreateResource extends Command
      *
      * @var string
      */
-    protected $signature = 'front:resource {name}';
+    protected $signature = 'front:resource {name} {--all}';
 
     /**
      * The console command description.
@@ -31,7 +31,7 @@ class CreateResource extends Command
     {
         $directory = WLFRONT_PATH.'/install-stubs';
         $name = $this->argument('name');
-
+        
         // Create Front Folder if doesnt exist
         if (! is_dir(app_path('Front'))) {
             mkdir(app_path('Front'));
@@ -61,5 +61,12 @@ class CreateResource extends Command
             ->execute();
 
         $this->line('Resource created: <info>✔</info>');
+
+        $all = $this->option('all');
+        $model = trim(trim(str_replace('App', '', config('front.models_folder').'/'.$name), '/'), '\\');
+        if($all) {
+            \Artisan::call("make:model {$model} -m");
+            \Artisan::call("make:policy {$name}Policy --model={$model}");
+        }
     }
 }
