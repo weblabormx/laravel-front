@@ -1,4 +1,3 @@
-
 # Front
 
 _This package was inspired on Laravel Nova._
@@ -16,11 +15,15 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 - Install via composer executing `composer require weblabormx/laravel-front`
 - Execute `php artisan front:install` to install all necessary files (Will install configuration file and views)
 
-**If you have already code and views and you want to continue using the same design as you were using before:** 
-- The fields for this package requires of the "Easy JS Library", so please add on the layout on the script section `https://weblabormx.github.io/Easy-JS-Library/library/script.js` (It requires of jquery)
+_Adapt the layout_
+- Add on your layout the code `@yield('after-nav')` as there is where Laravel Front shows the menu
 - Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
 - Add on your layout the code `@yield('sidebar')` as there is where Laravel Front shows the filters on the menu
-- After creating the first front resource using the command `php artisan front:resource {name}`, edit the `App\Front\Resource.php` file and configure the layout view name with the view you are currently using, by default it will show the default front layout. This change
+- Add on your layout the code `@yield('scripts-footer')` as there is where Laravel Front shows the javascript info
+- Add on the layout the next code `@include('flash::message')`, this will show the success and errors messages
+- This package requires of jquery, so please be sure that its called before executing `@yield('scripts-footer')`
+- You can edit anything on the views published on `views/vendor/front` to adapt to your previous desing.
+- Edit the `App\Front\Resource.php` file and configure the layout view name that you are currently using (The default value is layouts.app, if you use this layout this step is not necessary)
 
 ```php
 namespace App\Front;
@@ -29,12 +32,37 @@ use WeblaborMx\Front\Resource as Base;
 
 abstract class Resource extends Base
 {
-    public $layout = 'layout.master'; // This is the name of your layout
+    public $layout = 'layouts.app'; 
 }
-
 ```
+#### Layout example
+```php
+@yield('after-nav')
+<main class="container-fluid container">
+    @if(View::hasSection('sidebar') && strlen(trim(View::getSections()['sidebar']))>0)
+        <div class="row">
+            <div class="col-sm-3 py-4">
+                @yield('sidebar')
+            </div>
+            <div class="col-sm-9 py-4">
+                @include('flash::message')
+                @yield('content')
+            </div>
+        </div>
+    @else
+        <div class="py-4">
+            @include('flash::message')
+            ∂@yield('content')
+        </div>
+    @endif
+</main>
 
-- You can edit anything on the views published on `views/vendor/front` to adapt to your previous desing.
+<script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+@yield('scripts-footer')
+```
 
 ### Basics
 Laravel Front makes a use of different items that can be defined on the next way:
