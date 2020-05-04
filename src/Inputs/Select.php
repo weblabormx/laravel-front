@@ -5,6 +5,7 @@ namespace WeblaborMx\Front\Inputs;
 class Select extends Input
 {
 	public $options = [];
+	public $empty_title = 'Pick one..';
 
 	public function getValue($object)
 	{
@@ -16,7 +17,7 @@ class Select extends Input
 
 	public function form()
 	{
-		$this->attributes['placeholder'] = __('Pick one..');
+		$this->attributes['placeholder'] = __($this->empty_title);
 		return \Form::select($this->column, $this->options, $this->default_value, $this->attributes);
 	}
 
@@ -29,6 +30,17 @@ class Select extends Input
 			$array = $array();
 		}
 		$this->options = $array;
+		return $this;
+	}
+
+	public function setEmptyTitle($value = null)
+	{
+		if(is_null($value)) 
+		{
+			return $this;
+		}
+		
+		$this->empty_title = $value;
 		return $this;
 	}
 }

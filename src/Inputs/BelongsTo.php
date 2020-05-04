@@ -14,6 +14,7 @@ class BelongsTo extends Input
 	public $relation_front;
 	public $searchable = false;
 	public $search_field;
+	public $empty_title;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
@@ -115,7 +116,7 @@ class BelongsTo extends Input
 
 		$title = $this->search_field ?? $this->relation_front->search_title;
 		$options = $options->pluck($title, $model->getKeyName());
-		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value)->size($this->size);
+		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value)->size($this->size)->setEmptyTitle($this->empty_title);
 		return $select->form();
 	}
 
@@ -128,6 +129,12 @@ class BelongsTo extends Input
 	public function setSearchField($field)
 	{
 		$this->search_field = $field;
+		return $this;
+	}
+
+	public function setEmptyTitle($value)
+	{
+		$this->empty_title = $value;
 		return $this;
 	}
 }
