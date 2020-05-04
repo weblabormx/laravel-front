@@ -35,7 +35,7 @@ abstract class Resource
 			$this->label = __($label);
 		}
         if(!isset($this->plural_label)) {
-            $this->plural_label = __(Str::plural($label));
+            $this->plural_label = __(Str::plural($label ?? $this->label));
         }
 		$this->setSource($source);
         if(!isset($this->view_title)) {

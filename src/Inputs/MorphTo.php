@@ -176,6 +176,11 @@ class MorphTo extends Input
 			return $this->removeCreatedFields($data, $id_field);
 		}
 
+		// If id field is already defined
+		if(isset($data[$id_field])) {
+			return $this->removeCreatedFields($data, $id_field);
+		}
+
 		// Set the correct value
 		$model = $data[$type_field];				// Value on xx_type column gotten
 		$key = $this->types_models->search($model); // Find the label of the model
