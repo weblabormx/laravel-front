@@ -11,6 +11,7 @@
 </div>
 
 @section('scripts-footer')
+	@parent
   	<script type="text/javascript">
 		function executeFile(id) {
 			console.log('#'+id);
