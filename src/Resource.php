@@ -251,6 +251,19 @@ abstract class Resource
     	return $inputs;
     }
 
+    // If the inputs have a removeAction is executed before its really removed
+
+    public function processRemoves($object)
+    {
+         // Get fields processing
+        $fields = $this->filterFields('edit', true);
+
+        // Execute removeAction function for every input
+        $fields->each(function($item) use ($object) {
+            $item->removeAction($object);
+        });
+    }
+
     /* 
 	 * Setters and getters
 	 */

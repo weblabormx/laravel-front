@@ -177,4 +177,13 @@ class Input
 	{
 		return;
 	}
+
+	/**
+	 * Action that is executed bofore an object is removed
+	 **/
+
+	public function removeAction($object)
+	{
+		return;
+	}
 }

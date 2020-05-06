@@ -28,6 +28,9 @@ class FrontDestroy
         // Call the action to be done before is deleted
         $this->front->destroy($this->object);
 
+        // Process inputs actions for when is removed
+        $this->front->processRemoves($this->object);
+
         // Delete the object
         $this->object->delete();
         
