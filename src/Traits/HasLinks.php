@@ -33,7 +33,7 @@ trait HasLinks
          // Add delete button
         if( \Auth::user()->can('delete', $object) ) {
             $links[] = Button::make('<i class="fa fa-times pr-2"></i> '.__('Delete'))
-                ->setExtra("data-type='confirm' title='".__('Delete')."' data-info='".__('Do you really want to remove this item?')."' data-button-yes='".__('Yes')."' data-button-no='".__('No')."' data-action='".url($this->base_url.'/'.$object->getKey())."' data-redirection='".url($this->base_url)."' data-variables='{ \"_method\": \"delete\", \"_token\": \"{ csrf_token() }\" }'")
+                ->setExtra("data-type='confirm' title='".__('Delete')."' data-info='".__('Do you really want to remove this item?')."' data-button-yes='".__('Yes')."' data-button-no='".__('No')."' data-action='".url($this->base_url.'/'.$object->getKey())."' data-redirection='".url($this->base_url)."' data-variables='{ \"_method\": \"delete\", \"_token\": \"".csrf_token()."\" }'")
                 ->setType('btn-danger');
         }
 
