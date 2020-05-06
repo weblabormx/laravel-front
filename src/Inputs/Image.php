@@ -22,6 +22,10 @@ class Image extends Input
 		['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
 	];
 
+	/*
+	 * Basic functions
+	 */
+
 	public function load()
 	{
 		$this->url_returned = function($file_name) {
@@ -35,6 +39,17 @@ class Image extends Input
 		$id = 'file_'.rand();
 		return view('front::inputs.image-form', compact('input', 'id'));
 	}
+
+	public function getValue($object)
+	{
+		$name = $this->column;
+		$value = getThumb($object->$name, $this->view_size);
+		return view('front::inputs.image', compact('value'));
+	}
+
+	/*
+	 * Setters
+	 */
 
 	public function setDirectory($directory)
 	{
@@ -87,6 +102,16 @@ class Image extends Input
 		return $this;
 	}
 
+	public function sizeToShow($size)
+	{
+		$this->view_size = $size;
+		return $this;
+	}
+
+	/*
+	 * Processing
+	 */
+
 	public function processData($data)
 	{
 		if(!isset($data[$this->column.'_new'])) {
@@ -110,19 +135,6 @@ class Image extends Input
 		return $data;
 	}
 
-	public function getValue($object)
-	{
-		$name = $this->column;
-		$value = getThumb($object->$name, $this->view_size);
-		return view('front::inputs.image', compact('value'));
-	}
-
-	public function sizeToShow($size)
-	{
-		$this->view_size = $size;
-		return $this;
-	}
-
 	public function validate($data)
 	{
 		$name = $this->column.'_new';
@@ -136,7 +148,35 @@ class Image extends Input
 		\Validator::make($data, $rules, [], $attributes)->validate();
 	}
 
-	public function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
+	public function removeAction($object)
+	{
+		// Get url of the image
+		$column = $this->column;
+		$value = $object->$column;
+
+		// Get base url (The text before the url)
+		$function = $this->url_returned;
+		$format = $function('test.test');
+		$base = str_replace('test.test', '', $format);
+
+		// Get file names
+		$original_file_name = str_replace($base, '', $value);
+		$file_names = array();
+		$file_names[] = $original_file_name;
+		foreach ($this->thumbnails as $thumbnail) {
+			$file_names[] = getThumb($original_file_name, $thumbnail['prefix']);
+		}
+
+		// Remove the files
+		Storage::delete($file_names);
+		return;
+	}
+
+	/*
+	 * Internal functions
+	 */
+
+	private function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
 	{
 		$new_file = Intervention::make($file);
 		if($is_fit) {
