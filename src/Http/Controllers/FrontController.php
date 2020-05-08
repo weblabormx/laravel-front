@@ -291,6 +291,9 @@ class FrontController extends Controller
 
     private function getFront()
     {
+        if(request()->route()==null) {{
+            return;
+        }}
         $action = request()->route()->getAction();
         if(!is_array($action) || !isset($action['prefix'])) {
             return;
