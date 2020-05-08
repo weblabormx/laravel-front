@@ -103,7 +103,7 @@ class MorphTo extends Input
 		foreach ($this->types as $type) 
 		{
 			// Generate new field name
-			$column = $this->column.'_id_'.strtolower($type->label); 
+			$column = $this->column.'_id_'.Str::slug($type->label, '_'); 
 
 			// Get model
 			$model = $options->search($type->label);
@@ -184,10 +184,9 @@ class MorphTo extends Input
 		// Set the correct value
 		$model = $data[$type_field];				// Value on xx_type column gotten
 		$key = $this->types_models->search($model); // Find the label of the model
-		$type = strtolower($key); 					// Convert to lower case
+		$type = Str::slug($key, '_'); 					// Convert to lower case
 		$new_type_field = $id_field.'_'.$type;		// Get the field name of the type saved
 		$data[$id_field] = $data[$new_type_field];  // Set the id to the value on the new type field
-
 		return $this->removeCreatedFields($data, $id_field);
 	}
 
@@ -202,5 +201,4 @@ class MorphTo extends Input
 		}
 		return $data;
 	}
-
 }
