@@ -12,7 +12,7 @@ class Page
 	use HasInputs, HasLinks, HasBreadcrumbs, Sourceable;
 
 	public $title;
-	public $layout = 'layouts.app';
+	public $layout;
 	public $view = 'front::page';
 	public $has_big_card = true;
 

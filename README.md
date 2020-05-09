@@ -23,18 +23,8 @@ _Adapt the layout_
 - Add on the layout the next code `@include('flash::message')`, this will show the success and errors messages
 - This package requires of jquery, so please be sure that its called before executing `@yield('scripts-footer')`
 - You can edit anything on the views published on `views/vendor/front` to adapt to your previous desing.
-- Edit the `App\Front\Resource.php` file and configure the layout view name that you are currently using (The default value is layouts.app, if you use this layout this step is not necessary)
+- Edit the config.front to select the correct layout
 
-```php
-namespace App\Front;
-
-use WeblaborMx\Front\Resource as Base;
-
-abstract class Resource extends Base
-{
-    public $layout = 'layouts.app'; 
-}
-```
 #### Layout example
 ```php
 @yield('after-nav')

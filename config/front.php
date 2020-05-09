@@ -39,4 +39,15 @@ return [
 
     'default_search_filter' => App\Front\Filters\SearchFilter::class,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Layout Name
+    |--------------------------------------------------------------------------
+    |
+    | The default layout name that uses Laravel Front
+    |
+    */
+
+    'default_layout' => 'layouts.app',
+
 ];

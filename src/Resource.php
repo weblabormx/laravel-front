@@ -26,7 +26,7 @@ abstract class Resource
 	public $show_title = true;
     public $show_create_button_on_index = true;
     public $pagination = 50;
-    public $layout = 'layouts.app';
+    public $layout;
 
 	public function __construct($source = null)
 	{
