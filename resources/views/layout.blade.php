@@ -9,10 +9,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarFrontMenu">
                 @isset(\Auth::user()->currentTeam)
-                    <div class="d-inline-block">
+                    <div class="d-inline-block bg-light p-1 px-2 mr-2 rounded">
                         <img src="{{ \Auth::user()->currentTeam->photo_url }}" height="20" />
                         <span class="font-weight-normal ml-2">{{ \Auth::user()->currentTeam->name }}</span>
-                        <a class="fa fa-arrow-left" href="/" title="Change of team" style="color:#aaa; margin-left: 10px;"></a>
                     </div>
                 @endisset
                 <ul class="navbar-nav">

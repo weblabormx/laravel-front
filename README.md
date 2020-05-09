@@ -42,7 +42,7 @@ _Adapt the layout_
     @else
         <div class="py-4">
             @include('flash::message')
-            ∂@yield('content')
+            @yield('content')
         </div>
     @endif
 </main>
