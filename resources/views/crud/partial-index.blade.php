@@ -1,38 +1,32 @@
 @if($result->count() > 0)
-    @php $appends = isset($pagination_name) ? request()->except($pagination_name) : request()->except('page'); @endphp
+    @php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null); @endphp
     <div class="card" @isset($style) style="{{$style}}" @endisset>
-        @if($result instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $result->appends($appends)->links() }}
-        @endif
+        {{ $helper->links() }}
         <div class="card-datatable table-responsive">
             <table class="table table-striped table-bordered mb-0">
                 <thead>
                     <tr>
-                        @php $front->setObject($result->first()); @endphp
-                        @foreach($front->indexFields() as $field)
-                            <th class="{{$field->data_classes}}">{{$field->title}}</th>
+                        @foreach($helper->headers() as $field)
+                            <th class="{{$field->class}}">{{$field->title}}</th>
                         @endforeach
                         <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($result as $object)
-                        @php $front->setObject($object); @endphp
+                    @foreach($helper->rows() as $row)
                         <tr>
-                            @foreach($front->indexFields() as $field)
-                                <td class="{{$field->data_classes}}">
-                                    {!! $field->getValueProcessed($object) !!}
+                            @foreach($row->columns as $field)
+                                <td class="{{$field->class}}">
+                                    {!! $field->value !!}
                                 </td>
                             @endforeach
-                            @include('front::elements.object_actions', ['base_url' => $front->base_url, 'object' => $object])
+                            @include('front::elements.object_actions', ['base_url' => $front->base_url, 'object' => $row->object])
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        @if($result instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $result->appends($appends)->links() }}
-        @endif
+        {{ $helper->links() }}
     </div>
 @else
     <div class="card" @isset($style) style="{{$style}}" @endisset>

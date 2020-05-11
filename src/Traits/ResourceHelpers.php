@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use WeblaborMx\Front\Helpers\PartialIndex;
+
 trait ResourceHelpers
 {
 	public function getTitle($object)
@@ -15,5 +17,10 @@ trait ResourceHelpers
             return $object->$view_title_field;
         }
         return $this->plural_label;
+    }
+
+    public function getPartialIndexHelper($result, $page_name)
+    {
+        return new PartialIndex($this, $result, $page_name);
     }
 }
