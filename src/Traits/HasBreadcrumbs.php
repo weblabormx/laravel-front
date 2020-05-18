@@ -42,7 +42,7 @@ trait HasBreadcrumbs
         // Index Action
         if($front->source=='create' && isset($data) && isset($data['action']) && !isset($object)) {
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->base_url];
-            $breadcrumbs[] = ['title' => strip_tags($action->title), 'active' => true];
+            $breadcrumbs[] = ['title' => strip_tags($data['action']->title), 'active' => true];
             return $breadcrumbs;
         }
 

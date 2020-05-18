@@ -319,6 +319,6 @@ class FrontController extends Controller
     private function getFields($array)
     {
         $parameters = request()->route()->parameters();
-        return collect($array)->merge($parameters)->all();
+        return collect($parameters)->merge($array)->all();
     }
 }
