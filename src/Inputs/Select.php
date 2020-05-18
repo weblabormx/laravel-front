@@ -6,6 +6,7 @@ class Select extends Input
 {
 	public $options = [];
 	public $empty_title = 'Pick one..';
+	public $show_placeholder = true;
 
 	public function getValue($object)
 	{
@@ -14,10 +15,11 @@ class Select extends Input
 		return $options[$value] ?? $value;
 	}
 
-
 	public function form()
 	{
-		$this->attributes['placeholder'] = __($this->empty_title);
+		if($this->show_placeholder) {
+			$this->attributes['placeholder'] = __($this->empty_title);	
+		}
 		return \Form::select($this->column, $this->options, $this->default_value, $this->attributes);
 	}
 
@@ -41,6 +43,20 @@ class Select extends Input
 		}
 		
 		$this->empty_title = $value;
+		return $this;
+	}
+
+	public function multiple()
+	{
+		$this->attributes['multiple'] = 'multiple';
+		$this->column = $this->column.'[]';
+		$this->hidePlaceholder();
+		return $this;
+	}
+
+	public function hidePlaceholder()
+	{
+		$this->show_placeholder = false;
 		return $this;
 	}
 }
