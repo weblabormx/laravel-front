@@ -51,22 +51,22 @@ class FrontServiceProvider extends ServiceProvider
                 $plural = Str::plural($singular);    
             }
 
-            Route::group(['prefix' => $plural, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($singular) {
+            Route::group(['prefix' => $plural, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () {
                 Route::get('/', 'FrontController@index');
                 Route::get('create', 'FrontController@create');
                 Route::post('/', 'FrontController@store');
                 Route::get('search', 'FrontController@search');
-                Route::get('action/{action}', 'FrontController@indexActionShow');
-                Route::post('action/{action}', 'FrontController@indexActionStore');
-                Route::get('lenses/{lense}', 'FrontController@lenses');
-                Route::get('{'.$singular.'}', 'FrontController@show');
-                Route::get('{'.$singular.'}/edit', 'FrontController@edit');
-                Route::put('{'.$singular.'}', 'FrontController@update');
-                Route::delete('{'.$singular.'}', 'FrontController@destroy');
-                Route::get('{'.$singular.'}/action/{action}', 'FrontController@actionShow');
-                Route::post('{'.$singular.'}/action/{action}', 'FrontController@actionStore');
-                Route::get('{'.$singular.'}/masive_edit/{key}', 'FrontController@massiveEditShow');
-                Route::post('{'.$singular.'}/masive_edit/{key}', 'FrontController@massiveEditStore');
+                Route::get('action/{front_action}', 'FrontController@indexActionShow');
+                Route::post('action/{front_action}', 'FrontController@indexActionStore');
+                Route::get('lenses/{front_lense}', 'FrontController@lenses');
+                Route::get('{front_object}', 'FrontController@show');
+                Route::get('{front_object}/edit', 'FrontController@edit');
+                Route::put('{front_object}', 'FrontController@update');
+                Route::delete('{front_object}', 'FrontController@destroy');
+                Route::get('{front_object}/action/{front_action}', 'FrontController@actionShow');
+                Route::post('{front_object}/action/{front_action}', 'FrontController@actionStore');
+                Route::get('{front_object}/masive_edit/{front_key}', 'FrontController@massiveEditShow');
+                Route::post('{front_object}/masive_edit/{front_key}', 'FrontController@massiveEditStore');
             });
         });
 
