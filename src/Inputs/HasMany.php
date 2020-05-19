@@ -31,7 +31,7 @@ class HasMany extends Input
 			$this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
 		}
 		
-		$this->create_link = $this->front->base_url.'/create';
+		$this->create_link = $this->front->getBaseUrl().'/create';
 		$this->show_before = \Auth::check() ? \Auth::user()->can('viewAny', $this->front->getModel()) : false;
 		$this->masive_edit_link = '';
 	}
@@ -63,7 +63,7 @@ class HasMany extends Input
 		// If any link has been set so add to select by default the relationhip
 		if(!isset($this->create_link_accessed)) {
 			$this->setCreateLink(function($link) use ($resource, $base_url) {
-				return $link.'?'.$base_url.'&relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->base_url.'/'.$resource->object->getKey();
+				return $link.'?'.$base_url.'&relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->getBaseUrl().'/'.$resource->object->getKey();
 			});
 		}
 

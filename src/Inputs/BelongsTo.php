@@ -62,7 +62,7 @@ class BelongsTo extends Input
 		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
 		if(!isset($this->link)) {
-			$this->link = $this->relation_front->base_url.'/'.$object->$relation->getKey();	
+			$this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();	
 		}
 		if(!isset($value)) {
 			return '--';
@@ -90,7 +90,7 @@ class BelongsTo extends Input
 				$serialized = serialize($wrapper);
 				$serialized = json_encode($serialized);
 			}
-			return Autocomplete::make($this->title, $this->column)->setUrl($relation_front->base_url.'/search?filter_query='.$serialized)->setText($title)->default($this->default_value)->size($this->size)->form();
+			return Autocomplete::make($this->title, $this->column)->setUrl($relation_front->getBaseUrl().'/search?filter_query='.$serialized)->setText($title)->default($this->default_value)->size($this->size)->form();
 		}
 
 		$model = $this->relation_front->getModel();

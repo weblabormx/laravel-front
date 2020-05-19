@@ -74,7 +74,7 @@ class MorphTo extends Input
 		if(is_null($front)) {
 			abort(405, $class.' front is not defined on the types');
 		}
-		$this->link = $front->base_url.'/'.$value->getKey();
+		$this->link = $front->getBaseUrl().'/'.$value->getKey();
 		$title_field = $front->title;
 		return $value->$title_field;
 	}
@@ -114,7 +114,7 @@ class MorphTo extends Input
 
 			// Show autocomplete field
 			$field = Autocomplete::make($type->label, $column)
-				->setUrl($type->base_url.'/search')->conditional($type_field, $model);
+				->setUrl($type->getBaseUrl().'/search')->conditional($type_field, $model);
 
 			// if we have an object and a value, set it and its for this type
 			if(isset($this->resource) && isset($this->resource->object) && $this->resource->object->$type_field == $model && isset($this->resource->object->$morph_field)) {

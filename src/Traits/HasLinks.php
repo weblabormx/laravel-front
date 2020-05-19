@@ -22,7 +22,7 @@ trait HasLinks
 
         // Show index actions
         foreach($this->getActions() as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->base_url."/{$object->getKey()}/action/{$action->slug}");
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
@@ -33,14 +33,14 @@ trait HasLinks
          // Add delete button
         if( \Auth::user()->can('delete', $object) ) {
             $links[] = Button::make('<i class="fa fa-times pr-2"></i> '.__('Delete'))
-                ->setExtra("data-type='confirm' title='".__('Delete')."' data-info='".__('Do you really want to remove this item?')."' data-button-yes='".__('Yes')."' data-button-no='".__('No')."' data-action='".url($this->base_url.'/'.$object->getKey())."' data-redirection='".url($this->base_url)."' data-variables='{ \"_method\": \"delete\", \"_token\": \"".csrf_token()."\" }'")
+                ->setExtra("data-type='confirm' title='".__('Delete')."' data-info='".__('Do you really want to remove this item?')."' data-button-yes='".__('Yes')."' data-button-no='".__('No')."' data-action='".url($this->getBaseUrl().'/'.$object->getKey())."' data-redirection='".url($this->getBaseUrl())."' data-variables='{ \"_method\": \"delete\", \"_token\": \"".csrf_token()."\" }'")
                 ->setType('btn-danger');
         }
 
         // Add update button
         if( \Auth::user()->can('update', $object) ) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
-            $links[] = Button::make('<span class="fa fa-edit"></span> '. __('Edit'))->addLink("{$this->base_url}/{$object->getKey()}/edit{$extraUrl}");
+            $links[] = Button::make('<span class="fa fa-edit"></span> '. __('Edit'))->addLink("{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}");
         }
 
         return $links;
@@ -52,7 +52,7 @@ trait HasLinks
 
     	// Show index actions
 	    foreach($this->getIndexActions() as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->base_url."/action/{$action->slug}");
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}");
 	    }
 
         // Show links added manually
@@ -62,7 +62,7 @@ trait HasLinks
 
         // Show create button
         if($this->show_create_button_on_index && \Auth::user()->can('create', $this->getModel())) {
-            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->base_url.'/create');
+            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->getBaseUrl().'/create');
         }
 	    return $links;
     }

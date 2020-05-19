@@ -30,7 +30,7 @@ trait InputWithLinks
         if(isset($this->actions) && count($this->actions)>0) {
             foreach($this->actions as $action) {
             	$links[] = Button::make($action->button_text)
-            		->addLink("{$this->front->base_url}/{$object->getKey()}/action/{$action->slug}");
+            		->addLink("{$this->front->getBaseUrl()}/{$object->getKey()}/action/{$action->slug}");
             }
         }
 
@@ -42,7 +42,7 @@ trait InputWithLinks
         // Add massive edit link
         if(isset($this->masive_edit_link) && $this->show_massive) {
         	$links[] = Button::make("<i class='fa fa-edit'></i> ".__('Edit')." {$this->front->plural_label}")
-        		->addLink("{$front->base_url}/{$object->getKey()}/masive_edit/{$key}{$this->masive_edit_link}");
+        		->addLink("{$front->getBaseUrl()}/{$object->getKey()}/masive_edit/{$key}{$this->masive_edit_link}");
         }
         
         // Add create link

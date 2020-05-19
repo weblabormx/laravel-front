@@ -308,6 +308,39 @@ abstract class Resource
         return $this;
     }
     
+    public function getBaseUrl()
+    {
+        $base_url = $this->base_url;
+
+        // Get all route parameters
+        $parameters = request()->route()->parameters();
+
+        // Find which values are required on base_url
+        preg_match_all('#\{(.*?)\}#', $this->base_url, $match);
+        $results = $match[1];
+
+        foreach ($results as $result) {
+            $result_explode = explode(':', $result);
+
+            // if value on base url doesnt exist on parameters so ignore
+            if(!isset($parameters[$result_explode[0]])) {
+                continue;
+            }
+
+            // Get value on parameters
+            $value = $parameters[$result_explode[0]];
+
+            // If there isnt any field selected
+            if(!isset($result_explode[1])) {
+                $base_url = str_replace('{'.$result.'}', $value, $base_url);
+            } else {
+                $column = $result_explode[1];
+                $base_url = str_replace('{'.$result.'}', $value->$column, $base_url);
+            }
+        }
+        return $base_url;
+    }
+
     public function setBaseUrl($base_url)
     {
         $this->base_url = $base_url;

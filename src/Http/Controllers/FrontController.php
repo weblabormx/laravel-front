@@ -36,7 +36,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('index');
-        $base_url = $front->base_url;
+        $base_url = $front->getBaseUrl();
 
         $response = $this->run(new FrontIndex($front, $base_url));
         if($this->isResponse($response)) {
@@ -68,7 +68,7 @@ class FrontController extends Controller
         }
         
         // Redirect to index page
-        return redirect($front->base_url);
+        return redirect($front->getBaseUrl());
     }
 
     public function show($object)
@@ -137,7 +137,7 @@ class FrontController extends Controller
         }
 
         // Redirect
-        return redirect($this->front->base_url);
+        return redirect($this->front->getBaseUrl());
     }
 
     /*
@@ -261,7 +261,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('index')->getLense($lense);
-        $base_url = $front->base_url;
+        $base_url = $front->getBaseUrl();
 
         $response = $this->run(new FrontIndex($front, $base_url));
         if($this->isResponse($response)) {
