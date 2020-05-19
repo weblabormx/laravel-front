@@ -119,7 +119,7 @@ abstract class Resource
         }
 
         // Execute filters
-		foreach ($this->filters() as $filter) {
+		foreach ($this->getFilters() as $filter) {
 			$field = $filter->slug;
 			if(!request()->filled($field)) {
 				continue;
