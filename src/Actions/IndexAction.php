@@ -5,10 +5,11 @@ namespace WeblaborMx\Front\Actions;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\Panel;
 use WeblaborMx\Front\Traits\HasInputs;
+use WeblaborMx\Front\Traits\IsValidated;
 
 class IndexAction
 {
-    use HasInputs;
+    use HasInputs, IsValidated;
     
 	public $title;
     public $icon = 'fa fa-book';
@@ -52,12 +53,9 @@ class IndexAction
 
     public function validate()
     {
-    	$rules = collect($this->fields())->filter(function($item) {
-    		return count($item->getRules($this->source))>0;
-    	})->mapWithKeys(function($item) {
-            return [$item->column => $item->getRules()];
-        })->toArray();
-    	\Validator::make(request()->all(), $rules)->validate();
+        $fields = collect($this->fields());
+        $data = request()->all();
+        $this->makeValidation($fields, $data);
         return $this;
     }
 

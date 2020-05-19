@@ -12,10 +12,11 @@ use WeblaborMx\Front\Traits\Sourceable;
 use WeblaborMx\Front\Traits\HasCards;
 use WeblaborMx\Front\Traits\HasLenses;
 use WeblaborMx\Front\Traits\ResourceHelpers;
+use WeblaborMx\Front\Traits\IsValidated;
 
 abstract class Resource
 {
-	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers;
+	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated;
 
 	public $data;
 	public $title = 'name';
@@ -182,40 +183,11 @@ abstract class Resource
     	}
 
         // Get fields 
-        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true));
-
-        // Get rules on inputs of the resource
-    	$rules = $fields->filter(function($item) {
-    		return count($item->getRules($this->source))>0 && $item->shouldBeShown();
-    	})->map(function($item) {
-    		return $item->setResource($this);
-    	})->mapWithKeys(function($item) {
-            $column = $item->column;
-            $column = str_replace('[', '.', $column);
-            $column = str_replace(']', '', $column);
-    		return [$column => $item->getRules($this->source)];
-    	})->toArray();
-
-        // Update rules on inputs
-        foreach ($fields as $field) {
-            $rules = $field->editRules($rules);
-        }
-        
-        // Execute validator function on fields
-        $fields->map(function($item) {
-            return $item->setResource($this);
-        })->each(function($item) use ($data) {
-            return $item->validate($data);
+        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+            return $item->shouldBeShown();
         });
 
-        // Validate all the rules
-        $attributes = $fields->filter(function($item) {
-            return isset($item->column) && isset($item->title) && is_string($item->column) && is_string($item->title);
-        })->mapWithKeys(function($item) {
-            return [$item->column => $item->title];
-        })->toArray();
-        
-        \Validator::make($data, $rules, [], $attributes)->validate();
+        $this->makeValidation($fields, $data);
     	return $this;
     }
 
