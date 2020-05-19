@@ -1,4 +1,4 @@
-{!! Form::open(array('url' => $front->base_url, 'files' => true)) !!}
+{!! Form::open(array('url' => $front->getBaseUrl(), 'files' => true)) !!}
 
     {!! Form::hidden('redirect_url') !!}
     @foreach($front->createPanels() as $panel)

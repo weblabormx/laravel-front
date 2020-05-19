@@ -20,7 +20,7 @@
                                     {!! $field->value !!}
                                 </td>
                             @endforeach
-                            @include('front::elements.object_actions', ['base_url' => $front->base_url, 'object' => $row->object])
+                            @include('front::elements.object_actions', ['base_url' => $front->getBaseUrl(), 'object' => $row->object])
                         </tr>
                     @endforeach
                 </tbody>
