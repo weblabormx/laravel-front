@@ -47,22 +47,19 @@ trait IsRunable
         });
     }
 
-    public function makeFrontable($result)
+    public function makeFrontable($result, $setters)
     {
-        $page = new Page;
-        $page->setFields($result);
-        dd($page->getFields());
-        $front = $this->getFront();
-        $fields = $this->getFields(compact('front'));
-
-        // Search the individual action
-        if(isset($fields['front_object'])) {
-            $fields['action'] = $front->searchAction($fields['action']);
-        } else {
-            $fields['action'] = $front->searchIndexAction($fields['action']);
+        // Get page
+        $page = (new Page)->setSource('index')->setFields($result);
+        foreach ($setters as $key => $value) {
+            $page->$key = $value.' - '.__('Result');
         }
-        dd($fields);
-        return view('front::crud.action', $fields);
+
+        // Get variables to pass
+        $front = $this->getFront();
+        $fields = $this->getFields(compact('front', 'page'));
+
+        return view($page->view, $fields);
     }
 
     /*
@@ -100,5 +97,10 @@ trait IsRunable
     {
         $parameters = request()->route()->parameters();
         return collect($parameters)->merge($array)->all();
+    }
+
+    private function getParameter($name = 'object')
+    {
+        return request()->route()->parameters()['front_'.$name];
     }
 }

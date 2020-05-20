@@ -67,6 +67,9 @@ class Input
 		if(isset($this->value)) {
 			return $this->value;
 		}
+		if(!isset($object)) {
+			return;
+		}
 		$column = $this->column;
 		if(!is_string($column) && is_callable($column)) {
 			$return = $column($object);

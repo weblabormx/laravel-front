@@ -6,21 +6,16 @@ use WeblaborMx\Front\Front;
 
 class View extends Component
 {
-	private $compact = [];
+	private $with = [];
 
-	public function formHtml()
+	public function form()
 	{
-		return view($this->column, $this->compact);
+		return view($this->column, $this->with)->render();
 	}
 
-	public function showHtml($object)
+	public function with($array)
 	{
-		return view($this->column, $this->compact);
-	}
-
-	public function compact($array)
-	{
-		$this->compact = $array;
+		$this->with = $array;
 		return $this;
 	}
 }
