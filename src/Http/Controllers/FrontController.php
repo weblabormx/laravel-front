@@ -290,46 +290,4 @@ class FrontController extends Controller
             return $response;
         }
     }
-
-    /*
-     * Internal Functions
-     */
-
-    private function getFront()
-    {
-        if(request()->route()==null) {{
-            return;
-        }}
-        $action = request()->route()->getAction();
-        if(!is_array($action) || !isset($action['prefix'])) {
-            return;
-        }
-        $action = explode('/', $action['prefix']);
-        $action = $action[count($action)-1];
-        $action = Str::camel(Str::singular($action));
-        $action = ucfirst($action);
-        $class = 'App\Front\\'.$action;
-        return new $class;
-    }
-
-    private function getObject($object)
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-        return $object;
-    }
-
-    private function getFields($array)
-    {
-        $parameters = request()->route()->parameters();
-        return collect($parameters)->merge($array)->all();
-    }
-
-    private function getParameter($name = 'object')
-    {
-        return request()->route()->parameters()['front_'.$name];
-    }
 }

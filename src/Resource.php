@@ -28,6 +28,7 @@ abstract class Resource
     public $show_create_button_on_index = true;
     public $pagination = 50;
     public $layout;
+    public $functions_values = [];
 
 	public function __construct($source = null)
 	{

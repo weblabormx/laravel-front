@@ -65,6 +65,11 @@ class ActionStore
             $result = $action->handle($this->request);
         }
 
+        // If is front fields
+        if($this->isFrontable($result)) {
+            $result = $this->makeFrontable($result);
+        }
+
         // If returns a response so dont do any more
         if($this->isResponse($result)) {
             $this->request->flash();
