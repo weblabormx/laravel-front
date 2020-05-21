@@ -2,8 +2,12 @@
 
 namespace WeblaborMx\Front\Jobs;
 
+use WeblaborMx\Front\Traits\IsRunable;
+
 class ActionShow
 {
+    use IsRunable;
+    
     public $front;
     public $object;
     public $action;
@@ -51,8 +55,15 @@ class ActionShow
             $action = $action->setObject($this->object);    
         }
 
+        $result = $action->fields();
+
+        // If returns a response so dont do any more
+        if($this->isResponse($result)) {
+            return $result;
+        }
+
         // Detect if dont have fields process inmediately
-        if(count($action->fields())==0) {
+        if(is_array($result) && count($result)==0) {
             $function = $this->store;
             return $function();
         }
