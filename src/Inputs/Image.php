@@ -136,6 +136,7 @@ class Image extends Input
 	public function processData($data)
 	{
 		if(!isset($data[$this->column.'_new'])) {
+			unset($data[$this->column]);
 			return $data;
 		}
 		$file = $data[$this->column.'_new'];
