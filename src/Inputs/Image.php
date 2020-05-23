@@ -223,6 +223,9 @@ class Image extends Input
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
 		$storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
+		if($storage_file==false) {
+			abort(406, "{$file_name} wasn't uploaded");
+		}
 		$url_returned = $this->url_returned;
 		return $url_returned($file_name);
 	}
