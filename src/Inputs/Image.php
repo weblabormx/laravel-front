@@ -3,8 +3,8 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image as Intervention;
+use Illuminate\Support\Str;
 
 class Image extends Input
 {
@@ -153,6 +153,12 @@ class Image extends Input
 		}
 		$file = $data[$this->column];
 
+		// Remove old files
+		if(isset($this->resource) && isset($this->resource->object)) {
+			$object = $this->resource->object;
+			$this->removeAction($object);
+		}
+
 		// Save original file
 		$result = $this->saveOriginalFile($data, $file);
 		$url = $result['url'];
@@ -211,6 +217,7 @@ class Image extends Input
 
 	private function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
 	{
+		// Make smaller the image
 		$new_file = Intervention::make($file);
 		if($is_fit) {
 			$new_file = $new_file->fit($width, $height);	
@@ -220,6 +227,7 @@ class Image extends Input
 			});
 		}
 
+		// Save the image
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
 		$storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
@@ -235,6 +243,9 @@ class Image extends Input
 		$file_name = $this->file_name;
 		if(is_callable($file_name)) {
 			$file_name = $file_name($data);
+		}
+		if(is_null($file_name)) {
+			$file_name = Str::random(9);
 		}
 		if(!is_null($file_name)) {
 			$extension = $this->extension ?? $file->guessExtension();
