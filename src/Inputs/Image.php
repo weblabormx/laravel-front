@@ -10,6 +10,7 @@ class Image extends Input
 {
 	public $directory = 'images';
 	public $view_size = 'm';
+	public $visibility = 'public';
 	public $original_size;
 	public $file_name;
 	public $url_returned;
@@ -108,6 +109,12 @@ class Image extends Input
 		return $this;
 	}
 
+	public function setVisibility($visibility)
+	{
+		$this->visibility = $visibility;
+		return $this;
+	}
+
 	/*
 	 * Processing
 	 */
@@ -189,7 +196,7 @@ class Image extends Input
 
 		$new_name = getThumb($file_name, $prefix);
 		$file_name = $this->directory.'/'.$new_name;
-		$storage_file = Storage::put($file_name, (string) $new_file->encode());
+		$storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
 		$url_returned = $this->url_returned;
 		return $url_returned($file_name);
 	}
@@ -219,9 +226,9 @@ class Image extends Input
 
 		// Save original file
 		if(!is_null($set_file_name)) {
-			$storage_file = Storage::putFileAs($this->directory, $file, $set_file_name);
+			$storage_file = Storage::putFileAs($this->directory, $file, $set_file_name, $this->visibility);
 		} else {
-			$storage_file = Storage::putFile($this->directory, $file);
+			$storage_file = Storage::putFile($this->directory, $file, $this->visibility);
 		}
 		
 		$file_name = class_basename($storage_file);
