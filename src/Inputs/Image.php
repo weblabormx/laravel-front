@@ -11,9 +11,11 @@ class Image extends Input
 	public $directory = 'images';
 	public $view_size = 'm';
 	public $visibility = 'public';
+	public $max_size = 1024;
 	public $original_size;
 	public $file_name;
 	public $url_returned;
+	public $extension;
 	public $thumbnails = [
 		['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
 		['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
@@ -115,6 +117,18 @@ class Image extends Input
 		return $this;
 	}
 
+	public function setExtension($extension)
+	{
+		$this->extension = $extension;
+		return $this;
+	}
+
+	public function setMaxSize($extension)
+	{
+		$this->max_size = $max_size;
+		return $this;
+	}
+
 	/*
 	 * Processing
 	 */
@@ -125,6 +139,19 @@ class Image extends Input
 			return $data;
 		}
 		$file = $data[$this->column.'_new'];
+
+		// Assign data to request
+		$data[$this->column] = $file;
+		unset($data[$this->column.'_new']);
+		return $data;
+	}
+
+	public function processDataAfterValidation($data)
+	{
+		if(!isset($data[$this->column])) {
+			return $data;
+		}
+		$file = $data[$this->column];
 
 		// Save original file
 		$result = $this->saveOriginalFile($data, $file);
@@ -138,16 +165,15 @@ class Image extends Input
 		
 		// Assign data to request
 		$data[$this->column] = $url;
-		unset($data[$this->column.'_new']);
 		return $data;
 	}
 
 	public function validate($data)
 	{
-		$name = $this->column.'_new';
+		$name = $this->column;
 		$attribute_name = $this->title;
 		$rules = [
-			$name => ['image','mimes:jpeg,png,jpg,gif,svg']
+			$name => ['image','mimes:jpeg,png,jpg,gif,svg', 'max:'.$this->max_size]
 		];
 		$attributes = [
 			$name => $attribute_name
@@ -208,7 +234,8 @@ class Image extends Input
 			$file_name = $file_name($data);
 		}
 		if(!is_null($file_name)) {
-			$file_name .= '.'.$file->guessExtension();
+			$extension = $this->extension ?? $file->guessExtension();
+			$file_name .= '.'.$extension;
 		}
 		return $file_name;
 	}
