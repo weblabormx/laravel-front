@@ -11,7 +11,7 @@ class Image extends Input
 	public $directory = 'images';
 	public $view_size = 'm';
 	public $visibility = 'public';
-	public $max_size = 1024;
+	public $max_size = 5000;
 	public $original_size;
 	public $file_name;
 	public $url_returned;
