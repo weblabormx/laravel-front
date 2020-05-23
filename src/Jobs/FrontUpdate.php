@@ -32,6 +32,9 @@ class FrontUpdate
 
         // Validate
         $this->front->validate($data);
+
+        // Process data after validation
+        $data = $this->front->processDataAfterValidation($data);
         
         // Update the object
         $this->object->update($data);

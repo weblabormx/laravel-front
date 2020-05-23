@@ -224,6 +224,18 @@ abstract class Resource
     	return $inputs;
     }
 
+    public function processDataAfterValidation($inputs)
+    {
+        // Get fields processing
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
+        $fields->filter(function($item) use ($inputs) {
+            return $item->is_input;
+        })->each(function($item) use (&$inputs) {
+            $inputs = $item->processDataAfterValidation($inputs);
+        });
+        return $inputs;
+    }
+
     // If the inputs have a removeAction is executed before its really removed
 
     public function processRemoves($object)

@@ -172,6 +172,11 @@ class Input
 		return $data;
 	}
 
+	public function processDataAfterValidation($data)
+	{
+		return $data;
+	}
+
 	/**
 	 * Can add extra validation to inputs in case is needed
 	 **/

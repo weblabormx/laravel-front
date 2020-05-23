@@ -31,6 +31,9 @@ class FrontStore
         // Validate
         $this->front->validate($data);
 
+        // Process data after validation
+        $data = $this->front->processDataAfterValidation($data);
+
         // Create the object
         $model = $this->front->getModel();
         $object = $model::create($data);
