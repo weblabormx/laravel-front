@@ -2,9 +2,7 @@
 
 namespace WeblaborMx\Front\Http\Controllers;
 
-use WeblaborMx\Front\Http\Repositories\FrontRepository;
 use WeblaborMx\Front\Traits\IsRunable;
-use Illuminate\Http\Request;
 
 class PageController extends Controller
 {

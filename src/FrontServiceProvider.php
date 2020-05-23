@@ -87,6 +87,8 @@ class FrontServiceProvider extends ServiceProvider
             });
         });
 
+        Route::post('laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
+
         Blade::directive('active', function ($route) {
             return "<?php if(request()->is('$route/*') || request()->is('$route')) echo 'active';?>";
         });
