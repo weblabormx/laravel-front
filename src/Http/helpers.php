@@ -14,3 +14,9 @@ function getThumb($full_name, $prefix)
 
     return $full_name;
 }
+
+function getFront($model, $source = null)
+{
+	$model = config('front.resources_folder').'\\'.$model;
+    return new $model($source);
+}

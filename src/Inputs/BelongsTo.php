@@ -30,8 +30,7 @@ class BelongsTo extends Input
 		}
 
 		$this->model_name = $this->extra;
-		$class = 'App\Front\\'.$this->model_name;
-		$this->relation_front = new $class($this->source);
+		$this->relation_front = getFront($this->model_name, $this->source);
 		$class = $this->relation_front->getModel();
 		$this->title = $this->relation_front->label;
 

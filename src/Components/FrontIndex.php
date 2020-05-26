@@ -12,9 +12,8 @@ class FrontIndex extends Component
 
 	public function __construct($front_class, $column = null, $extra = null, $source = null)
 	{
-		$front_class = '\App\Front\\'.$front_class;
 		$this->source = $source;
-		$this->front_class = new $front_class($this->source);
+		$this->front_class =getFront($front_class, $this->source);
 		$this->show_before = \Auth::user()->can('viewAny', $this->front_class->getModel());
 	}
 

@@ -16,7 +16,7 @@ class Worker
 	{
 		$front = '\App\Front\\'.$front;
 		$this->source = $source;
-		$this->front = new $front($this->source);
+		$this->front = getFront($front, $this->source);
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 

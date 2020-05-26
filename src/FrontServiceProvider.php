@@ -47,9 +47,8 @@ class FrontServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        Route::macro('front', function ($model, $plural = null) {
-            $model = config('front.resources_folder').'\\'.$model;
-            $front = new $model;
+        Route::macro('front', function ($model) {
+            $front = getFront($model);
             $prefix = class_basename($front->base_url);
 
             Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front) 

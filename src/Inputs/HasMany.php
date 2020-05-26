@@ -19,8 +19,7 @@ class HasMany extends Input
 
 	public function __construct($front, $title = null, $column = null, $source = null)
 	{
-		$front = 'App\Front\\'.$front;
-		$this->front = new $front($source);
+		$this->front = getFront($front, $source);
 		$this->column = $column;
 		$this->source = $source;
 		if(!is_null($title)) {
