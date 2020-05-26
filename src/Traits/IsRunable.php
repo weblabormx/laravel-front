@@ -47,7 +47,7 @@ trait IsRunable
         });
     }
 
-    public function makeFrontable($result, $setters)
+    public function makeFrontable($result, $setters, $front)
     {
         // Get page
         $page = (new Page)->setSource('index')->setFields($result);
@@ -56,7 +56,6 @@ trait IsRunable
         }
 
         // Get variables to pass
-        $front = $this->getFront();
         $fields = $this->getFields(compact('front', 'page'));
 
         return view($page->view, $fields);
@@ -65,23 +64,6 @@ trait IsRunable
     /*
      * Controller Internal Functions
      */
-
-    private function getFront()
-    {
-        if(request()->route()==null) {{
-            return;
-        }}
-        $action = request()->route()->getAction();
-        if(!is_array($action) || !isset($action['prefix'])) {
-            return;
-        }
-        $action = explode('/', $action['prefix']);
-        $action = $action[count($action)-1];
-        $action = Str::camel(Str::singular($action));
-        $action = ucfirst($action);
-        $class = 'App\Front\\'.$action;
-        return new $class;
-    }
 
     private function getObject($object)
     {

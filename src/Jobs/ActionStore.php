@@ -69,7 +69,7 @@ class ActionStore
         if($this->isFrontable($result)) {
             $result = $this->makeFrontable($result, [
                 'title' => $action->title,
-            ]);
+            ], $this->front);
         }
 
         // If returns a response so dont do any more
