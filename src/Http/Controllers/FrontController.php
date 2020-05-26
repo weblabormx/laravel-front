@@ -21,9 +21,9 @@ class FrontController extends Controller
 
     private $front;
 
-    public function __construct()
+    public function __construct($front)
 	{
-        $this->front = $this->getFront();
+        $this->front = $front;
     }
 
     /*
@@ -71,10 +71,10 @@ class FrontController extends Controller
         return redirect($front->getBaseUrl());
     }
 
-    public function show()
+    public function show($object)
     {
         // Get object
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
         
         // Validate policy
         $this->authorize('view', $object);
@@ -87,10 +87,10 @@ class FrontController extends Controller
         return view('front::crud.show', $this->getFields(compact('object', 'front')));
     }
 
-    public function edit()
+    public function edit($object)
     {
         // Get object
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
 
         // Validate policy
         $this->authorize('update', $object);
@@ -102,10 +102,10 @@ class FrontController extends Controller
         return view('front::crud.edit', $this->getFields(compact('object', 'front')));
     }
 
-    public function update(Request $request)
+    public function update($object, Request $request)
     {
         // Get object
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
         
         // Validate policy
         $this->authorize('update', $object);
@@ -121,10 +121,10 @@ class FrontController extends Controller
         return back();
     }
 
-    public function destroy()
+    public function destroy($object)
     {
         // Get object
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
 
         // Validate Policy
         $this->authorize('delete', $object);
@@ -144,11 +144,10 @@ class FrontController extends Controller
      * Actions
      */
 
-    public function actionShow() 
+    public function actionShow($object, $action) 
     {
         // Get object
-        $action = $this->getParameter('action');
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
 
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
@@ -164,11 +163,10 @@ class FrontController extends Controller
         return view('front::crud.action', $this->getFields(compact('action', 'front', 'object')));
     }
 
-    public function actionStore(Request $request)
+    public function actionStore($object, $action, Request $request)
     {
         // Get object
-        $action = $this->getParameter('action');
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
 
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
@@ -181,10 +179,9 @@ class FrontController extends Controller
         return back();
     }
 
-    public function indexActionShow() 
+    public function indexActionShow($action) 
     {
         // Front code
-        $action = $this->getParameter('action');
         $front = $this->front->setSource('create');
         $response = $this->run(new ActionShow($front, null, $action, function() use ($action) {
             return $this->indexActionStore($action, request());
@@ -198,10 +195,9 @@ class FrontController extends Controller
         return view('front::crud.action', $this->getFields(compact('action', 'front')));
     }
 
-    public function indexActionStore(Request $request)
+    public function indexActionStore($action, Request $request)
     {
         // Front code
-        $action = $this->getParameter('action');
         $front = $this->front->setSource('create');
         $response = $this->run(new ActionStore($front, null, $action, $request));
         if($this->isResponse($response)) {
@@ -216,11 +212,10 @@ class FrontController extends Controller
      * Massive Edition
      */
 
-    public function massiveEditShow() 
+    public function massiveEditShow($object, $key) 
     {
         // Get object
-        $key = $this->getParameter('key');
-        $object = $this->getObject($this->getParameter());
+        $object = $this->getObject($object);
 
         // Validate Policy
         $this->authorize('update', $object);
@@ -237,10 +232,9 @@ class FrontController extends Controller
         return view('front::crud.massive-edit', $this->getFields($data));
     }
 
-    public function massiveEditStore(Request $request)
+    public function massiveEditStore($object, $key, Request $request)
     {
         // Get object
-        $key = $this->getParameter('key');
         $object = $this->getObject($object);
 
         // Validate Policy
@@ -261,12 +255,12 @@ class FrontController extends Controller
      * More features
      */
 
-    public function lenses(Request $request)
+    public function lenses($lense, Request $request)
     {
         $this->authorize('viewAny', $this->front->getModel());
 
         // Front code
-        $front = $this->front->setSource('index')->getLense($this->getParameter('lense'));
+        $front = $this->front->setSource('index')->getLense($lense);
         $base_url = $front->getBaseUrl();
 
         $response = $this->run(new FrontIndex($front, $base_url));
