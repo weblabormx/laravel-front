@@ -14,7 +14,6 @@ class Worker
 
 	public function __construct($front, $column = null, $extra = null, $source = null)
 	{
-		$front = '\App\Front\\'.$front;
 		$this->source = $source;
 		$this->front = getFront($front, $this->source);
 	}

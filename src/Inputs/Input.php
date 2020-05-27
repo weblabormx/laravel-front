@@ -39,7 +39,7 @@ class Input
 	public static function make($title = null, $column = null, $extra = null) 
 	{
 		if(is_null($column) && !is_null($title) && is_string($title)) {
-			$column = $title;
+			$column = class_basename($title);
 			$column = Str::snake($column);
 		}
 

@@ -120,7 +120,12 @@ abstract class Resource
         }
 
         // Execute filters
-		foreach ($this->getFilters() as $filter) {
+        try {
+            $filters = $this->getFilters();
+        } catch (\Exception $e) {
+            return $query;
+        }
+		foreach ($filters as $filter) {
 			$field = $filter->slug;
 			if(!request()->filled($field)) {
 				continue;
