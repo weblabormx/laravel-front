@@ -46,6 +46,9 @@ class Image extends Input
 	public function getValue($object)
 	{
 		$name = $this->column;
+		if(is_null($object->$name)) {
+			return;
+		}
 		$value = getThumb($object->$name, $this->view_size);
 		return view('front::inputs.image', compact('value'));
 	}
