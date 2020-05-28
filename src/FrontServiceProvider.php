@@ -76,29 +76,29 @@ class FrontServiceProvider extends ServiceProvider
                 Route::get('lenses/{front_lense}', function($front_lense) use ($controller) {
                     return $controller->lenses($front_lense);
                 });
-                Route::get('{front_object}', function($front_object) use ($controller) {
-                    return $controller->show($front_object);
+                Route::get('{front_object}', function() use ($controller) {
+                    return $controller->show($controller->getParameter());
                 });
-                Route::get('{front_object}/edit', function($front_object) use ($controller) {
-                    return $controller->edit($front_object);
+                Route::get('{front_object}/edit', function() use ($controller) {
+                    return $controller->edit($controller->getParameter());
                 });
-                Route::put('{front_object}', function($front_object, Request $request) use ($controller) {
-                    return $controller->update($front_object, $request);
+                Route::put('{front_object}', function(Request $request) use ($controller) {
+                    return $controller->update($controller->getParameter(), $request);
                 });
-                Route::delete('{front_object}', function($front_object) use ($controller) {
-                    return $controller->destroy($front_object);
+                Route::delete('{front_object}', function() use ($controller) {
+                    return $controller->destroy($controller->getParameter());
                 });
-                Route::get('{front_object}/action/{front_action}', function($front_object, $front_action) use ($controller) {
-                    return $controller->actionShow($front_object, $front_action);
+                Route::get('{front_object}/action/{front_action}', function() use ($controller) {
+                    return $controller->actionShow($controller->getParameter(), $controller->getParameter('action'));
                 });
-                Route::post('{front_object}/action/{front_action}', function($front_object, $front_action, Request $request) use ($controller) {
-                    return $controller->actionStore($front_object, $front_action, $request);
+                Route::post('{front_object}/action/{front_action}', function(Request $request) use ($controller) {
+                    return $controller->actionStore($controller->getParameter(), $controller->getParameter('action'), $request);
                 });
-                Route::get('{front_object}/masive_edit/{front_key}', function($front_object, $front_key) use ($controller) {
-                    return $controller->massiveEditShow($front_object, $front_key);
+                Route::get('{front_object}/masive_edit/{front_key}', function() use ($controller) {
+                    return $controller->massiveEditShow($controller->getParameter(), $controller->getParameter('key'));
                 });
-                Route::post('{front_object}/masive_edit/{front_key}', function($front_object, $front_key, Request $request) use ($controller) {
-                    return $controller->massiveEditStore($front_object, $front_key, $request);
+                Route::post('{front_object}/masive_edit/{front_key}', function(Request $request) use ($controller) {
+                    return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
                 });
             });
         });

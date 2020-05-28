@@ -81,7 +81,7 @@ trait IsRunable
         return collect($parameters)->merge($array)->all();
     }
 
-    private function getParameter($name = 'object')
+    public function getParameter($name = 'object')
     {
         return request()->route()->parameters()['front_'.$name];
     }
