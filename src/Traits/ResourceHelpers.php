@@ -16,7 +16,7 @@ trait ResourceHelpers
             $view_title_field = $this->title;
             return $object->$view_title_field;
         }
-        return $this->plural_label;
+        return __($this->label);
     }
 
     public function getPartialIndexHelper($result, $page_name)
