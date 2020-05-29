@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class NumericCard extends Card
 {
     public $view = 'front::cards.numeric';
-    public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage'];
+    public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage', 'background', 'style'];
 
     /*
      * Editable functions
@@ -42,6 +42,15 @@ class NumericCard extends Card
     {
         $name = get_class($this);
         return 'Card:'.$name;
+    }
+
+    public function getStyle()
+    {
+        $style = $this->style ?? '';
+        if(isset($this->background)) {
+            $style .= ' background: '.$this->background;
+        }
+        return $style;
     }
 
     /*
