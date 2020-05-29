@@ -47,59 +47,29 @@ class FrontServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        Route::macro('front', function ($model) {
+        $provider = $this;
+        Route::macro('front', function ($model) use ($provider) {
             $front = getFront($model);
             $prefix = class_basename($front->base_url);
 
-            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front) 
+            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front, $provider) 
             {
                 $controller = new FrontController($front);
+                $provider->generateFrontRoutes($controller);
+                
+            });
+        });
 
-                Route::get('/', function(Request $request) use ($controller) {
-                    return $controller->index();
-                });
-                Route::get('create', function() use ($controller) {
-                    return $controller->create();
-                });
-                Route::post('/', function(Request $request) use ($controller) {
-                    return $controller->store($request);
-                });
-                Route::get('search', function(Request $request) use ($controller) {
-                    return $controller->search($request);
-                });
-                Route::get('action/{front_action}', function($front_action) use ($controller) {
-                    return $controller->indexActionShow($front_action);
-                });
-                Route::post('action/{front_action}', function($front_action, Request $request) use ($controller) {
-                    return $controller->indexActionStore($front_action, $request);
-                });
-                Route::get('lenses/{front_lense}', function($front_lense) use ($controller) {
-                    return $controller->lenses($front_lense);
-                });
-                Route::get('{front_object}', function() use ($controller) {
-                    return $controller->show($controller->getParameter());
-                });
-                Route::get('{front_object}/edit', function() use ($controller) {
-                    return $controller->edit($controller->getParameter());
-                });
-                Route::put('{front_object}', function(Request $request) use ($controller) {
-                    return $controller->update($controller->getParameter(), $request);
-                });
-                Route::delete('{front_object}', function() use ($controller) {
-                    return $controller->destroy($controller->getParameter());
-                });
-                Route::get('{front_object}/action/{front_action}', function() use ($controller) {
-                    return $controller->actionShow($controller->getParameter(), $controller->getParameter('action'));
-                });
-                Route::post('{front_object}/action/{front_action}', function(Request $request) use ($controller) {
-                    return $controller->actionStore($controller->getParameter(), $controller->getParameter('action'), $request);
-                });
-                Route::get('{front_object}/masive_edit/{front_key}', function() use ($controller) {
-                    return $controller->massiveEditShow($controller->getParameter(), $controller->getParameter('key'));
-                });
-                Route::post('{front_object}/masive_edit/{front_key}', function(Request $request) use ($controller) {
-                    return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
-                });
+        Route::macro('lense', function ($model) use ($provider) {
+            $model = 'Lenses\\'.$model;
+            $front = getFront($model);
+            $prefix = class_basename($front->base_url);
+
+            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front, $provider) 
+            {
+                $controller = new FrontController($front);
+                $provider->generateFrontRoutes($controller);
+                
             });
         });
 
@@ -133,6 +103,54 @@ class FrontServiceProvider extends ServiceProvider
         $this->app->make('form')->considerRequest(true);
     }
 
+    public function generateFrontRoutes($controller)
+    {
+        Route::get('/', function(Request $request) use ($controller) {
+            return $controller->index();
+        });
+        Route::get('create', function() use ($controller) {
+            return $controller->create();
+        });
+        Route::post('/', function(Request $request) use ($controller) {
+            return $controller->store($request);
+        });
+        Route::get('search', function(Request $request) use ($controller) {
+            return $controller->search($request);
+        });
+        Route::get('action/{front_action}', function($front_action) use ($controller) {
+            return $controller->indexActionShow($front_action);
+        });
+        Route::post('action/{front_action}', function($front_action, Request $request) use ($controller) {
+            return $controller->indexActionStore($front_action, $request);
+        });
+        Route::get('lenses/{front_lense}', function($front_lense) use ($controller) {
+            return $controller->lenses($front_lense);
+        });
+        Route::get('{front_object}', function() use ($controller) {
+            return $controller->show($controller->getParameter());
+        });
+        Route::get('{front_object}/edit', function() use ($controller) {
+            return $controller->edit($controller->getParameter());
+        });
+        Route::put('{front_object}', function(Request $request) use ($controller) {
+            return $controller->update($controller->getParameter(), $request);
+        });
+        Route::delete('{front_object}', function() use ($controller) {
+            return $controller->destroy($controller->getParameter());
+        });
+        Route::get('{front_object}/action/{front_action}', function() use ($controller) {
+            return $controller->actionShow($controller->getParameter(), $controller->getParameter('action'));
+        });
+        Route::post('{front_object}/action/{front_action}', function(Request $request) use ($controller) {
+            return $controller->actionStore($controller->getParameter(), $controller->getParameter('action'), $request);
+        });
+        Route::get('{front_object}/masive_edit/{front_key}', function() use ($controller) {
+            return $controller->massiveEditShow($controller->getParameter(), $controller->getParameter('key'));
+        });
+        Route::post('{front_object}/masive_edit/{front_key}', function(Request $request) use ($controller) {
+            return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
+        });
+    }
     /**
      * Register the service provider.
      *
