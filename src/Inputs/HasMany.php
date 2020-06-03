@@ -59,24 +59,26 @@ class HasMany extends Input
 			$this->front = $this->front->hideColumns($this->getColumnsToHide());
 		}
 
+		$relation_front = str_replace(config('front.resources_folder').'\\', '', get_class($resource));
+
 		// If any link has been set so add to select by default the relationhip
 		if(!isset($this->create_link_accessed)) {
-			$this->setCreateLink(function($link) use ($resource, $base_url) {
-				return $link.'?'.$base_url.'&relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->getBaseUrl().'/'.$resource->object->getKey();
+			$this->setCreateLink(function($link) use ($resource, $base_url, $relation_front) {
+				return $link.'?'.$base_url.'&relation_front='.$relation_front.'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->getBaseUrl().'/'.$resource->object->getKey();
 			});
 		}
 
 		// The same for edit
 		if(!isset($this->edit_link_accessed)) {
-			$this->setEditLink(function($link) use ($resource) {
-				return $link.'?relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey();;
+			$this->setEditLink(function($link) use ($resource, $relation_front) {
+				return $link.'?relation_front='.$relation_front.'&relation_id='.$resource->object->getKey();;
 			});
 		}
 
 		// The same for show
 		if(!isset($this->show_link_accessed)) {
-			$this->setShowLink(function($link) use ($resource) {
-				return $link.'?relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey();
+			$this->setShowLink(function($link) use ($resource, $relation_front) {
+				return $link.'?relation_front='.$relation_front.'&relation_id='.$resource->object->getKey();
 			});
 		}
 
