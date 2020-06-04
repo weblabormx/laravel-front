@@ -1,4 +1,4 @@
-<div class="card" style="margin-bottom: 20px;">
+<div class="card {{$panel->class}}" style="margin-bottom: 20px; {{$panel->style_width()}}">
     @if(strlen($panel->title) > 0)
         <h6 class="card-header">{{$panel->title}}</h6>
     @endif
