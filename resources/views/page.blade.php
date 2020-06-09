@@ -23,7 +23,7 @@
     @if($page->has_big_card)
         <div class="card card-default">
             <div class="card-header">
-                <b><{{$page->title}}/b>
+                <span>{{$page->title}}</span>
                 @foreach($page->getLinks() as $button)
                     {!! $button->form() !!}
                 @endforeach
