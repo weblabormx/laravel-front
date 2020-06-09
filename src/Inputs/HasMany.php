@@ -99,7 +99,12 @@ class HasMany extends Input
 		}
 
 		// Get results
-		$pagination_name = $this->relationship.'_page';
+		$pagination_name = $this->relationship;
+		if(isset($this->title)) {
+			$pagination_name = Str::slug($this->title, '_');
+		}
+		$pagination_name = $pagination_name.'_page';
+
 		$result = $this->getResults($object);
 		if(get_class($result) != 'Illuminate\Support\Collection') {
 			$result = $result->paginate($this->front->pagination, ['*'], $pagination_name);
