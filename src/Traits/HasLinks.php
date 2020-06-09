@@ -16,8 +16,12 @@ trait HasLinks
         return [];
     }
 
-    public function getLinks($object)
+    public function getLinks($object=null)
     {
+        if(is_null($object)) {
+            return $this->getPageLinks();
+        }
+
         $links = [];
 
         // Show index actions
@@ -65,5 +69,17 @@ trait HasLinks
             $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->getBaseUrl().'/create');
         }
 	    return $links;
+    }
+
+    public function getPageLinks()
+    {
+        $links = [];
+
+        // Show links added manually
+        foreach($this->links() as $link => $text) {
+            $links[] = Button::make($text)->addLink($link);
+        }
+
+        return $links;
     }
 }
