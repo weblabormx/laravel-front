@@ -123,8 +123,8 @@ class FrontServiceProvider extends ServiceProvider
         Route::post('action/{front_action}', function($front_action, Request $request) use ($controller) {
             return $controller->indexActionStore($front_action, $request);
         });
-        Route::get('lenses/{front_lense}', function($front_lense) use ($controller) {
-            return $controller->lenses($front_lense);
+        Route::get('lenses/{front_lense}', function($front_lense, Request $request) use ($controller) {
+            return $controller->lenses($front_lense, $request);
         });
         Route::get('{front_object}', function() use ($controller) {
             return $controller->show($controller->getParameter());

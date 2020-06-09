@@ -59,6 +59,11 @@ trait HasLinks
             $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}");
 	    }
 
+        // Show links to lenses
+        foreach($this->lenses() as $lense) {
+            $links[] = Button::make($lense->label)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}");
+        }
+
         // Show links added manually
         foreach($this->index_links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);

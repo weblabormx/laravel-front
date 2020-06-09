@@ -269,8 +269,8 @@ class FrontController extends Controller
         }
         
         // Show view
-        $objects = $response;
-        return view('front::crud.index', $this->getFields(compact('objects', 'front')));
+        $result = $response;
+        return view('front::crud.index', $this->getFields(compact('result', 'front')));
     }
 
     public function search(Request $request)
