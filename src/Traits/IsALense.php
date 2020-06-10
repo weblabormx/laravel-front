@@ -5,6 +5,7 @@ namespace WeblaborMx\Front\Traits;
 trait IsALense
 {
 	public $lense_slug = null;
+	public $is_a_lense = true;
 
 	public function getLenseSlug()
     {
