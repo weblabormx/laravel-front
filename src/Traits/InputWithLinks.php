@@ -5,6 +5,7 @@ namespace WeblaborMx\Front\Traits;
 use WeblaborMx\Front\Front;
 use WeblaborMx\Front\Texts\Button;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 
 trait InputWithLinks
 {
@@ -46,7 +47,7 @@ trait InputWithLinks
         }
         
         // Add create link
-        if( \Auth::user()->can('create', $this->front->getModel()) && isset($this->create_link)) {
+        if( isset($this->create_link) && Gate::allows('create', $this->front->getModel()) && in_array('create', $front->actions)) {
             $title = Str::singular($this->title) ?? $this->front->label;
         	$links[] = Button::make("<span class='fa fa-plus'></span> ".__('Add')." {$title}")
         		->addLink($this->create_link);

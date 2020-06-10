@@ -5,7 +5,7 @@
     </a>
 </li>
 
-@if( Auth::user()->can('viewAny', App\Page::class) )
+@if( Gate::allows('viewAny', App\Page::class) )
     <li class="nav-item @active(admin/pages)">
         <a href="/admin/pages" class="nav-link">
             <i class="fa fa-file mr-1"></i> Pages

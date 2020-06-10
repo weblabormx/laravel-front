@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\InputWithActions;
 use WeblaborMx\Front\Traits\InputWithLinks;
 use WeblaborMx\Front\Traits\InputRelationship;
+use Illuminate\Support\Facades\Gate;
 
 class HasMany extends Input
 {
@@ -31,7 +32,7 @@ class HasMany extends Input
 		}
 		
 		$this->create_link = $this->front->getBaseUrl().'/create';
-		$this->show_before = \Auth::check() ? \Auth::user()->can('viewAny', $this->front->getModel()) : false;
+		$this->show_before = Gate::allows('viewAny', $this->front->getModel()) && in_array('index', $this->front->actions);
 		$this->masive_edit_link = '';
 	}
 

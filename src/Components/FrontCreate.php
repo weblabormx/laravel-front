@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Components;
 
 use WeblaborMx\Front\Front;
+use Illuminate\Support\Facades\Gate;
 
 class FrontCreate extends Component
 {
@@ -15,7 +16,7 @@ class FrontCreate extends Component
 	{
 		$this->source = $source;
 		$this->front_class = getFront($front_class, $this->source);
-		$this->show_before = \Auth::check() ? \Auth::user()->can('create', $this->front_class->getModel()) : true;
+		$this->show_before = Gate::allows('create', $this->front_class->getModel()) && in_array('create', $this->front_class->actions);
 	}
 
 	public function form()

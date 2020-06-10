@@ -29,6 +29,7 @@ abstract class Resource
     public $pagination = 50;
     public $layout;
     public $functions_values = [];
+    public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
 	public function __construct($source = null)
 	{

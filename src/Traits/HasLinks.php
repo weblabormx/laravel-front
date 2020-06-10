@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Traits;
 
 use WeblaborMx\Front\Texts\Button;
+use Illuminate\Support\Facades\Gate;
 
 trait HasLinks
 {
@@ -35,14 +36,14 @@ trait HasLinks
         }
 
          // Add delete button
-        if( \Auth::user()->can('delete', $object) ) {
+        if( Gate::allows('delete', $object) && in_array('destroy', $this->actions) ) {
             $links[] = Button::make('<i class="fa fa-times pr-2"></i> '.__('Delete'))
                 ->setExtra("data-type='confirm' title='".__('Delete')."' data-info='".__('Do you really want to remove this item?')."' data-button-yes='".__('Yes')."' data-button-no='".__('No')."' data-action='".url($this->getBaseUrl().'/'.$object->getKey())."' data-redirection='".url($this->getBaseUrl())."' data-variables='{ \"_method\": \"delete\", \"_token\": \"".csrf_token()."\" }'")
                 ->setType('btn-danger');
         }
 
         // Add update button
-        if( \Auth::user()->can('update', $object) ) {
+        if( Gate::allows('update', $object) && in_array('edit', $this->actions) ) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
             $links[] = Button::make('<span class="fa fa-edit"></span> '. __('Edit'))->addLink("{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}");
         }
@@ -70,7 +71,7 @@ trait HasLinks
         }
 
         // Show create button
-        if($this->show_create_button_on_index && \Auth::user()->can('create', $this->getModel())) {
+        if($this->show_create_button_on_index && Gate::allows('create', $this->getModel()) && in_array('create', $this->actions)) {
             $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->getBaseUrl().'/create');
         }
 	    return $links;
