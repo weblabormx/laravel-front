@@ -33,6 +33,7 @@ class FrontController extends Controller
     public function index()
     {
         $this->authorize('viewAny', $this->front->getModel());
+        $this->frontAuthorize('index');
 
         // Front code
         $front = $this->front->setSource('index');
@@ -51,6 +52,7 @@ class FrontController extends Controller
     public function create()
 	{
         $this->authorize('create', $this->front->getModel());
+        $this->frontAuthorize('create');
         
         $front = $this->front->setSource('create');
         return view('front::crud.create', $this->getFields(compact('front')));
@@ -59,6 +61,7 @@ class FrontController extends Controller
     public function store(Request $request)
 	{
         $this->authorize('create', $this->front->getModel());
+        $this->frontAuthorize('store');
 
         // Front code
         $front = $this->front->setSource('store');
@@ -78,6 +81,7 @@ class FrontController extends Controller
         
         // Validate policy
         $this->authorize('view', $object);
+        $this->frontAuthorize('show');
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
@@ -94,6 +98,7 @@ class FrontController extends Controller
 
         // Validate policy
         $this->authorize('update', $object);
+        $this->frontAuthorize('edit');
 
         // Front code
         $front = $this->front->setSource('edit')->setObject($object);
@@ -109,6 +114,7 @@ class FrontController extends Controller
         
         // Validate policy
         $this->authorize('update', $object);
+        $this->frontAuthorize('update');
 
         // Front code
         $front = $this->front->setSource('update')->setObject($object);
@@ -128,6 +134,7 @@ class FrontController extends Controller
 
         // Validate Policy
         $this->authorize('delete', $object);
+        $this->frontAuthorize('destroy');
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
@@ -282,6 +289,13 @@ class FrontController extends Controller
         $response = $this->run(new FrontSearch($front, $request));
         if($this->isResponse($response)) {
             return $response;
+        }
+    }
+
+    public function frontAuthorize($method)
+    {
+        if(!in_array($method, $this->front->actions)) {
+            abort(403, 'This action is unauthorized.');
         }
     }
 }
