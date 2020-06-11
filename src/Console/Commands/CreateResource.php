@@ -47,27 +47,29 @@ class CreateResource extends Command
 
         // Create resource
         $file_name = app_path('Front/'.$name.'.php');
-        if(FileModifier::file($file_name)->exists()) {
-            $this->line('Resource already exists.');
-            return;
+        if(!FileModifier::file($file_name)->exists()) {
+            copy($directory.'/resource.php', $file_name);
+
+            FileModifier::file($file_name)
+                ->replace('{name}', $name)
+                ->replace('{model_folder}', config('front.models_folder'))
+                ->replace('{default_base_url}', config('front.default_base_url'))
+                ->replace('{slug}', Str::plural(Str::snake($name)))
+                ->execute();
+
+            $this->line('Resource created: <info>✔</info>');
         }
-        copy($directory.'/resource.php', $file_name);
-
-        FileModifier::file($file_name)
-            ->replace('{name}', $name)
-            ->replace('{model_folder}', config('front.models_folder'))
-            ->replace('{default_base_url}', config('front.default_base_url'))
-            ->replace('{slug}', Str::plural(Str::snake($name)))
-            ->execute();
-
-        $this->line('Resource created: <info>✔</info>');
 
         $all = $this->option('all');
         $model = trim(trim(str_replace('App', '', config('front.models_folder').'/'.$name), '/'), '\\');
         if($all) {
-            \Artisan::call("make:model {$model} -m");
-            $this->line('Model created: <info>✔</info>');
-            $this->line('Migration created: <info>✔</info>');
+            try {
+                \Artisan::call("make:model {$model} -m");
+                $this->line('Model created: <info>✔</info>');
+                $this->line('Migration created: <info>✔</info>');
+            } catch (\Exception $e) {
+                
+            }
             \Artisan::call("make:policy {$name}Policy --model={$model}");
             $this->line('Policy created: <info>✔</info>');
         }
