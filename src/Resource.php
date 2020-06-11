@@ -103,6 +103,12 @@ abstract class Resource
     {
         return $result;
     }
+
+    public function create($data)
+    {
+        $model = $this->getModel();
+        return $model::create($data);
+    }
     
 	/* 
 	 * Hidden functions

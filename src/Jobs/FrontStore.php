@@ -35,8 +35,7 @@ class FrontStore
         $data = $this->front->processDataAfterValidation($data);
 
         // Create the object
-        $model = $this->front->getModel();
-        $object = $model::create($data);
+        $object = $this->front->create($data);
 
         // Call the action to be done after is created
         $this->front->store($object, $this->request);
