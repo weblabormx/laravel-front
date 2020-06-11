@@ -37,11 +37,12 @@ abstract class Resource
             $label = trim(preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', class_basename(get_class($this))));
 			$this->label = $label;
 		}
-        $this->label = __($this->label);
 
         if(!isset($this->plural_label)) {
             $this->plural_label = __(Str::plural($label ?? $this->label));
         }
+        $this->label = __($this->label);
+
 		$this->setSource($source);
         if(!isset($this->view_title)) {
             $this->view_title = $this->title;
