@@ -23,6 +23,6 @@
     
 @endsection
 
-@section('scripts-footer')
+@push('scripts-footer')
     <script type="text/javascript" src="https://weblabormx.github.io/Easy-JS-Library/library/script.js"></script>
-@endsection
+@endpush

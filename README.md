@@ -19,7 +19,7 @@ _Adapt the layout_
 - Add on your layout the code `@yield('after-nav')` as there is where Laravel Front shows the menu
 - Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
 - Add on your layout the code `@yield('sidebar')` as there is where Laravel Front shows the filters on the menu
-- Add on your layout the code `@yield('scripts-footer')` as there is where Laravel Front shows the javascript info
+- Add on your layout the code `@stack('scripts-footer')` as there is where Laravel Front shows the javascript info
 - Add on the layout the next code `@include('flash::message')`, this will show the success and errors messages
 - This package requires of jquery, so please be sure that its called before executing `@yield('scripts-footer')`
 - You can edit anything on the views published on `views/vendor/front` to adapt to your previous desing.
@@ -51,7 +51,7 @@ _Adapt the layout_
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous"></script>
-@yield('scripts-footer')
+@stack('scripts-footer')
 ```
 
 ### Basics

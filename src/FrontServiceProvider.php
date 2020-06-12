@@ -35,6 +35,7 @@ class FrontServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'front');
         $this->registerRoutes();
+        $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider);
         $this->loadInputs();
         
@@ -92,6 +93,16 @@ class FrontServiceProvider extends ServiceProvider
 
         Route::post('laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
 
+        $this->app->make('form')->considerRequest(true);
+    }
+
+    /**
+     * Register blade directives
+     *
+     * @return void
+     */
+    protected function registerBladeDirectives()
+    {
         Blade::directive('active', function ($route) {
             return "<?php if(request()->is('$route/*') || request()->is('$route')) echo 'active';?>";
         });
@@ -100,9 +111,22 @@ class FrontServiceProvider extends ServiceProvider
             return "<?php if(request()->is('$route')) echo 'active';?>";
         });
 
-        $this->app->make('form')->considerRequest(true);
+        Blade::directive('pushonce', function ($expression) {
+            $var = '$__env->{"__pushonce_" . md5(__FILE__ . ":" . __LINE__)}';
+            return "<?php if(!isset({$var})): {$var} = true; \$__env->startPush({$expression}); ?>";
+        });
+
+        Blade::directive('endpushonce', function ($expression) {
+            return '<?php $__env->stopPush(); endif; ?>';
+        });
+
     }
 
+    /**
+     * Generate Front Routes
+     *
+     * @return void
+     */
     public function generateFrontRoutes($controller)
     {
         Route::get('/', function(Request $request) use ($controller) {
@@ -151,6 +175,7 @@ class FrontServiceProvider extends ServiceProvider
             return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
         });
     }
+
     /**
      * Register the service provider.
      *

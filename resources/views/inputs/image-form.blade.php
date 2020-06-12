@@ -10,12 +10,10 @@
 	</div>
 </div>
 
-@section('scripts-footer')
-	@parent
+@pushonce('scripts-footer')
   	<script type="text/javascript">
 		function executeFile(id) {
-			console.log('#'+id);
 		    $('#'+id).click();
 		};
   	</script>
-@endsection
+@endpushonce
