@@ -31,7 +31,7 @@
     </h4>
 
     @include ('front::components.cards', ['cards' => $front->cards()])
-    @include ('front::crud.partial-index')
+    @include ($front->getCurrentView())
 
 @endsection
 

@@ -1,6 +1,7 @@
 @if($result->count() > 0)
     @php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null); @endphp
     <div class="card" @isset($style) style="{{$style}}" @endisset>
+        {{ $helper->views() }}
         {{ $helper->links() }}
         <div class="card-datatable table-responsive">
             <table class="table table-striped table-bordered mb-0">

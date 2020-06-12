@@ -91,4 +91,43 @@ class PartialIndex
         $this->headers = $headers;
         $this->rows = $rows;
     }
+
+    public function views()
+    {
+        if(count($this->front->index_views) <= 1) {
+            return;
+        }
+
+        // Add url and name on views
+        $views = collect($this->front->index_views)->map(function($item, $key) {
+            $data = $item;
+            $data['name'] = $key;
+            $data['url'] = $this->getViewUrl($data['name']);
+            return $data;
+        })->values();
+
+        // Get current view
+        $current_view = $this->front->getCurrentViewName();
+
+        // Set is active
+        $views = $views->map(function($item) use ($current_view) {
+            $item['is_active'] = $current_view==$item['name'];
+            return $item;
+        });
+
+        return view('front::elements.views_buttons', compact('views'));
+    }
+
+    private function getViewUrl($name)
+    {
+        $url = request()->fullUrl();
+        $query = parse_url($url, PHP_URL_QUERY);
+        // Returns a string if the URL has parameters or NULL if not
+        if ($query) {
+            $url .= '&front_view='.$name;
+        } else {
+            $url .= '?front_view='.$name;
+        }
+        return $url;
+    }
 }

@@ -30,6 +30,13 @@ abstract class Resource
     public $layout;
     public $functions_values = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+    public $index_views = [
+        'normal' => [
+            'icon' => 'fa fa-th-list',
+            'title' => 'Normal',
+            'view' => 'front::crud.partial-index'
+        ]
+    ];
 
 	public function __construct($source = null)
 	{
@@ -357,6 +364,20 @@ abstract class Resource
     {
         $this->plural_label = $plural_label;
         return $this;
+    }
+
+    public function getCurrentViewName()
+    {
+        return request()->front_view ?? collect($this->index_views)->keys()->first();
+    }
+
+    public function getCurrentView()
+    {
+        $current_view_name = $this->getCurrentViewName();
+        $view = collect($this->index_views)->filter(function($item, $key) use ($current_view_name) {
+            return $key==$current_view_name;
+        })->first();
+        return $view['view'];
     }
 
     /* 
