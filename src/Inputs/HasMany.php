@@ -109,6 +109,7 @@ class HasMany extends Input
 		$result = $this->getResults($object);
 		if(get_class($result) != 'Illuminate\Support\Collection') {
 			$result = $result->paginate($this->front->pagination, ['*'], $pagination_name);
+        	$result = $this->front->indexResult($result);
 		}
 
 		$front = $this->front;
