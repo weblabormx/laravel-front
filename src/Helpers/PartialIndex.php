@@ -59,6 +59,7 @@ class PartialIndex
             $columns = $this->front->indexFields()->map(function($column) use ($object) {
                 $input = [];
                 $input['class'] = $column->data_classes;
+                $input['title'] = $column->title;
                 $input['value'] = $column->getValueProcessed($object);
                 return (object) $input;
             })->values();
