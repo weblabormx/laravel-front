@@ -30,13 +30,7 @@ abstract class Resource
     public $layout;
     public $functions_values = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
-    public $index_views = [
-        'normal' => [
-            'icon' => 'fa fa-th-list',
-            'title' => 'Normal',
-            'view' => 'front::crud.partial-index'
-        ]
-    ];
+    public $index_views = [];
 
 	public function __construct($source = null)
 	{
@@ -56,6 +50,15 @@ abstract class Resource
         }
         if(!isset($this->search_title)) {
             $this->search_title = $this->title;
+        }
+        if(!isset($this->index_views) || (is_array($this->index_views) && count($this->index_views)==0)) {
+            $this->index_views = [
+                'normal' => [
+                    'icon' => 'fa fa-th-list',
+                    'title' => 'Normal',
+                    'view' => 'front::crud.partial-index'
+                ]
+            ];
         }
         $this->load();
 	}
@@ -368,7 +371,9 @@ abstract class Resource
 
     public function getCurrentViewName()
     {
-        return request()->front_view ?? collect($this->index_views)->keys()->first();
+        $name = Str::snake(class_basename(get_class($this)));
+        $name .= '_view';
+        return request()->$name ?? collect($this->index_views)->keys()->first();
     }
 
     public function getCurrentView()

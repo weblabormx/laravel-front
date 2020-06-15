@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Helpers;
 
+use Illuminate\Support\Str;
+
 class PartialIndex
 {
     private $front;
@@ -119,18 +121,21 @@ class PartialIndex
         return view('front::elements.views_buttons', compact('views'));
     }
 
-    private function getViewUrl($name)
+    private function getViewUrl($view)
     {
+        $name = Str::snake(class_basename(get_class($this->front)));
+        $name .= '_view';
+
         $url = request()->fullUrl();
-        $url = preg_replace('~(\?|&)front_view=[^&]*~', '$1', $url);
+        $url = preg_replace('~(\?|&)'.$name.'=[^&]*~', '$1', $url);
         $url = str_replace('?&', '?', $url);
 
         $query = parse_url($url, PHP_URL_QUERY);
         // Returns a string if the URL has parameters or NULL if not
         if ($query) {
-            $url .= '&front_view='.$name;
+            $url .= '&'.$name.'='.$view;
         } else {
-            $url .= '?front_view='.$name;
+            $url .= '?'.$name.'='.$view;
         }
         return $url;
     }

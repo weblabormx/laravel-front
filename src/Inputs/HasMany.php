@@ -124,6 +124,7 @@ class HasMany extends Input
 		// Set lense
 		if(isset($this->lense)) {
    			$this->front = $this->front->getLense($this->lense);
+   			$this->index_view = $this->front->getCurrentView();
    		}
 
 		// Get objects

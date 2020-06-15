@@ -31,6 +31,20 @@ trait HasInputs
     	if(isset($this->functions_values[$fields_function])) {
     		return $this->functions_values[$fields_function];
     	}
+    	// Add priority to this
+    	if($fields_function!='fields') {
+    		return $this->$fields_function();	
+    	}
+    	// Dynamic fields name
+    	$view = $this->getCurrentViewName();
+    	if($view!='normal') {
+    		$function = 'fieldsOn'.ucfirst(Str::camel($view)).'View';
+    		$exists = method_exists($this, $function);
+    		if($exists) {
+    			return $this->$function();
+    		}
+    	}
+	    	
     	return $this->$fields_function();
     }
 
