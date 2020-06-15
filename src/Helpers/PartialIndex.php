@@ -122,6 +122,9 @@ class PartialIndex
     private function getViewUrl($name)
     {
         $url = request()->fullUrl();
+        $url = preg_replace('~(\?|&)front_view=[^&]*~', '$1', $url);
+        $url = str_replace('?&', '?', $url);
+
         $query = parse_url($url, PHP_URL_QUERY);
         // Returns a string if the URL has parameters or NULL if not
         if ($query) {
