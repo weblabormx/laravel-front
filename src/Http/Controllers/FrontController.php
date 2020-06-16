@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\IsRunable;
 use WeblaborMx\Front\Jobs\FrontStore;
+use WeblaborMx\Front\Jobs\FrontShow;
 use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Jobs\FrontUpdate;
 use WeblaborMx\Front\Jobs\FrontDestroy;
@@ -85,9 +86,13 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
-        $front->show($object);
+        $response = $this->run(new FrontShow($object, $front));
+        if($this->isResponse($response)) {
+            return $response;
+        }
 
         // Show view
+        $object = $response;
         return view('front::crud.show', $this->getFields(compact('object', 'front')));
     }
 
