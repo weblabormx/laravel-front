@@ -133,6 +133,7 @@ trait HasBreadcrumbs
         $object = null;
         if(request()->filled('relation_front')) {
             $front = request()->relation_front;
+            $front = str_replace('.', '\\', $front);
             $front = getFront($front, $this->source);
             $object = $front->getModel();
             $object = $object::find(request()->relation_id);

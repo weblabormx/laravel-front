@@ -60,7 +60,7 @@ class HasMany extends Input
 			$this->front = $this->front->hideColumns($this->getColumnsToHide());
 		}
 
-		$relation_front = str_replace(config('front.resources_folder').'\\', '', get_class($resource));
+		$relation_front = str_replace('\\', '.', str_replace(config('front.resources_folder').'\\', '', get_class($resource)));
 
 		// If any link has been set so add to select by default the relationhip
 		if(!isset($this->create_link_accessed)) {
