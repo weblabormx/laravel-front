@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Jobs;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class FrontIndex
 {
@@ -43,7 +44,7 @@ class FrontIndex
         }
 
         // If is normal query paginate results
-        $result = $objects->paginate($this->front->pagination);
+        $result = $this->paginate($objects);
 
         // If the result needs to be modified just modify it
         $result = $this->front->indexResult($result);
@@ -84,5 +85,35 @@ class FrontIndex
             }
         }
         return $result;
+    }
+
+    private function paginate($objects)
+    {
+        // Get cache time to cache
+        $cache = $this->front->cacheFor();
+
+        // If not time set so paginate directly
+        if($cache==false) {
+            return $objects->paginate($this->front->pagination);
+        }
+
+        // Get cache key
+        $cache_key = $this->getCacheKey($objects);
+
+        // Make the pagination
+        return Cache::remember($cache_key, $cache, function () use ($objects) {
+            return $objects->paginate($this->front->pagination);
+        });
+    }
+
+    private function getCacheKey($objects)
+    {
+        $request = collect(request()->all())->whereNotNull()->map(function($item, $key) {
+            return $key.'-'.$item;
+        })->implode(',');
+        $key = 'front:'.$request.':';
+        $key .= $objects->toSql();
+        $key = hash('sha256', $key);
+        return $key;
     }
 }

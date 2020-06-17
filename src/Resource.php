@@ -120,6 +120,11 @@ abstract class Resource
         $model = $this->getModel();
         return $model::create($data);
     }
+
+    public function cacheFor()
+    {
+        return false;
+    }
     
 	/* 
 	 * Hidden functions
