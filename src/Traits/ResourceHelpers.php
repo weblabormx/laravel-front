@@ -19,8 +19,8 @@ trait ResourceHelpers
         return __($this->label);
     }
 
-    public function getPartialIndexHelper($result, $page_name)
+    public function getPartialIndexHelper($result, $page_name, $show_filters)
     {
-        return new PartialIndex($this, $result, $page_name);
+        return new PartialIndex($this, $result, $page_name, $show_filters);
     }
 }

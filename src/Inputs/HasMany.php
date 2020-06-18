@@ -17,6 +17,7 @@ class HasMany extends Input
 	public $show_on_create = false;
 	public $show_on_index = false;
 	public $index_view = 'front::crud.partial-index';
+	public $show_filters = false;
 
 	public function __construct($front, $title = null, $column = null, $source = null)
 	{
@@ -115,8 +116,9 @@ class HasMany extends Input
 		$front = $this->front;
 		$edit_link = $this->edit_link;
 		$show_link = $this->show_link;
+		$show_filters = $this->show_filters;
 
-		return view($this->index_view, compact('result', 'front', 'pagination_name', 'edit_link', 'show_link'))->render();
+		return view($this->index_view, compact('result', 'front', 'pagination_name', 'edit_link', 'show_link', 'show_filters'))->render();
 	}
 
 	public function getResults($object)
@@ -150,6 +152,12 @@ class HasMany extends Input
 	public function setIndexView($value)
 	{
 		$this->index_view = $value;
+		return $this;
+	}
+
+	public function showFilters()
+	{
+		$this->show_filters = true;
 		return $this;
 	}
 

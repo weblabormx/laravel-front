@@ -11,12 +11,14 @@ class PartialIndex
     private $page_name;
     private $headers;
     private $rows;
+    private $show_filters;
 
-	public function __construct($front, $result, $page_name = 'page')
+	public function __construct($front, $result, $page_name = 'page', $show_filters = false)
     {
         $this->front          = $front;
         $this->result         = $result;
         $this->page_name      = $page_name;
+        $this->show_filters   = $show_filters;
         
         $this->getUnusedColumns();
         return $this;
@@ -39,6 +41,16 @@ class PartialIndex
     public function rows()
     {
         return $this->rows;
+    }
+
+    public function filters()
+    {
+        // Show if set by relationship
+        if(!$this->show_filters || count($this->front->filters()) <= 0) {
+            return;
+        }
+        $front = $this->front;
+        return view('front::elements.relation_filters', compact('front'));
     }
 
     public function calcuateHeaders()
