@@ -1,8 +1,11 @@
-@if($result->count() > 0)
-    @php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null); @endphp
-    <div class="card" @isset($style) style="{{$style}}" @endisset>
-        {{ $helper->views() }}
-        {{ $helper->links() }}
+@php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null); @endphp
+<div class="card" @isset($style) style="{{$style}}" @endisset>
+    {{ $helper->views() }}
+    {{ $helper->totals() }}
+    {{ $helper->filters() }}
+    {{ $helper->links() }}
+    
+    @if($result->count() > 0)
         <div class="card-datatable table-responsive">
             <table class="table table-striped table-bordered mb-0">
                 <thead>
@@ -27,13 +30,11 @@
                 </tbody>
             </table>
         </div>
-        {{ $helper->links() }}
-    </div>
-@else
-    <div class="card" @isset($style) style="{{$style}}" @endisset>
+    @else
         <div class="card-body">
             {{ __('No data to show') }}
         </div>
-    </div>
-@endif
-    
+    @endif
+        
+    {{ $helper->links() }}
+</div>

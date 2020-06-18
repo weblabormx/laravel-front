@@ -55,6 +55,12 @@ class PartialIndex
         return view('front::elements.relation_filters', compact('front'));
     }
 
+    public function totals()
+    {
+        $result = $this->result;
+        return view('front::elements.total_results', compact('result'));
+    }
+
     public function calcuateHeaders()
     {
         $this->front->setObject($this->result->first());
