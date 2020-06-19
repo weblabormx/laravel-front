@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Traits;
 
 use WeblaborMx\Front\Helpers\PartialIndex;
+use WeblaborMx\Front\Helpers\Actions;
 
 trait ResourceHelpers
 {
@@ -22,5 +23,10 @@ trait ResourceHelpers
     public function getPartialIndexHelper($result, $page_name, $show_filters)
     {
         return new PartialIndex($this, $result, $page_name, $show_filters);
+    }
+
+    public function getActionsHelper($object, $base_url, $edit_link, $show_link)
+    {
+        return new Actions($this, $object, $base_url, $edit_link, $show_link);
     }
 }
