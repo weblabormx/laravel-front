@@ -20,7 +20,7 @@ class PartialIndex
         $this->page_name      = $page_name;
         $this->show_filters   = $show_filters;
         
-        if($this->result->total()>0) {
+        if($this->result->count() > 0) {
             $this->getUnusedColumns();
         }
         return $this;

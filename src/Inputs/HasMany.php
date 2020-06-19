@@ -110,8 +110,8 @@ class HasMany extends Input
 		$result = $this->getResults($object);
 		if(!Str::endsWith(get_class($result), 'Collection')) {
 			$result = $result->paginate($this->front->pagination, ['*'], $pagination_name);
-        	$result = $this->front->indexResult($result);
 		}
+		$result = $this->front->indexResult($result);
 
 		$front = $this->front;
 		$edit_link = $this->edit_link;
@@ -131,7 +131,7 @@ class HasMany extends Input
 
 		// Get objects
 		$relationship = $this->relationship;
-		$objects = $object->$relationship()->with($this->with);;
+		$objects = $object->$relationship()->with($this->with);
 
 		// Force query if set
 		if(isset($this->force_query)) {
