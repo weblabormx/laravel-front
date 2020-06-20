@@ -36,6 +36,15 @@ trait HasInputs
     		return $this->$fields_function();	
     	}
     	// Dynamic fields name
+    	if(method_exists($this, 'getCurrentViewName') && $this->getFieldsOnView()!=false) {
+    		return $this->getFieldsOnView();
+    	}
+	    	
+    	return $this->$fields_function();
+    }
+
+    private function getFieldsOnView()
+    {
     	$view = $this->getCurrentViewName();
     	if($view!='normal') {
     		$function = 'fieldsOn'.ucfirst(Str::camel($view)).'View';
@@ -44,8 +53,7 @@ trait HasInputs
     			return $this->$function();
     		}
     	}
-	    	
-    	return $this->$fields_function();
+    	return false;
     }
 
     // This need to be improved

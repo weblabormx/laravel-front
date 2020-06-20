@@ -32,7 +32,7 @@
                 </table>
             </div>
         @else
-            <div class="card-body">
+            <div class="text-center">
                 {{ __('No data to show') }}
             </div>
         @endif
