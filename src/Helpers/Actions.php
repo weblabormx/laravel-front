@@ -17,7 +17,7 @@ class Actions
     {
         $this->front     = $front;
         $this->object    = $object;
-        $this->edit_link = $edit_link;
+        $this->edit_link = $edit_link ?? '{key}/edit';
         $this->show_link = $show_link;
         $this->base_url  = $base_url;
         return $this;
