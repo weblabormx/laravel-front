@@ -1,3 +1,3 @@
 <div class="total">
-    {{$result->count()}} {{__('Results')}}
+    {{$total}} {{__('Results')}}
 </div>

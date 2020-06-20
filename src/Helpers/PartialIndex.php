@@ -57,8 +57,12 @@ class PartialIndex
 
     public function totals()
     {
-        $result = $this->result;
-        return view('front::elements.total_results', compact('result'));
+        if(Str::endsWith(get_class($this->result), 'Collection')) {
+            $total = $this->result->count();
+        } else {
+            $total = $this->result->total();
+        }
+        return view('front::elements.total_results', compact('total'));
     }
 
     public function calcuateHeaders()
