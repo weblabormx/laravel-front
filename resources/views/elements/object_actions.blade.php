@@ -10,6 +10,6 @@
     @endif
     <!-- Remove button -->
     @if( $helper->canRemove() )
-        <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($link)}}" data-redirection="{{url($helper->removeUrl())}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default p-0" href="#"><i class="fa fa-times"></i></a>
+        <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($helper->removeUrl())}}" data-redirection="{{url($base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default p-0" href="#"><i class="fa fa-times"></i></a>
     @endif
 </td>
