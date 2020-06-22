@@ -111,6 +111,14 @@ class FrontServiceProvider extends ServiceProvider
             return "<?php if(request()->is('$route')) echo 'active';?>";
         });
 
+        Blade::directive('var_active', function ($route) {
+            return "<?php if(request()->is($route.'/*') || request()->is($route)) echo 'active';?>";
+        });
+
+        Blade::directive('var_active_exact', function ($route) {
+            return "<?php if(request()->is($route)) echo 'active';?>";
+        });
+
         Blade::directive('pushonce', function ($expression) {
             $var = '$__env->{"__pushonce_" . md5(__FILE__ . ":" . __LINE__)}';
             return "<?php if(!isset({$var})): {$var} = true; \$__env->startPush({$expression}); ?>";
