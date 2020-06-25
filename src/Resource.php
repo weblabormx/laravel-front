@@ -60,6 +60,10 @@ abstract class Resource
                 ]
             ];
         }
+        if(isset($this->lense_title)) {
+            $this->label = $this->label.' '.$this->lense_title;
+            $this->plural_label = $this->plural_label.' '.$this->lense_title;
+        }
         $this->load();
 	}
 

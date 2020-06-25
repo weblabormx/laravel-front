@@ -61,15 +61,19 @@ trait HasLinks
 	    }
 
         // Show links to lenses
-        if($this->is_a_lense) {
-            $links[] = Button::make(__('Normal View'))->addLink($this->getBaseUrl());
+        if($this->is_a_lense && isset($this->normal_front)) {
+            $icon = isset($this->normal_front->icon) ? '<i class="'.$this->normal_front->icon.'"></i> ': '';
+            $title = $this->normal_front->lense_title ?? __('Normal View');
+            $text = $icon.$title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl());
         }
         foreach($this->lenses() as $lense) {
             if($this->is_a_lense && $lense->getLenseSlug()==$this->getLenseSlug()) {
                 continue;
             }
             $icon = isset($lense->icon) ? '<i class="'.$lense->icon.'"></i> ': '';
-            $text = $icon.$lense->label;
+            $title = $lense->lense_title;
+            $text = $icon.$title;
             $links[] = Button::make($text)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}");
         }
 

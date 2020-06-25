@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 trait HasLenses
 {
+    private $normal_front;
+
 	public function lenses()
     {
         return [];
@@ -22,7 +24,13 @@ trait HasLenses
     	return collect($this->lenses())->filter(function($item) use ($slug) {
     		return $item->getLenseSlug() == $slug;
     	})->map(function($item) {
-    		return $item->addData($this->data)->setModel($this->getModel())->setSource($this->source);
+    		return $item->addData($this->data)->setModel($this->getModel())->setSource($this->source)->setNormalFront($this);
     	})->first();
+    }
+
+    public function setNormalFront($front)
+    {
+        $this->normal_front = $front;
+        return $this;
     }
 }
