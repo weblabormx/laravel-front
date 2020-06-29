@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 
 trait HasLinks
 {
+    public $create_link = '{base_url}/create';
+
 	public function index_links()
     {
         return [];
@@ -84,7 +86,9 @@ trait HasLinks
 
         // Show create button
         if($this->show_create_button_on_index && Gate::allows('create', $this->getModel()) && in_array('create', $this->actions)) {
-            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($this->getBaseUrl().'/create');
+            $url = $this->create_link;
+            $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
+            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($url);
         }
 	    return $links;
     }
