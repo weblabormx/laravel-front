@@ -130,6 +130,11 @@ abstract class Resource
         return false;
     }
     
+    public function createRedirectionUrl()
+    {
+        return $this->getBaseUrl();
+    }
+
 	/* 
 	 * Hidden functions
 	 */
