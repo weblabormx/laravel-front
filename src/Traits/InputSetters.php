@@ -121,6 +121,12 @@ trait InputSetters
 		return $this;
 	}
 
+	public function placeholder($placeholder)
+	{
+		$this->attributes['placeholder'] = $placeholder;
+		return $this;
+	}
+
 	public function default($value, $force = false)
 	{
 		if(!is_string($value) && is_callable($value)) {
