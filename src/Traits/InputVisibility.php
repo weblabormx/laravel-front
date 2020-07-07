@@ -107,7 +107,7 @@ trait InputVisibility
 
 	public function showOnHere()
 	{
-		$var = $this->source;
+		$var = $this->source ?? 'index';
 		$var = $var=='update' ? 'edit' : $var;
 		$var = $var=='store' ? 'create' : $var;
 		$var = 'show_on_'.$var;
