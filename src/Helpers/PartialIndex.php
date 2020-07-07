@@ -65,7 +65,7 @@ class PartialIndex
         return view('front::elements.total_results', compact('total'));
     }
 
-    public function calcuateHeaders()
+    public function calculateHeaders()
     {
         $this->front->setObject($this->result->first());
         $result = collect([]);
@@ -95,7 +95,7 @@ class PartialIndex
 
     private function getUnusedColumns()
     {
-        $headers = $this->calcuateHeaders();
+        $headers = $this->calculateHeaders();
         $rows = $this->calcuateRows();
         
         $unused_columns = $rows->pluck('columns')->map(function($column) {
