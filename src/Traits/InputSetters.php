@@ -127,6 +127,12 @@ trait InputSetters
 		return $this;
 	}
 
+	public function addAttribute($key, $value)
+	{
+		$this->attributes[$key] = $value;
+		return $this;
+	}
+
 	public function default($value, $force = false)
 	{
 		if(!is_string($value) && is_callable($value)) {
