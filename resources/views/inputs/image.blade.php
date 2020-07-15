@@ -1,3 +1,5 @@
-@if(!is_null($value))
-	<img src="{{$value}}" style="max-width:100%" />
+@if(!is_null($thumb))
+	<a href="{{$original}}" data-type="popup" data-popup-type="image">
+		<img src="{{$thumb}}" style="max-width:100%" />	
+	</a>
 @endif

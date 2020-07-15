@@ -49,8 +49,9 @@ class Image extends Input
 		if($value=='--') {
 			return;
 		}
-		$value = getThumb($value, $this->view_size);
-		return view('front::inputs.image', compact('value'));
+		$original = $value;
+		$thumb = getThumb($value, $this->view_size);
+		return view('front::inputs.image', compact('original', 'thumb'));
 	}
 
 	/*
