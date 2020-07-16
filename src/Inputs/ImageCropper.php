@@ -15,7 +15,7 @@ class ImageCropper extends Input
 		$this->attributes['data-image'] = $id;
 		$this->attributes['data-width'] = $this->width;
 		$this->attributes['data-ratio'] = $this->ratio;
-		return '<img src="'.$this->image.'" id="'.$id.'" />'.\Form::hidden($this->column, $this->default_value, $this->attributes);
+		return '<img src="'.$this->image.'" id="'.$id.'" style="max-width: none !important;" />'.\Form::hidden($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function setImage($image)
