@@ -47,7 +47,7 @@ class FrontIndex
         $result = $this->paginate($objects);
 
         // If the result needs to be modified just modify it
-        $result = $this->front->indexResult($result);
+        $result = $this->result($result);
 
         // If filter has different default values check who is not empty
         $result = $this->multipleRedirects($result);
@@ -98,7 +98,7 @@ class FrontIndex
         }
 
         // Get cache key
-        $cache_key = $this->getCacheKey($objects);
+        $cache_key = $this->getPaginateCacheKey($objects);
 
         // Make the pagination
         return Cache::remember($cache_key, $cache, function () use ($objects) {
@@ -106,13 +106,40 @@ class FrontIndex
         });
     }
 
-    private function getCacheKey($objects)
+    private function getPaginateCacheKey($objects)
     {
         $request = collect(request()->all())->whereNotNull()->map(function($item, $key) {
             return $key.'-'.$item;
         })->implode(',');
         $key = 'front:'.$request.':';
         $key .= $objects->toSql();
+        $key = hash('sha256', $key);
+        return $key;
+    }
+
+    private function result($result)
+    {
+        // Get cache time to cache
+        $cache = $this->front->cacheFor();
+
+        // If not time set so paginate directly
+        if($cache==false) {
+            return $this->front->indexResult($result);
+        }
+
+        // Get cache key
+        $cache_key = $this->getResultCacheKey($result);
+
+        // Make the pagination
+        return Cache::remember($cache_key, $cache, function () use ($result) {
+            return $this->front->indexResult($result);
+        });
+    }
+
+    private function getResultCacheKey($result)
+    {
+        $key_name = $result->first()->getKeyName();
+        $key = get_class($this).':result:'.$result->pluck($key_name)->implode('|');
         $key = hash('sha256', $key);
         return $key;
     }
