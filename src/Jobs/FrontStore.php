@@ -45,7 +45,10 @@ class FrontStore
         
         // Redirect if there was a redirect value on the form
         if($this->request->filled('redirect_url')) {
-            return redirect($this->request->redirect_url);
+            $url = $this->request->redirect_url;
+            $url = str_replace('{base_url}', $this->front->getBaseUrl(), $url);
+            $url = str_replace('{key}', $object->getKey(), $url);
+            return redirect($url);
         }
 
         // Return the created object
