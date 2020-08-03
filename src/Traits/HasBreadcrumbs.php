@@ -62,7 +62,7 @@ trait HasBreadcrumbs
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
             if($front->show_title) {
                 $title = $front->title;
-                $breadcrumbs[] = ['title' => $object->object->$title, 'url' => $front->getBaseUrl().'/'.$object->getKey()];
+                $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getBaseUrl().'/'.$object->getKey()];
             }
             $breadcrumbs[] = ['title' => __('Edit').' '.$data['massive']->title, 'active' => true];
             return $breadcrumbs;
