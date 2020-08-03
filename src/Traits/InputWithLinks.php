@@ -47,7 +47,7 @@ trait InputWithLinks
         }
         
         // Add create link
-        if( isset($this->create_link) && Gate::allows('create', $front->getModel()) && in_array('create', $front->actions)) {
+        if( isset($this->create_link) && Gate::allows('create', $this->front->getModel()) && in_array('create', $this->front->actions)) {
             $title = Str::singular($this->title) ?? $this->front->label;
         	$links[] = Button::make("<span class='fa fa-plus'></span> ".__('Add')." {$title}")
         		->addLink($this->create_link);
