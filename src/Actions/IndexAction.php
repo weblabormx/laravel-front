@@ -91,6 +91,12 @@ class IndexAction
         return $this;
     }
 
+    public function showButton($show = true)
+    {
+        $this->show_button = $show;
+        return $this;
+    }
+
     public function getStyle()
     {
         if(isset($this->color)) {
