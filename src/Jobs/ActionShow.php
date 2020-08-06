@@ -62,8 +62,16 @@ class ActionShow
             return $result;
         }
 
-        // Detect if dont have fields process inmediately
-        if(is_array($result) && count($result)==0) {
+        // If doesnt have fields return action
+        if(!is_array($result)) {
+            return $action;
+        }
+
+        // Detect if dont have fields or if are just hidden inputs process inmediately
+        $visible_fields = collect($result)->filter(function($item) {
+            return get_class($item)!='WeblaborMx\Front\Inputs\Hidden';
+        });
+        if($visible_fields->count() == 0) {
             $function = $this->store;
             return $function();
         }
