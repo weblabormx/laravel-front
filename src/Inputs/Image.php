@@ -166,7 +166,6 @@ class Image extends Input
 		if(!$this->save) {
 			return $data;
 		}
-		dd('Entra');
 		$file = $data[$this->column];
 
 		// Remove old files
