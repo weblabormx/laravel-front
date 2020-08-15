@@ -55,14 +55,24 @@ class ActionStore
             $action = $action->setObject($this->object);
         }
 
+        // Get data to be saved
+        $data = $action->processData($this->request->all());
+
         // Validate object
-        $action->validate();
+        $action->validate($data);
+
+        // Process data after validation
+        $data = $action->processDataAfterValidation($data);
+
+        // Get request
+        $request = $this->request;
+        $request = $request->replace($data);
 
         // Execute action
         if(isset($this->object)) {
-            $result = $action->handle($this->object, $this->request);
+            $result = $action->handle($this->object, $request);
         } else {
-            $result = $action->handle($this->request);
+            $result = $action->handle($request);
         }
 
         // If is front fields

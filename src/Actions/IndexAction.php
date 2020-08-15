@@ -51,10 +51,9 @@ class IndexAction
         return [];
     }
 
-    public function validate()
+    public function validate($data)
     {
         $fields = collect($this->fields());
-        $data = request()->all();
         $this->makeValidation($fields, $data);
         return $this;
     }
@@ -88,6 +87,26 @@ class IndexAction
     public function setObject($object)
     {
         $this->object = $object;
+        return $this;
+    }   
+
+    public function setTitle($title)
+    {
+        if(is_null($title)) {
+            return $this;
+        }
+        $this->title = $title;
+        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
+        return $this;
+    }
+
+    public function setIcon($icon)
+    {
+        if(is_null($icon)) {
+            return $this;
+        }
+        $this->icon = $icon;
+        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
         return $this;
     }
 

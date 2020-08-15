@@ -16,6 +16,7 @@ class Image extends Input
 	public $file_name;
 	public $url_returned;
 	public $extension;
+	public $save = true;
 	public $thumbnails = [
 		['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
 		['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
@@ -133,6 +134,12 @@ class Image extends Input
 		return $this;
 	}
 
+	public function noSave()
+	{
+		$this->save = false;
+		return $this;
+	}
+
 	/*
 	 * Processing
 	 */
@@ -156,6 +163,10 @@ class Image extends Input
 		if(!isset($data[$this->column])) {
 			return $data;
 		}
+		if(!$this->save) {
+			return $data;
+		}
+		dd('Entra');
 		$file = $data[$this->column];
 
 		// Remove old files

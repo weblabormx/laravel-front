@@ -190,4 +190,50 @@ trait HasInputs
 		$this->fields_function = $fields_function;
 		return $this;
 	}
+
+	public function processData($inputs)
+    {
+        // Remove from the inputs fields marked as null
+        if(isset($this->ignore_if_null)) {
+        	foreach($this->ignore_if_null as $input) {
+	    		if(is_null($inputs[$input])) {
+	    			unset($inputs[$input]);
+	    		}
+	    	}
+        }
+
+        // Remove redirect url helper
+        unset($inputs['redirect_url']);
+
+        // Get fields processing
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
+
+        // Remove autocomplete helper input
+        $autocomplete_fields = $fields->filter(function($item) {
+            return isset($item->searchable) && $item->searchable;
+        })->map(function($item) {
+            return $item->column.'ce';
+        })->values()->each(function($item) use (&$inputs) {
+            unset($inputs[$item]);
+        });
+
+        $fields->filter(function($item) use ($inputs) {
+            return $item->is_input;
+        })->each(function($item) use (&$inputs) {
+            $inputs = $item->processData($inputs);
+        });
+    	return $inputs;
+    }
+
+    public function processDataAfterValidation($inputs)
+    {
+        // Get fields processing
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
+        $fields->filter(function($item) use ($inputs) {
+            return $item->is_input;
+        })->each(function($item) use (&$inputs) {
+            $inputs = $item->processDataAfterValidation($inputs);
+        });
+        return $inputs;
+    }
 }
