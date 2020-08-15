@@ -164,6 +164,7 @@ class Image extends Input
 			return $data;
 		}
 		if(!$this->save) {
+			unset($data['image']);
 			return $data;
 		}
 		$file = $data[$this->column];

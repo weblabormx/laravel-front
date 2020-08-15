@@ -66,7 +66,7 @@ class ActionStore
 
         // Get request
         $request = $this->request;
-        $request = $request->replace($data);
+        $request = $request->merge($data);
 
         // Execute action
         if(isset($this->object)) {
