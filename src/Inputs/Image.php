@@ -128,7 +128,7 @@ class Image extends Input
 		return $this;
 	}
 
-	public function setMaxSize($extension)
+	public function setMaxSize($max_size)
 	{
 		$this->max_size = $max_size;
 		return $this;

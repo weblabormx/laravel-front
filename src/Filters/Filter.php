@@ -18,7 +18,6 @@ class Filter
         }
     }
 
-
     /*
      * Needed functions
      */
