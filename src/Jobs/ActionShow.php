@@ -33,8 +33,15 @@ class ActionShow
      */
     public function handle()
     {
+        $object = $this->object;
+
+        // Modify with indexResult
+        $result = collect([$object]);
+        $result = $this->front->indexResult($result);
+        $object = $result->first();
+
         // Search the individual action
-        if(isset($this->object)) {
+        if(isset($object)) {
             $action = $this->front->searchAction($this->action);
         } else {
             $action = $this->front->searchIndexAction($this->action);
@@ -51,8 +58,8 @@ class ActionShow
         }
 
         // Set object to action
-        if(isset($this->object)) {
-            $action = $action->setObject($this->object);    
+        if(isset($object)) {
+            $action = $action->setObject($object);    
         }
 
         $result = $action->fields();
