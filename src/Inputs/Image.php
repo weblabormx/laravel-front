@@ -231,7 +231,7 @@ class Image extends Input
 	 * Internal functions
 	 */
 
-	private function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
+	public function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
 	{
 		// Make smaller the image
 		$new_file = Intervention::make($file);
@@ -254,7 +254,7 @@ class Image extends Input
 		return $url_returned($file_name);
 	}
 
-	private function getFileName($data, $file)
+	public function getFileName($data, $file)
 	{
 		$file_name = $this->file_name;
 		if(is_callable($file_name)) {
@@ -270,7 +270,7 @@ class Image extends Input
 		return $file_name;
 	}
 
-	private function saveOriginalFile($data, $file)
+	public function saveOriginalFile($data, $file)
 	{
 		// Get File Name
 		$set_file_name = $this->getFileName($data, $file);

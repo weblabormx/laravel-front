@@ -34,11 +34,19 @@ class FrontStore
         // Process data after validation
         $data = $this->front->processDataAfterValidation($data);
 
-        // Create the object
-        $object = $this->front->create($data);
+        // Make work with arrays
+        if(!$this->isArrayOfArrays($data)) {
+            $data = [$data];
+        }
 
-        // Call the action to be done after is created
-        $this->front->store($object, $this->request);
+        // Iterate with all info
+        foreach ($data as $result) {
+            // Create the object
+            $object = $this->front->create($result);
+
+            // Call the action to be done after is created
+            $this->front->store($object, $this->request);
+        }
 
         // Show success message
         flash(__(':name created successfully', ['name' => $this->front->label]))->success();
@@ -53,5 +61,19 @@ class FrontStore
 
         // Return the created object
         return $object;
+    }
+
+    private function isArrayOfArrays($array)
+    {
+        if(!is_array($array)) {
+            return false;
+        }
+        $result = true;
+        foreach ($array as $children) {
+            if(!is_array($children)) {
+                $result = false;
+            }
+        }
+        return $result;
     }
 }
