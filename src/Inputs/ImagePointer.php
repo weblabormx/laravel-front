@@ -1,0 +1,32 @@
+<?php
+
+namespace WeblaborMx\Front\Inputs;
+
+class ImagePointer extends Input
+{
+	public $image;
+	public $width = '100%';
+
+	public function form()
+	{
+		$rand = rand(1, 100);
+		$id = 'image-to-get-coordiantes-'.$rand;
+		$this->attributes['data-type'] = 'image-coordinate';
+		$this->attributes['data-image'] = $id;
+		$html = '<img src="'.$this->image.'" id="'.$id.'" max-width="'.$this->width.';" />';
+		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
+		return $html;
+	}
+
+	public function setImage($image)
+	{
+		$this->image = $image;
+		return $this;
+	}
+
+	public function setWidth($width)
+	{
+		$this->width = $width;
+		return $this;
+	}
+}
