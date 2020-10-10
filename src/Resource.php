@@ -99,6 +99,15 @@ abstract class Resource
         //
     }
 
+    // To execute before updating ab object
+
+    public function beforeUpdate($object, $request)
+    {
+        //
+    }
+
+    // To execute after updating ab object
+
     public function update($object, $request)
     {
         //
