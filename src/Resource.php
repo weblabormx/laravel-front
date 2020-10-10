@@ -339,10 +339,16 @@ abstract class Resource
         return $this;
     }
 
-    public function getCurrentViewName()
+    public function getCurrentViewRequestName()
     {
         $name = Str::snake(class_basename(get_class($this)));
         $name .= '_view';
+        return $name;
+    }
+
+    public function getCurrentViewName()
+    {
+        $name = $this->getCurrentViewRequestName();
         return request()->$name ?? collect($this->index_views)->keys()->first();
     }
 

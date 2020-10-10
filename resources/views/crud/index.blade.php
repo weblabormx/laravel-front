@@ -6,7 +6,7 @@
         <div class="sidenav-header small font-weight-semibold mb-2">{{ __('FILTER :name', ['name' => strtoupper($front->plural_label)]) }}</div>
         {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
             <div class="card pt-3 sidenav-forms">
-                {!! Form::hidden('search') !!}
+                {!! Form::hidden($front->getCurrentViewRequestName()) !!}
                 @foreach($front->getFilters() as $filter)
                     {!! $filter->formHtml() !!}
                 @endforeach
