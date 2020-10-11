@@ -31,6 +31,7 @@ abstract class Resource
     public $functions_values = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
     public $index_views = [];
+    public $cache = ['indexQuery', 'indexResult'];
 
 	public function __construct($source = null)
 	{

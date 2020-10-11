@@ -93,7 +93,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if($cache==false) {
+        if($cache==false || !in_array('indexQuery', $this->front->cache)) {
             return $objects->paginate($this->front->pagination);
         }
 
@@ -123,7 +123,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if($cache==false) {
+        if($cache==false || !in_array('indexResult', $this->front->cache)) {
             return $this->front->indexResult($result);
         }
 
