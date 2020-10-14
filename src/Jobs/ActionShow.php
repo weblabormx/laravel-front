@@ -36,9 +36,11 @@ class ActionShow
         $object = $this->object;
 
         // Modify with indexResult
-        $result = collect([$object]);
-        $result = $this->front->indexResult($result);
-        $object = $result->first();
+        if(isset($object)) {
+            $result = collect([$object]);
+            $result = $this->front->indexResult($result);
+            $object = $result->first();
+        }
 
         // Search the individual action
         if(isset($object)) {
