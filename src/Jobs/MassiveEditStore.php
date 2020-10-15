@@ -10,6 +10,7 @@ class MassiveEditStore
     public $object;
     public $key;
     public $request;
+    public $input_front;
 
     /**
      * Create a new job instance.
@@ -39,6 +40,7 @@ class MassiveEditStore
         // Get relationship input
         $input = $this->front->showRelations()[$this->key];
         $input_front = $input->front->addData($this->front->data);
+        $this->input_front = $input_front;
 
         // Get data that should be added to all data
         $basic_data = collect($this->request->except(['_token', 'submitName']))->filter(function($item) {
@@ -73,20 +75,23 @@ class MassiveEditStore
 
     private function saveData($data, $input, $object, $basic_data, $input_front) 
     {
-        collect($data)->filter(function($item) {
+        $objects = collect($data)->filter(function($item) {
             // Just show arrays
             return is_array($item);
         })->filter(function($item) {
             // Avoid adding data with only nulls
             $item = collect($item)->values()->unique();
             return $item->count() > 1; 
-        })->each(function($data, $key) use ($input, $object, $basic_data, $input_front) {
+        })->map(function($data, $key) use ($input, $object, $basic_data, $input_front) {
             // If there is a new column save it instead of updating
             if(Str::contains($key, 'new')) {
                 $data = $basic_data->merge($data)->toArray();
                 $model = $input->front->model;
-                $model::create($data);
-                return;
+                $object = $model::create($data);
+
+                // Call the action to be done after is created
+                $this->input_front->store($object, $data);
+                return $object;
             }
 
             // Get models data
@@ -100,8 +105,19 @@ class MassiveEditStore
                 $item = $model::find($key);
             }
 
+            // Call the action to be done before is updated
+            $this->input_front->beforeUpdate($item, $data);
+
             // Update data
             $item->update($data);
+
+            // Call the action to be done after is updated
+            $this->input_front->update($item, $data);
+
+            return $item;
         });
+
+        // Call the action to be done after is updated
+        $this->input_front->afterMassive($objects);
     }
 }

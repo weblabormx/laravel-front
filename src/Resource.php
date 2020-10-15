@@ -86,6 +86,20 @@ abstract class Resource
 		return $query->latest();
 	}
 
+    // Modify the results gotten on the query 
+
+    public function indexResult($result)
+    {
+        return $result;
+    }
+
+    // To execute when seeing the index view
+
+    public function index()
+    {
+        //
+    }
+
     // To execute when seeing a show view
 
     public function show($object)
@@ -100,40 +114,43 @@ abstract class Resource
         //
     }
 
-    // To execute before updating ab object
+    // To execute before updating an object
 
     public function beforeUpdate($object, $request)
     {
         //
     }
 
-    // To execute after updating ab object
+    // To execute after updating an object
 
     public function update($object, $request)
     {
         //
     }
 
+    // To execute before destroying an object
+
     public function destroy($object)
     {
         //
     }
 
-    public function index()
+    // To execute before destroying an object
+
+    public function afterMassive($objects)
     {
         //
     }
 
-    public function indexResult($result)
-    {
-        return $result;
-    }
+    // How to create the object
 
     public function create($data)
     {
         $model = $this->getModel();
         return $model::create($data);
     }
+
+    // Set time for cache results
 
     public function cacheFor()
     {
