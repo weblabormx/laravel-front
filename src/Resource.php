@@ -209,32 +209,33 @@ abstract class Resource
     		return;
     	}
 
-    	// Only will acess if the url doesnt have any variable sent
-    	if(count(request()->all())>0 && !request()->filled('is_redirect')) {
+        $try = \Cache::get('resource.redirect_tries');
+        $try = $is_first ? 0 : $try+1;
+
+        // Get all the filters variables with their default values
+        $filters = collect($this->filters())->mapWithKeys(function($filter) use ($try) {
+            // Default value
+            $default = $filter->setResource($this)->default();
+            if(is_array($default)) {
+                $default = $default[$try] ?? null;
+            }
+            return [$filter->slug => $default ?? null];
+        })->filter(function($item) {
+            return isset($item) && strlen($item);
+        });
+
+        $filters_with_default_values_are_set = $filters->intersect(request()->all())->count() == $filters->count();
+
+    	// Only will acess if the url doesnt have the required variables
+    	if($filters_with_default_values_are_set && !request()->filled('is_redirect')) {
     		return;
     	}
 
-    	$try = \Cache::get('resource.redirect_tries');
-    	$try = $is_first ? 0 : $try+1;
-    	\Cache::put('resource.redirect_tries', $try, now()->addSeconds(10));
-
-    	// Get all the filters variables with their default values
-    	$filters = collect($this->filters())->mapWithKeys(function($filter) use ($try) {
-    		// Default value
-	    	$default = $filter->setResource($this)->default();
-	    	if(is_array($default)) {
-	    		$default = $default[$try] ?? null;
-	    	}
-    		return [$filter->slug => $default ?? null];
-		})->filter(function($item) {
-			return isset($item) && strlen($item);
-		});
-
-		// If we dont have any value dont do anything
-		if($filters->count() <= 0) {
-			return;
-		}
+        \Cache::put('resource.redirect_tries', $try, now()->addSeconds(10));
         
+        // Respect currect request data
+        $filters = $filters->merge(request()->all());
+
 		// Generate the url to be redirected
         $filters['is_redirect'] = true;
 		$url = request()->url();
