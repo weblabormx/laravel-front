@@ -17,6 +17,9 @@ trait HasBreadcrumbs
     public function getBreadcrumbs($object = null, $action = null)
     {
         $breadcrumbs = $this->getBreadcrumbsValues($object, $action);
+        $breadcrumbs = $this->processBreadcrumbs($breadcrumbs);
+
+        // Update new fields as html
         $breadcrumbs = collect($breadcrumbs)->map(function($item) {
             $item['html'] = '';
             if(isset($item['url'])) {
@@ -28,9 +31,9 @@ trait HasBreadcrumbs
             }
             return $item;
         });
-        
-        // You can edit breadcrumbs return at the end
-    	return $this->processBreadcrumbs($breadcrumbs);
+
+        // Return values
+    	return $breadcrumbs;
     }
 
     public function getBreadcrumbsValues($object = null, $data = [])
