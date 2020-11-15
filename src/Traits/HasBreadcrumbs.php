@@ -9,6 +9,11 @@ trait HasBreadcrumbs
         return [];
     }
 
+    public function processBreadcrumbs($breadcrumbs)
+    {
+        return $breadcrumbs;
+    }
+
     public function getBreadcrumbs($object = null, $action = null)
     {
         $breadcrumbs = $this->getBreadcrumbsValues($object, $action);
@@ -23,7 +28,9 @@ trait HasBreadcrumbs
             }
             return $item;
         });
-    	return $breadcrumbs;
+        
+        // You can edit breadcrumbs return at the end
+    	return $this->processBreadcrumbs($breadcrumbs);
     }
 
     public function getBreadcrumbsValues($object = null, $data = [])
@@ -37,7 +44,7 @@ trait HasBreadcrumbs
                 'title' => $item,
                 'url' => $key
             ];
-        });
+        })->values();
 
         // Index Action
         if($front->source=='create' && isset($data) && isset($data['action']) && !isset($object)) {
