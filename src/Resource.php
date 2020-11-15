@@ -162,6 +162,11 @@ abstract class Resource
         return $this->getBaseUrl();
     }
 
+    public function removeRedirectionUrl()
+    {
+        return $this->getBaseUrl();
+    }
+
 	/* 
 	 * Hidden functions
 	 */
