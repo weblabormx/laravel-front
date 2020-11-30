@@ -135,7 +135,7 @@ abstract class Resource
         //
     }
 
-    // To execute before destroying an object
+    // To execute after massive is done
 
     public function afterMassive($objects)
     {
@@ -156,11 +156,15 @@ abstract class Resource
     {
         return false;
     }
+
+    // Change url for redirection after a creation is done
     
     public function createRedirectionUrl()
     {
         return $this->getBaseUrl();
     }
+
+    // Change url for redirection after a delete is done
 
     public function removeRedirectionUrl()
     {
