@@ -68,8 +68,13 @@ class CreateResource extends Command
         }
 
         $all = $this->option('all');
-        $model = trim(trim(str_replace('App', '', config('front.models_folder').'/'.$name), '/'), '\\');
         if($all) {
+            $model = config('front.models_folder').'/'.$name;
+            $model = str_replace('App\Models', '', $model);
+            $model = str_replace('App', '', $model);
+            $model = trim($model, '/');
+            $model = trim($model, '\\');
+            
             try {
                 \Artisan::call("make:model {$model} -m");
                 $this->line('Model created: <info>✔</info>');
