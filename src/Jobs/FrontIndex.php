@@ -67,7 +67,7 @@ class FrontIndex
             $redirect_url = $this->front->redirects(false);
 
             // If there isn't any redirect url don't do anything
-            if(!isset($redirect_url)) {
+            if(!isset($redirect_url) || url()->full()==$redirect_url) {
                 return $result;
             }
 

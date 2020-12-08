@@ -218,8 +218,12 @@ abstract class Resource
     		return;
     	}
 
-        $try = \Cache::get('resource.redirect_tries');
+        $try = session('resource.redirect_tries', 0);
         $try = $is_first ? 0 : $try+1;
+
+        if($try>2) {
+            return;
+        }
 
         // Get all the filters variables with their default values
         $filters = collect($this->filters())->mapWithKeys(function($filter) use ($try) {
@@ -240,7 +244,7 @@ abstract class Resource
     		return;
     	}
 
-        \Cache::put('resource.redirect_tries', $try, now()->addSeconds(10));
+        session(['resource.redirect_tries' => $try]);
         
         // Respect currect request data
         $filters = $filters->merge(request()->all());
