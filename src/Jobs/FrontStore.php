@@ -2,8 +2,12 @@
 
 namespace WeblaborMx\Front\Jobs;
 
+use WeblaborMx\Front\Traits\IsRunable;
+
 class FrontStore
 {
+    use IsRunable;
+
     public $request;
     public $front;
 
@@ -43,6 +47,10 @@ class FrontStore
         foreach ($data as $result) {
             // Create the object
             $object = $this->front->create($result);
+
+            if($this->isResponse($object)) {
+                return $object;
+            }
 
             // Call the action to be done after is created
             $this->front->store($object, $this->request);
