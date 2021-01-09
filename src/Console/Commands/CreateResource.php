@@ -33,9 +33,9 @@ class CreateResource extends Command
         $dir_location = $this->argument('dir_location');
         $model = str_replace('/', '\\', $dir_location);
         $model_name = class_basename($model);
-        $model_extra_path = str_replace('\\'.$model_name, '', $model);
+        $model_extra_path = str_replace($model_name, '', $model);
         if(strlen($model_extra_path)>0) {
-            $model_extra_path = '\\'.$model_extra_path;
+            $model_extra_path = '\\'.trim($model_extra_path, '\\');
         }
         $slug = Str::plural(Str::snake($model_name));
         $url = strtolower(str_replace($model_name, $slug, $dir_location));
