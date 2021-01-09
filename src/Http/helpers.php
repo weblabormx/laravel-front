@@ -2,6 +2,12 @@
 
 function getThumb($full_name, $prefix)
 {
+    if(function_exists('validateGetThumb')) {
+        $execute = validateGetThumb($full_name);
+        if(!$execute) {
+            return $full_name;
+        }
+    }
     $full_name = explode('/', $full_name);
     $key = count($full_name)-1;
 
