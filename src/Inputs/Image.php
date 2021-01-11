@@ -244,7 +244,7 @@ class Image extends Input
 		}
 
 		// Save the image
-		$new_name = getThumb($file_name, $prefix);
+		$new_name = getThumb($file_name, $prefix, true);
 		$file_name = $this->directory.'/'.$new_name;
 		$storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
 		if($storage_file==false) {

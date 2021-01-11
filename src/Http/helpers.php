@@ -1,8 +1,8 @@
 <?php
 
-function getThumb($full_name, $prefix)
+function getThumb($full_name, $prefix, $force = false)
 {
-    if(function_exists('validateGetThumb')) {
+    if(function_exists('validateGetThumb') && !$force) {
         $execute = validateGetThumb($full_name);
         if(!$execute) {
             return $full_name;
