@@ -7,7 +7,7 @@
 			<img src="{{$input->value}}" class="mw-100"><br /><br />
 		@endif
 		<p class="file-name"></p>
-		<button type="button" class="btn btn-secondary" onclick="executeFile()">{{ __('Upload Image') }}</button>
+		<button type="button" class="btn btn-secondary" onclick="executeFile('{{$id}}')">{{ __('Upload Image') }}</button>
 		{!! Form::hidden($input->column, $input->value) !!}
         {!! Form::file($input->column.'_new', ['style' => 'display:none;']) !!}
 	</div>
@@ -15,12 +15,16 @@
 
 @pushonce('scripts-footer')
   	<script type="text/javascript">
-		function executeFile() {
-		    $('#{{$id}} > input[type="file"]').click();
+		function executeFile(id) {
+		    $('#'+id+' > input[type="file"]').click();
 		};
+  	</script>
+@endpushonce
+@push('scripts-footer')
+  	<script type="text/javascript">
 		$('#{{$id}} > input[type="file"]').change(function(e){
             var fileName = e.target.files[0].name;
             $('#{{$id}} .file-name').html(fileName);
         });
   	</script>
-@endpushonce
+@endpush
