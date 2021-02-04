@@ -33,7 +33,7 @@ class ImageCropper extends Input
 		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
 		if(isset($this->handler)) {
 			$handler = $this->handler;
-			$html .= '<script type="text/javascript">function '.$function.'(c) { '.$handler().' }</script>';
+			$html .= '<script>function '.$function.'(c) { '.$handler().' }</script>';
 		}
 		return $html;
 	}

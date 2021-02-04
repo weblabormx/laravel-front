@@ -6,7 +6,7 @@
 </div>
 
 @pushonce('scripts-footer')
-  	<script type="text/javascript">
+  	<script>
 		function executeFileMultiple(id) {
 		    $('#'+id).click();
 		};
