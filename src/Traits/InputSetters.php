@@ -69,21 +69,23 @@ trait InputSetters
 		return $this;
 	}
 
-	public function conditional($key, $value)
+	public function conditional($conditional)
 	{
 		// This work on form
-		$this->form_before = '<div data-type="conditional" data-cond-option="'.$key.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
+		$this->form_before = '<div data-type="conditional2" data-condition="'.$conditional.'" style="'.$this->style_width().'">';
 		$this->form_after = '</div>';
-		$this->conditional = ['key' => $key,  'value' => $value];
+		$this->conditional = $conditional;
 		return $this;
 	}
 
 	private function validateConditional($object)
 	{
 		if(isset($this->conditional)) {
-			$conditional = $this->conditional;
-			$key = $conditional['key'];
-			if( !isset($object->$key) || ( isset($object->$key) && $object->$key != $conditional['value'] ) ) {
+			$conditional = '$object->'.$this->conditional;
+			try {
+				$conditional = eval("return $conditional;");
+				return $conditional;
+			} catch (\Exception $e) {
 				return false;
 			}
 		}
@@ -130,6 +132,12 @@ trait InputSetters
 	public function addAttribute($key, $value)
 	{
 		$this->attributes[$key] = $value;
+		return $this;
+	}
+
+	public function withId($id)
+	{
+		$this->attributes['id'] = $id;
 		return $this;
 	}
 
