@@ -352,10 +352,10 @@ abstract class Resource
             $value = $parameters[$result_explode[0]];
 
             // If there isnt any field selected
-            if(!isset($result_explode[1])) {
+            $column = $result_explode[1] ?? null;
+            if(!isset($result_explode[1]) || !isset($value->$column)) {
                 $base_url = str_replace('{'.$result.'}', $value, $base_url);
             } else {
-                $column = $result_explode[1];
                 $base_url = str_replace('{'.$result.'}', $value->$column, $base_url);
             }
         }
