@@ -116,9 +116,9 @@ trait InputRelationship
 		return $this;
 	}
 
-	public function enableMassive()
+	public function enableMassive($value = true)
 	{
-		$this->show_massive = true;
+		$this->show_massive = $value;
 		return $this;
 	}
 
