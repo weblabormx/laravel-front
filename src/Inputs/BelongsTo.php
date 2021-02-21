@@ -15,6 +15,7 @@ class BelongsTo extends Input
 	public $searchable = false;
 	public $search_field;
 	public $empty_title;
+	public $show_placeholder = true;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
@@ -115,7 +116,7 @@ class BelongsTo extends Input
 
 		$title = $this->search_field ?? $this->relation_front->search_title;
 		$options = $options->pluck($title, $model->getKeyName());
-		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value)->size($this->size)->setEmptyTitle($this->empty_title);
+		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value)->size($this->size)->setEmptyTitle($this->empty_title)->withMeta($this->attributes)->setPlaceholder($this->show_placeholder);
 		return $select->form();
 	}
 
@@ -134,6 +135,12 @@ class BelongsTo extends Input
 	public function setEmptyTitle($value)
 	{
 		$this->empty_title = $value;
+		return $this;
+	}
+
+	public function hidePlaceholder()
+	{
+		$this->show_placeholder = false;
 		return $this;
 	}
 }

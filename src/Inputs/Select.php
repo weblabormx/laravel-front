@@ -59,4 +59,10 @@ class Select extends Input
 		$this->show_placeholder = false;
 		return $this;
 	}
+
+	public function setPlaceholder($value)
+	{
+		$this->show_placeholder = $value;
+		return $this;
+	}
 }
