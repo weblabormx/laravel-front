@@ -14,7 +14,9 @@
                             @foreach($helper->headers() as $field)
                                 <th class="{{$field->class}}">{{$field->title}}</th>
                             @endforeach
-                            <th>{{ __('Actions') }}</th>
+                            @if($helper->show_actions)
+                                <th>{{ __('Actions') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -25,7 +27,9 @@
                                         {!! $field->value !!}
                                     </td>
                                 @endforeach
-                                @include('front::elements.object_actions', ['base_url' => $front->getBaseUrl(), 'object' => $row->object])
+                                @if($helper->show_actions)
+                                    @include('front::elements.object_actions', ['base_url' => $front->getBaseUrl(), 'object' => $row->object])
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

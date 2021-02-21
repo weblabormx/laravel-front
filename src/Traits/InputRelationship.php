@@ -18,6 +18,7 @@ trait InputRelationship
 	public $hide_columns;
 	public $massive_class;
 	public $show_massive = false;
+	public $block_edition = false;
 
 	public function setCreateLink($function)
 	{
@@ -119,6 +120,12 @@ trait InputRelationship
 	public function enableMassive($value = true)
 	{
 		$this->show_massive = $value;
+		return $this;
+	}
+
+	public function blockEdition($block_edition = true)
+	{
+		$this->block_edition = $block_edition;
 		return $this;
 	}
 

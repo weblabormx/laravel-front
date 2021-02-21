@@ -32,6 +32,7 @@ abstract class Resource
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
     public $index_views = [];
     public $cache = ['indexQuery', 'indexResult'];
+    public $related_object;
 
 	public function __construct($source = null)
 	{
@@ -400,6 +401,12 @@ abstract class Resource
             return $key==$current_view_name;
         })->first();
         return $view['view'];
+    }
+
+    public function setRelatedObject($related_object)
+    {
+        $this->related_object = $related_object;
+        return $this;
     }
 
     /* 

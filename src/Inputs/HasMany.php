@@ -113,7 +113,7 @@ class HasMany extends Input
 		}
 		$result = $this->front->indexResult($result);
 
-		$front = $this->front;
+		$front = $this->front->setRelatedObject($this);
 		$edit_link = $this->edit_link;
 		$show_link = $this->show_link;
 		$show_filters = $this->show_filters;

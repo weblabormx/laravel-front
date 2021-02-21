@@ -12,6 +12,7 @@ class PartialIndex
     private $headers;
     private $rows;
     private $show_filters;
+    public $show_actions;
 
 	public function __construct($front, $result, $page_name = 'page', $show_filters = false)
     {
@@ -19,7 +20,8 @@ class PartialIndex
         $this->result         = $result;
         $this->page_name      = $page_name;
         $this->show_filters   = $show_filters;
-        
+        $this->show_actions = isset($front) && isset($front->related_object) && isset($front->related_object->block_edition) ? !$front->related_object->block_edition : true;
+
         if($this->result->count() > 0) {
             $this->getUnusedColumns();
         }
