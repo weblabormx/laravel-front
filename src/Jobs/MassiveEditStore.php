@@ -80,8 +80,15 @@ class MassiveEditStore
             return is_array($item);
         })->filter(function($item) {
             // Avoid adding data with only nulls
-            $item = collect($item)->values()->unique();
-            return $item->count() > 1; 
+            $values = collect($item)->values()->unique();
+
+            // Check required values are set
+            $required_values = collect($this->input_front->getRules())->filter(function($item) {
+                return in_array('required', $item);
+            })->keys()->map(function($column) use ($item) {
+                return isset($item[$column]);
+            })->values()->unique();
+            return $values->count() > 1 && $required_values->count() == 1 && $required_values->first()==true; 
         })->map(function($data, $key) use ($input, $object, $basic_data, $input_front) {
             // If there is a new column save it instead of updating
             if(Str::contains($key, 'new')) {

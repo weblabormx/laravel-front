@@ -4,8 +4,13 @@ namespace WeblaborMx\Front\Traits;
 
 trait IsValidated
 {
-    public function makeValidation($fields, $data)
+    public function getRules()
     {
+        // Get fields 
+        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+            return $item->shouldBeShown();
+        });
+
         // Get rules on inputs of the resource
         $rules = $fields->filter(function($item) {
             return count($item->getRules($this->source))>0;
@@ -14,6 +19,19 @@ trait IsValidated
         })->mapWithKeys(function($item) {
             return [$this->validatorGetColumn($item->column) => $item->getRules($this->source)];
         })->all();
+        return $rules;
+    }
+
+
+    public function makeValidation($data)
+    {
+        // Get fields 
+        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+            return $item->shouldBeShown();
+        });
+
+        // Get rules on inputs of the resource
+        $rules = $this->getRules();
 
         // Update rules on inputs
         foreach ($fields as $field) {

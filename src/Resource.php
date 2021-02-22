@@ -264,12 +264,7 @@ abstract class Resource
     		return;
     	}
 
-        // Get fields 
-        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
-            return $item->shouldBeShown();
-        });
-
-        $this->makeValidation($fields, $data);
+        $this->makeValidation($data);
     	return $this;
     }
 

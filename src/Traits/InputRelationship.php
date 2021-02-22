@@ -173,7 +173,7 @@ trait InputRelationship
 		$input_front = $this->front->setObject($object);
 
 		// Get id value
-        $id = get_class($object)=='Illuminate\Database\Eloquent\Model' ? $object->getKey() : $object->id;
+        $id = is_a($object, 'Illuminate\Database\Eloquent\Model') ? $object->getKey() : $object->id;
 
         // Start the result with the id result
 		$values = [$id];
@@ -188,7 +188,7 @@ trait InputRelationship
             $column = $field->column;
             $field = $field->setColumn($id.'['.$field->column.']')->default($object->$column, true);
             if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
-            	$field = $field->size(50);
+            	$field = $field->size(80);
             }
             $values[] = $field->form($object);
         }
@@ -212,6 +212,9 @@ trait InputRelationship
             	foreach($fields as $field) {
                     $column = $field->column; 
                     $field = $field->setColumn('new'.$i.'['.$field->column.']');
+                    if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
+		            	$field = $field->size(80);
+		            }
                     $values[] = $field->form($object);
             	}
         		$result[] = $values;
