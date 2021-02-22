@@ -19,6 +19,7 @@ trait InputRelationship
 	public $massive_class;
 	public $show_massive = false;
 	public $block_edition = false;
+	public $headings;
 
 	public function setCreateLink($function)
 	{
@@ -162,6 +163,7 @@ trait InputRelationship
         foreach($fields as $field) {
             $headings[] = $field->title;
         }
+        $this->headings = $headings;
 
         // Return the headings
         return $headings;
@@ -201,21 +203,23 @@ trait InputRelationship
 	{
 		$result = [];
 
-		// Show fields that are on index and that can be edited
+		// Show fields that are on index and that can be created
 		$fields = $this->front->indexFields()->filter(function($item) {
-			return $item->show_on_edit;
+			return $item->show_on_create;
 		});
 
 		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
             for($i = 0; $i < (request()->rows ?? 5); $i++) {
-            	$values = [''];
+            	$values = collect($this->headings)->flip()->map(function($item) {
+            		return '';
+            	});
             	foreach($fields as $field) {
                     $column = $field->column; 
                     $field = $field->setColumn('new'.$i.'['.$field->column.']');
                     if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
 		            	$field = $field->size(80);
 		            }
-                    $values[] = $field->form($object);
+                    $values[$field->title] = $field->form($object);
             	}
         		$result[] = $values;
             }
