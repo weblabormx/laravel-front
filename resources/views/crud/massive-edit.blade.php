@@ -46,7 +46,7 @@
                     @foreach($input->getExtraTableValues($object) as $row)
                         <tr>
                             @foreach($row as $value)
-                                <td>{{$value}}</td>
+                                <td>{!! $value !!}</td>
                             @endforeach
                         </tr>
                     @endforeach
