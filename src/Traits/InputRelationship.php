@@ -140,7 +140,7 @@ trait InputRelationship
 			$forms[] = Text::make(__('New rows'), 'rows');
 		}
         foreach(request()->except('rows') as $key => $value) {
-        	$forms[] = Hidden::make($key)->setValue($value);
+        	$forms[] = Hidden::make($key, $key)->setValue($value);
         }
         return $forms;
 	}
@@ -207,7 +207,7 @@ trait InputRelationship
 		});
 
 		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
-            for($i = 0; $i < (request()->rows ?? 0); $i++) {
+            for($i = 0; $i < (request()->rows ?? 5); $i++) {
             	$values = [''];
             	foreach($fields as $field) {
                     $column = $field->column; 
