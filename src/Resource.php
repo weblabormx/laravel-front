@@ -13,10 +13,11 @@ use WeblaborMx\Front\Traits\HasCards;
 use WeblaborMx\Front\Traits\HasLenses;
 use WeblaborMx\Front\Traits\ResourceHelpers;
 use WeblaborMx\Front\Traits\IsValidated;
+use WeblaborMx\Front\Traits\HasPermissions;
 
 abstract class Resource
 {
-	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated;
+	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions;
 
 	public $data;
 	public $title = 'name';

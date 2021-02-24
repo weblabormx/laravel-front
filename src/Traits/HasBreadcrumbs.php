@@ -51,17 +51,17 @@ trait HasBreadcrumbs
 
         // Index Action
         if($front->source=='create' && isset($data) && isset($data['action']) && !isset($object)) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $breadcrumbs[] = ['title' => strip_tags($data['action']->title), 'active' => true];
             return $breadcrumbs;
         }
 
         // Action
         if($front->source=='create' && isset($data) && isset($data['action'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             if($front->show_title) {
                 $title = $front->title;
-                $breadcrumbs[] = ['title' => $front->object->$title, 'url' => $front->getBaseUrl().'/'.$front->object->getKey()];
+                $breadcrumbs[] = ['title' => $front->object->$title, 'url' => $front->getShowUrl()];
             }
             $breadcrumbs[] = ['title' => strip_tags($data['action']->title), 'active' => true];
             return $breadcrumbs;
@@ -69,10 +69,10 @@ trait HasBreadcrumbs
 
         // Massive
         if($front->source=='create' && isset($data) && isset($data['massive'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             if($front->show_title) {
                 $title = $front->title;
-                $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getBaseUrl().'/'.$object->getKey()];
+                $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getShowUrl($object)];
             }
             $breadcrumbs[] = ['title' => __('Edit').' '.$data['massive']->title, 'active' => true];
             return $breadcrumbs;
@@ -80,21 +80,21 @@ trait HasBreadcrumbs
 
         // Index
         if($front->source=='index') {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
         }
 
         // Show normal
         if($front->source=='show' && is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $this->title;
             $breadcrumbs[] = ['title' => strip_tags($object->$title), 'active' => true];
         }
 
         // Show with relation
         if($front->source=='show' && !is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getBaseUrl().'/'.$relation['object']->getKey()];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
             $breadcrumbs[] = ['title' => $this->plural_label];
             $title = $this->title;
             $breadcrumbs[] = ['title' => strip_tags($object->$title), 'active' => true];
@@ -102,33 +102,33 @@ trait HasBreadcrumbs
 
         // Create normal
         if($front->source=='create' && is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $breadcrumbs[] = ['title' => __('Add new'), 'active' => true];
         }
 
         // Create with relation
         if($front->source=='create' && !is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getBaseUrl().'/'.$relation['object']->getKey()];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
             $breadcrumbs[] = ['title' => __('Add new').' '.$this->label, 'active' => true];
         }
 
         // Edit normal
         if($front->source=='edit' && is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             if($front->show_title) {
                 $title = $front->title;
-                $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getBaseUrl().'/'.$front->object->getKey()];
+                $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getShowUrl()];
             }
             $breadcrumbs[] = ['title' => __('Edit'), 'active' => true];
         }
 
         // Edit with relation
         if($front->source=='edit' && !is_null($relation['front'])) {
-            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getBaseUrl()];
+            $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getBaseUrl().'/'.$relation['object']->getKey()];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
             $breadcrumbs[] = ['title' => $this->plural_label];
             $title = $front->title;
             $breadcrumbs[] = ['title' => __('Edit').' '.$this->$title, 'active' => true];
@@ -149,5 +149,18 @@ trait HasBreadcrumbs
             $object = $object::find(request()->relation_id);
         }
         return compact('front', 'object');
+    }
+
+    public function getIndexUrl()
+    {
+        return $this->canIndex() ? $this->getBaseUrl() : '#';
+    }
+
+    public function getShowUrl($object = null)
+    {
+        if(is_null($object)) {
+            $object = $this->object;
+        }
+        return $this->canShow() ? $this->getBaseUrl().'/'.$object->getKey() : '#';
     }
 }

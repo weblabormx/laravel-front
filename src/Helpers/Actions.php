@@ -3,7 +3,6 @@
 namespace WeblaborMx\Front\Helpers;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Gate;
 
 class Actions
 {
@@ -29,7 +28,7 @@ class Actions
         if(!$this->isEloquent()) {
             return false;
         }
-        return Gate::allows('view', $this->object) && in_array('show', $this->front->actions);
+        return $this->front->canShow($this->object);
     }
 
     public function canUpdate()
@@ -37,7 +36,7 @@ class Actions
         if(!$this->isEloquent()) {
             return false;
         }
-        return Gate::allows('update', $this->object) && in_array('edit', $this->front->actions);
+        return $this->front->canUpdate($this->object);
     }
 
     public function canRemove()
@@ -45,7 +44,7 @@ class Actions
         if(!$this->isEloquent()) {
             return false;
         }
-        return Gate::allows('delete', $this->object) && in_array('destroy', $this->front->actions);
+        return $this->front->canRemove($this->object);
     }
 
     public function showUrl()

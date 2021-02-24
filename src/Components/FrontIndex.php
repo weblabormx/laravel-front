@@ -3,7 +3,6 @@
 namespace WeblaborMx\Front\Components;
 
 use WeblaborMx\Front\Front;
-use Illuminate\Support\Facades\Gate;
 
 class FrontIndex extends Component
 {
@@ -14,8 +13,8 @@ class FrontIndex extends Component
 	public function __construct($front_class, $column = null, $extra = null, $source = null)
 	{
 		$this->source = $source;
-		$this->front_class =getFront($front_class, $this->source);
-		$this->show_before = Gate::allows('viewAny', $this->front_class->getModel()) && in_array('index', $this->front_class->actions);
+		$this->front_class = getFront($front_class, $this->source);
+		$this->show_before = $this->front_class->canIndex();
 	}
 
 	public function form()
