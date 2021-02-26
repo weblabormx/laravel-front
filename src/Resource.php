@@ -219,27 +219,31 @@ abstract class Resource
     	if(request()->filled('is_redirect') && $is_first) {
     		return;
     	}
-
-        $try = session('resource.redirect_tries', 0);
-        $try = $is_first ? 0 : $try+1;
-
-        if($try>2) {
+        if(request()->filled('dont_redirect')) {
             return;
         }
 
+        $try = session('resource.redirect_tries', 0);
+        $try = $is_first ? 0 : $try+1;
+ 
+        $exist_filter_value = false;
+
         // Get all the filters variables with their default values
-        $filters = collect($this->filters())->mapWithKeys(function($filter) use ($try) {
+        $filters = collect($this->filters())->mapWithKeys(function($filter) use ($try, &$exist_filter_value) {
             // Default value
             $default = $filter->setResource($this)->default();
-            if(is_array($default)) {
-                $default = $default[$try] ?? null;
+            if(is_array($default) && isset($default[$try])) {
+                $default = $default[$try];
+                $exist_filter_value = true;
+            } else if(is_array($default) && !isset($default[$try])) {
+                $default = $default[0];
             }
             return [$filter->slug => $default ?? null];
         })->filter(function($item) {
             return isset($item) && strlen($item);
         });
 
-        $filters_with_default_values_are_set = $filters->intersect(request()->all())->count() == $filters->count();
+        $filters_with_default_values_are_set = $filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
 
     	// Only will acess if the url doesnt have the required variables
     	if($filters_with_default_values_are_set && !request()->filled('is_redirect')) {
@@ -249,7 +253,10 @@ abstract class Resource
         session(['resource.redirect_tries' => $try]);
         
         // Respect currect request data
-        $filters = $filters->merge(request()->all());
+        $filters = collect(request()->all())->merge($filters);
+        if(!$exist_filter_value) {
+            $filters['dont_redirect'] = true;
+        }
 
 		// Generate the url to be redirected
         $filters['is_redirect'] = true;
