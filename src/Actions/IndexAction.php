@@ -53,8 +53,7 @@ class IndexAction
 
     public function validate($data)
     {
-        $fields = collect($this->fields());
-        $this->makeValidation($fields, $data);
+        $this->makeValidation($data);
         return $this;
     }
 
