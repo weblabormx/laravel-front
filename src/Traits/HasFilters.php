@@ -4,6 +4,8 @@ namespace WeblaborMx\Front\Traits;
 
 trait HasFilters
 {
+    public $default_search_filter;
+
 	public function filters()
     {
         return [];
@@ -11,7 +13,7 @@ trait HasFilters
 
     public function getFilters()
     {
-        $search_filter = config('front.default_search_filter');
+        $search_filter = $this->getDefaultSearchFilter();
         $filters = $this->filters();
         $filters[] = new $search_filter;
     	return collect($filters)->filter(function($item) {
@@ -19,5 +21,14 @@ trait HasFilters
         })->map(function($item) {
     		return $item->setResource($this);
     	});
+    }
+
+    public function getDefaultSearchFilter()
+    {
+        $default = $this->default_search_filter;
+        if(!is_null($default)) {
+            return $default;
+        }
+        return config('front.default_search_filter');
     }
 }
