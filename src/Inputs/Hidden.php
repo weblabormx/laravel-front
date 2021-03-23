@@ -10,7 +10,8 @@ class Hidden extends Input
 
 	public function form()
 	{
-		return \Form::hidden($this->title, $this->default_value, $this->attributes);
+		$column_to_use = config('front.hidden_value');
+		return \Form::hidden($this->$column_to_use, $this->default_value, $this->attributes);
 	}
 
 	public function formHtml()
