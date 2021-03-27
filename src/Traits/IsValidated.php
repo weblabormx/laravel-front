@@ -4,10 +4,15 @@ namespace WeblaborMx\Front\Traits;
 
 trait IsValidated
 {
-    public function getRules()
+    public function getRules($source = null)
     {
+        // Set default value
+        if(is_null($source)) {
+            $source = $this->source=='store' ? 'create' : 'edit';    
+        }
+
         // Get fields 
-        $fields = collect($this->filterFields($this->source=='store' ? 'create' : 'edit', true))->filter(function($item) {
+        $fields = collect($this->filterFields($source, true))->filter(function($item) {
             return $item->shouldBeShown();
         });
 

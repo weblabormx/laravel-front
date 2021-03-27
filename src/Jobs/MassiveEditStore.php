@@ -56,7 +56,7 @@ class MassiveEditStore
         }
 
         // Save data on table
-        $this->saveData($data, $input, $this->object, $basic_data, $input_front);
+        $this->saveData($data, $input, $this->object, $basic_data);
 
         // Declare it as null
         $return = null;
@@ -73,24 +73,38 @@ class MassiveEditStore
         }
     }
 
-    private function saveData($data, $input, $object, $basic_data, $input_front) 
+    private function saveData($data, $input, $object, $basic_data) 
     {
         $objects = collect($data)->filter(function($item) {
             // Just show arrays
             return is_array($item);
-        })->filter(function($item) {
+        })->filter(function($item, $key) {
             // Avoid adding data with only nulls
             $values = collect($item)->values()->whereNotNull();
 
-            // Check required values are set
-            $required_values = collect($this->input_front->getRules())->filter(function($item) {
+            // Get required fields
+            $required_fields = collect($this->input_front->getRules('index'))->filter(function($item) {
                 return in_array('required', $item);
+            })->keys();
+
+            // Check if required fields have a value
+            $required_fields_exist = $required_fields->mapWithKeys(function($column) use ($item) {
+                return [$column => isset($item[$column])];
             });
-            $required_values_exists = $required_values->keys()->map(function($column) use ($item) {
-                return isset($item[$column]);
-            })->values()->unique();
-            return $values->count() > 1 && ($required_values->count()==0 || ($required_values_exists->count() == 1 && $required_values_exists->first()==true)); 
-        })->map(function($data, $key) use ($input, $object, $basic_data, $input_front) {
+
+            // Validation
+            $required_values_result = $required_fields_exist->values()->unique();
+            $has_required_values = $required_fields->count()==0 || ($required_values_result->count() == 1 && $required_values_result->first()==true);
+
+            // Show message error if is not a new field
+            if(!$has_required_values && !Str::contains($key, 'new')) {
+                $missing_columns = $required_fields_exist->filter(function($item) {
+                    return !$item;
+                })->keys()->implode(', ');
+                flash()->warning('Row '.$key.' need the next required fields: '.$missing_columns.'. Update ignored.');
+            }
+            return $values->count() > 1 && $has_required_values; 
+        })->map(function($data, $key) use ($input, $object, $basic_data) {
             // If there is a new column save it instead of updating
             if(Str::contains($key, 'new')) {
                 $data = $basic_data->merge($data)->toArray();
@@ -109,7 +123,7 @@ class MassiveEditStore
             try {
                 $item = $results->find($key);    
             } catch (\Exception $e) {
-                $model = $input_front->model;
+                $model = $this->input_front->model;
                 $item = $model::find($key);
             }
 
