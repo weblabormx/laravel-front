@@ -115,6 +115,10 @@ class FrontServiceProvider extends ServiceProvider
             return "<?php if(request()->is($route.'/*') || request()->is($route)) echo 'active';?>";
         });
 
+        Blade::if('active', function ($route) {
+            return request()->is($route.'/*') || request()->is($route);
+        });
+
         Blade::directive('var_active_exact', function ($route) {
             return "<?php if(request()->is($route)) echo 'active';?>";
         });
