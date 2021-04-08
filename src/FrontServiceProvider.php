@@ -57,7 +57,6 @@ class FrontServiceProvider extends ServiceProvider
             {
                 $controller = new FrontController($front);
                 $provider->generateFrontRoutes($controller);
-                
             });
         });
 
@@ -78,7 +77,7 @@ class FrontServiceProvider extends ServiceProvider
             $singular = strtolower(Str::snake($model));
             $route = $route ?? $singular;
             Route::get($route, function() use ($model) {
-                return (new PageController)->page($model);
+                return (new PageController)->page($model, 'get');
             });
             Route::post($route, function() use ($model) {
                 return (new PageController)->page($model, 'post');

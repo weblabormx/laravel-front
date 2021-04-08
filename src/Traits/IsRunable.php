@@ -56,7 +56,7 @@ trait IsRunable
         }
 
         // Get variables to pass
-        $fields = $this->getFields(compact('front', 'page'));
+        $fields = $this->getParameters(compact('front', 'page'));
 
         return view($page->view, $fields);
     }
@@ -75,10 +75,14 @@ trait IsRunable
         return $object;
     }
 
-    private function getFields($array)
+    private function getParameters($array = [], $object = false)
     {
         $parameters = request()->route()->parameters();
-        return collect($parameters)->merge($array)->all();
+        $return = collect($parameters)->merge($array)->all();
+        if($object) {
+            return (object) $return;
+        }
+        return $return;
     }
 
     public function getParameter($name = 'object')

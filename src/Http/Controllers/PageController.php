@@ -2,20 +2,17 @@
 
 namespace WeblaborMx\Front\Http\Controllers;
 
-use WeblaborMx\Front\Traits\IsRunable;
-
 class PageController extends Controller
 {
-    use IsRunable;
-
-    public function page($page, $action = null)
+    public function page($page, $action)
     {
         // Call page class
         $page_class = 'App\Front\Pages\\'.$page;
         $page = (new $page_class)->setSource('index');
-        if(!is_null($action)) {
+        if($action!='get') {
         	$page = $page->changeFieldsFunction($action);
         }
-        return view($page->view, $this->getFields(compact('page', 'action')));
+        $method = 'execute'.ucfirst($action);
+        return $page->$method(compact('page', 'action'));
     }
 }

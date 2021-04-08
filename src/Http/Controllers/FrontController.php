@@ -47,7 +47,7 @@ class FrontController extends Controller
         
         // Show view
         $result = $response;
-        return view('front::crud.index', $this->getFields(compact('result', 'front')));
+        return view('front::crud.index', $this->getParameters(compact('result', 'front')));
     }
 
     public function create()
@@ -56,7 +56,7 @@ class FrontController extends Controller
         $this->frontAuthorize('create');
         
         $front = $this->front->setSource('create');
-        return view('front::crud.create', $this->getFields(compact('front')));
+        return view('front::crud.create', $this->getParameters(compact('front')));
     }
 
     public function store(Request $request)
@@ -93,7 +93,7 @@ class FrontController extends Controller
 
         // Show view
         $object = $response;
-        return view('front::crud.show', $this->getFields(compact('object', 'front')));
+        return view('front::crud.show', $this->getParameters(compact('object', 'front')));
     }
 
     public function edit($object)
@@ -109,7 +109,7 @@ class FrontController extends Controller
         $front = $this->front->setSource('edit')->setObject($object);
 
         // Show view
-        return view('front::crud.edit', $this->getFields(compact('object', 'front')));
+        return view('front::crud.edit', $this->getParameters(compact('object', 'front')));
     }
 
     public function update($object, Request $request)
@@ -172,7 +172,7 @@ class FrontController extends Controller
 
         // Show view
         $action = $response;
-        return view('front::crud.action', $this->getFields(compact('action', 'front', 'object')));
+        return view('front::crud.action', $this->getParameters(compact('action', 'front', 'object')));
     }
 
     public function actionStore($object, $action, Request $request)
@@ -204,7 +204,7 @@ class FrontController extends Controller
 
         // Show view
         $action = $response;
-        return view('front::crud.action', $this->getFields(compact('action', 'front')));
+        return view('front::crud.action', $this->getParameters(compact('action', 'front')));
     }
 
     public function indexActionStore($action, Request $request)
@@ -241,7 +241,7 @@ class FrontController extends Controller
 
         // Show view
         $data = collect(compact('object', 'front'))->merge($response)->all();
-        return view('front::crud.massive-edit', $this->getFields($data));
+        return view('front::crud.massive-edit', $this->getParameters($data));
     }
 
     public function massiveEditStore($object, $key, Request $request)
@@ -282,7 +282,7 @@ class FrontController extends Controller
         
         // Show view
         $result = $response;
-        return view('front::crud.index', $this->getFields(compact('result', 'front')));
+        return view('front::crud.index', $this->getParameters(compact('result', 'front')));
     }
 
     public function search(Request $request)
