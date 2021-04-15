@@ -23,7 +23,6 @@ class ToolsController extends Controller
 
         $new_name = $this->getFileName($file);
         $file_name = $variables->directory.'/'.$new_name;
-        \Log::info($file_name);
         $storage_file = Storage::put($file_name, (string) $new_file->encode(), 'public');
         $url = Storage::url($file_name);
 
