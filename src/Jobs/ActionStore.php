@@ -50,6 +50,9 @@ class ActionStore
             abort(404);
         }
 
+        // Set front
+        $action = $action->setFront($this->front);
+        
         // Set object to action and validate
         if(isset($this->object)) {
             $action = $action->setObject($this->object);

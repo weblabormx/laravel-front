@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\Panel;
 use WeblaborMx\Front\Traits\HasInputs;
 use WeblaborMx\Front\Traits\IsValidated;
+use WeblaborMx\Front\Jobs\FrontIndex;
 
 class IndexAction
 {
@@ -18,6 +19,7 @@ class IndexAction
 	public $data;
     public $save_button;
     public $slug;
+    public $front;
 
 	public function __construct()
 	{
@@ -135,6 +137,19 @@ class IndexAction
         if (isset($this->object) && isset($this->object->$name)) {
             return $this->object->$name;
         }
+    }
+
+    public function setFront($front)
+    {
+        $this->front = $front;
+        return $this;
+    }
+
+    public function results()
+    {
+        $result = $this->front->globalIndexQuery()->get();
+        $front_index = new FrontIndex($this->front, null);
+        return $front_index->result($result);
     }
 
 }

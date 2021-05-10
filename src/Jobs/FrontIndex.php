@@ -117,7 +117,7 @@ class FrontIndex
         return $key;
     }
 
-    private function result($result)
+    public function result($result)
     {
         // Get cache time to cache
         $cache = $this->front->cacheFor();

@@ -59,6 +59,9 @@ class ActionShow
             abort(404);
         }
 
+        // Set front
+        $action = $action->setFront($this->front);
+        
         // Set object to action
         if(isset($object)) {
             $action = $action->setObject($object);    
