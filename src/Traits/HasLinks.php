@@ -58,7 +58,9 @@ trait HasLinks
 
     	// Show index actions
 	    foreach($this->getIndexActions() as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}");
+            $query = request()->fullUrl();
+            $query = explode('?', $query)[1];
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}?{$query}");
 	    }
 
         // Show links to lenses
