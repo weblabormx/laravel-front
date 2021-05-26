@@ -2,6 +2,6 @@
     <img src="{{Auth::user()->photo_url}}" alt="" class="ui-w-50 rounded-circle">
     <div class="media-body ml-3">
         {{ __('Welcome back') }}, {{Auth::user()->name}}!
-        <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">{{ __('Today is') }} {{now()->format('l, F j, Y')}}</small></div>
+        <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">{{ __('Today is') }} {{now()->format($component->date_format)}}</small></div>
     </div>
 </h4>
