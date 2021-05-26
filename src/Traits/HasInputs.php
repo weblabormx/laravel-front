@@ -79,6 +79,9 @@ trait HasInputs
 				if(!is_array($columns)) {
 					$columns = [$columns];
 				}
+				if(!is_string($item->column) && is_callable($item->column)) {
+					return true;
+				}
 				return !collect($columns)->contains($item->column);
 			})->map(function($item) use ($where) {
 				return $item->setResource($this)->setSource($where);
