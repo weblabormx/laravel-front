@@ -38,7 +38,9 @@ abstract class Resource
 	public function __construct($source = null)
 	{
 		if(!isset($this->label)) {
-            $label = trim(preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', class_basename(get_class($this))));
+            $base = Str::contains(get_class($this), 'Lense') ? get_parent_class($this) : get_class($this);
+            $base = class_basename($base);
+            $label = trim(preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $base));
 			$this->label = $label;
 		}
 
@@ -62,10 +64,6 @@ abstract class Resource
                     'view' => 'front::crud.partial-index'
                 ]
             ];
-        }
-        if(isset($this->lense_title)) {
-            $this->label = $this->label.' '.$this->lense_title;
-            $this->plural_label = $this->plural_label.' '.$this->lense_title;
         }
         $this->load();
 	}

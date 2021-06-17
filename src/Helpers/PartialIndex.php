@@ -20,7 +20,13 @@ class PartialIndex
         $this->result         = $result;
         $this->page_name      = $page_name;
         $this->show_filters   = $show_filters;
-        $this->show_actions = isset($front) && isset($front->related_object) && isset($front->related_object->block_edition) ? !$front->related_object->block_edition : true;
+
+        if(isset($front) && isset($front->related_object) && isset($front->related_object->block_edition)) {
+            $this->show_actions = !$front->related_object->block_edition;
+        } else {
+            // Show actions only if are enabled
+            $this->show_actions = in_array(['show', 'edit', 'destroy'], $front->actions);
+        }
 
         if($this->result->count() > 0) {
             $this->getUnusedColumns();

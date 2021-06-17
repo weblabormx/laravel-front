@@ -12,6 +12,8 @@ Front is a administration panel for Laravel. It allows you to create CRUD easily
 
 ## Documentation
 ### Installation
+The easiest way to install Laravel Front is using the [base-laravel-front project](https://github.com/weblabormx/base-laravel-front) as a base. But in case you want to install manually you can follow the next instructions.
+
 - Install via composer executing `composer require weblabormx/laravel-front`
 - Execute `php artisan front:install` to install all necessary files (Will install configuration file and views)
 
@@ -68,6 +70,7 @@ Laravel Front makes a use of different items that can be defined on the next way
 - **Massives:** Define how a massive edition should work. For example you can have the users CRUD, each user have a lot of reservations, and you want to edit massively all reservations for this user, you can add more information on this classes, for example, adding a new button that says "Remove all" or "Send request"
 - **Pages:** Are information pages that only shows information, for example the Dashboard page
 - **Cards:** Are information cards that can be shown on pages, for example: The total money earned today, The total debt, etc
+- **Lenses:** Diferent views for an index page for a CRUD, for example Products can have different views or reports, one in general, other showing and ordered by most selled, etc.
 
 ### Resources
 
@@ -342,6 +345,58 @@ public function actions()
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
 
 You will able to change the data on `app/Front/PageName`
+
+## Lenses
+To create lenses just create the class on `app/Front/Lenses/` folder. The lenses have the next structure:
+
+```php
+namespace App\Front\Lenses;
+
+use WeblaborMx\Front\Traits\IsALense;
+use WeblaborMx\Front\Inputs\Date;
+use WeblaborMx\Front\Inputs\Number;
+use WeblaborMx\Front\Inputs\Money;
+use App\Front\Fuel;
+
+class FuelByDate extends Fuel
+{
+    use IsALense; // Required
+
+    public $lense_title = 'By Date'; // Title of the lense
+
+    public function fields()
+    {
+        return [
+            Date::make('Date'),
+            Number::make('Quantity', 'quantity_sum'),
+            Money::make('Price', 'price_sum'),
+        ];
+    }
+}
+
+```
+
+Then you need to add the lense to the resource (In this case, the Fuel Front File)
+
+```php
+namespace App\Front;
+
+use App\Front\Resource;
+use App\Front\Lenses\FuelByDate;
+
+class Fuel extends Resource
+{
+    public function lenses()
+    {
+        return [
+            new FuelByDate
+        ];
+    }
+}
+
+```
+
+The lenses have the same functionality as the Front Resources, so you customize fully the way it works.
 
 ## Customizing the theme
 
