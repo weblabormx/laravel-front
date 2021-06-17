@@ -23,7 +23,7 @@
 
     <h4 class="d-flex justify-content-between align-items-center mb-4">
         <div>{{$front->plural_label}}</div>
-        <div>
+        <div class="d-print-none">
             @foreach($front->getIndexLinks() as $button)
                 {!! $button->form() !!}
             @endforeach

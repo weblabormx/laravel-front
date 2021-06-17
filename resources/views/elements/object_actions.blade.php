@@ -1,5 +1,5 @@
 @php $helper = $front->getActionsHelper($object, $base_url, $edit_link ?? null, $show_link ?? null); @endphp
-<td class="text-center">
+<td class="text-center d-print-none">
 	@if( $helper->canShow() )
     	<!-- Edit button -->
         <a href="{{$helper->showUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('See') }}"><i class="fa fa-eye"></i></a>

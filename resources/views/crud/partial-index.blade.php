@@ -15,7 +15,7 @@
                                 <th class="{{$field->class}}">{{$field->title}}</th>
                             @endforeach
                             @if($helper->show_actions)
-                                <th>{{ __('Actions') }}</th>
+                                <th class="d-print-none">{{ __('Actions') }}</th>
                             @endif
                         </tr>
                     </thead>
