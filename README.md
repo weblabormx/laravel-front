@@ -341,12 +341,12 @@ public function actions()
 }
 ```
 
-## Pages
+### Pages
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
 
 You will able to change the data on `app/Front/PageName`
 
-## Lenses
+### Lenses
 To create lenses just create the class on `app/Front/Lenses/` folder. The lenses have the next structure:
 
 ```php
