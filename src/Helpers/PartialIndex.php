@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Helpers;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class PartialIndex
 {
@@ -25,7 +26,7 @@ class PartialIndex
             $this->show_actions = !$front->related_object->block_edition;
         } else {
             // Show actions only if are enabled
-            $this->show_actions = in_array(['show', 'edit', 'destroy'], $front->actions);
+            $this->show_actions = Arr::hasAny(collect($front->actions)->keys(), collect(['show', 'edit', 'destroy'])->keys());
         }
 
         if($this->result->count() > 0) {
