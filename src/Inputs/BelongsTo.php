@@ -41,6 +41,10 @@ class BelongsTo extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
+		if(!method_exists($resource, 'getModel')) {
+			return parent::setResource($resource);
+		}
+		
 		$class = $resource->getModel();
 		$model = new $class;
 		if(method_exists($model, $relation)) {
