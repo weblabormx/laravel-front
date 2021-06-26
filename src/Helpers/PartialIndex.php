@@ -22,11 +22,18 @@ class PartialIndex
         $this->page_name      = $page_name;
         $this->show_filters   = $show_filters;
 
-        if(isset($front) && isset($front->related_object) && isset($front->related_object->block_edition)) {
-            $this->show_actions = !$front->related_object->block_edition;
-        } else {
-            // Show actions only if are enabled
+        // If in front there is show_actions, use that
+        if(isset($this->front->show_actions)) {
+            $this->show_actions = $this->front->show_actions;
+
+        // If not check if there are enough actions to show
+        } else if(!isset($this->show_actions)) {
             $this->show_actions = Arr::hasAny(collect($front->actions)->keys(), collect(['show', 'edit', 'destroy'])->keys());
+        }
+
+        // Check if individual object has permissions
+        if(isset($front) && isset($front->related_object) && isset($front->related_object->block_edition)) {
+            $this->show_actions = !$front->related_object->block_edition && $this->show_actions;
         }
 
         if($this->result->count() > 0) {
