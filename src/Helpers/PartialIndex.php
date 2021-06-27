@@ -47,7 +47,12 @@ class PartialIndex
         if(!$this->result instanceof \Illuminate\Pagination\LengthAwarePaginator) {
             return;
         }
-        $appends = request()->except($this->page_name);
+        $appends = collect(request()->except($this->page_name))->map(function($item) {
+            if(is_null($item)) {
+                $item = '';
+            }
+            return $item;
+        })->all();
         return $this->result->appends($appends)->links();
     }
 
