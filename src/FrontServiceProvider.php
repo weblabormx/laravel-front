@@ -53,9 +53,9 @@ class FrontServiceProvider extends ServiceProvider
             $front = getFront($model);
             $prefix = class_basename($front->base_url);
 
-            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front, $provider) 
+            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($model, $provider) 
             {
-                $controller = new FrontController($front);
+                $controller = new FrontController($model);
                 $provider->generateFrontRoutes($controller);
             });
         });
@@ -65,9 +65,9 @@ class FrontServiceProvider extends ServiceProvider
             $front = getFront($model);
             $prefix = class_basename($front->base_url);
 
-            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($front, $provider) 
+            Route::group(['prefix' => $prefix, 'namespace' => '\WeblaborMx\Front\Http\Controllers'], function () use ($model, $provider) 
             {
-                $controller = new FrontController($front);
+                $controller = new FrontController($model);
                 $provider->generateFrontRoutes($controller);
                 
             });
