@@ -41,7 +41,7 @@ class MassiveEditShow
 
         // Get relationship data
         $result = $input->getResults($this->object);
-        if(get_class($result) != 'Illuminate\Support\Collection') {
+        if(!in_array(get_class($result), ['Illuminate\Support\Collection', 'Illuminate\Database\Eloquent\Collection'])) {
             $result = $result->get();
         }
 
