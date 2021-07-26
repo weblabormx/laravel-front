@@ -267,6 +267,8 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
+Laravel Front is growing so it is normal that we are adding new types of fields and it is not documented yet, if you want to see all the types of fields that your Laravel Front project has go to `vendor\weblabormx\laravel-front\src\inputs`
+
 #### BelongsTo
 if you want to insert some data from another table you can do it with
 BelongsTo referencing the model that has the data you need. 
@@ -320,7 +322,7 @@ If you need to use the `Image` field you will have to change `FILESYSTEM_DRIVER 
 ```php
 Image::make('Photo')->rules('required'),
 ```
-Sometimes you also need to change to public on the route `config/filesystems.php`.
+Sometimes you also need to change to public on the route `config\filesystems.php`.
 
 ```php
 'default' => env('FILESYSTEM_DRIVER', 'public'),
