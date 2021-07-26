@@ -267,7 +267,7 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
-### BelongsTo
+#### BelongsTo
 if you want to insert some data from another table you can do it with
 BelongsTo referencing the model that has the data you need. 
 ```php
@@ -286,9 +286,9 @@ Create the relationship in the model
         return $this->belongsTo(Currency::class);
     }
 ```
-### HasMany
+#### HasMany
 
-If your resource has a relation of many you can use the HasMany, indicating the model it relates to
+If your resource has a relation of many you can use the HasMany, indicating the model it relates to:
 ```php
     public function fields()
     {
@@ -298,7 +298,7 @@ If your resource has a relation of many you can use the HasMany, indicating the 
         ];
     }
 ```
-Create the relationship in the model in plural
+Create the relationship in the model in plural.
 ```php
     public function videos()
     {
@@ -313,7 +313,18 @@ If you want to a relationship resource to be edited massively just add `enableMa
 ```php
 HasMany::make('Reservation')->enableMassive(),
 ```
+#### Images
 
+If you need to use the `Image` field you will have to change `FILESYSTEM_DRIVER = local` to `FILESYSTEM_DRIVER` = public in the `.env` file.
+
+```php
+Image::make('Photo')->rules('required'),
+```
+Sometimes you also need to change to public on the route `config/filesystems.php`.
+
+```php
+'default' => env('FILESYSTEM_DRIVER', 'public'),
+```
 
 ### Filters
 
