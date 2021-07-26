@@ -317,7 +317,7 @@ HasMany::make('Reservation')->enableMassive(),
 ```
 #### Images
 
-If you need to use the `Image` field you will have to change `FILESYSTEM_DRIVER = local` to `FILESYSTEM_DRIVER` = public in the `.env` file.
+If you need to use the `Image` field you will have to change `FILESYSTEM_DRIVER = local` to `FILESYSTEM_DRIVER = public` in the `.env` file.
 
 ```php
 Image::make('Photo')->rules('required'),
