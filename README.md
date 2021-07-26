@@ -180,6 +180,7 @@ Text::make('Name', 'name_column')
 - onlyOnEdit
 - onlyOnCreate
 - exceptOnForms
+- rules
 
 You may chain any of these methods onto your field's definition in order to instruct Frpmt where the field should be displayed:
 
@@ -247,6 +248,7 @@ All the fields available on front:
 - Time
 - Trix
 
+
 #### Text types
 
 - Alert
@@ -265,6 +267,44 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
+### BelongsTo
+if you want to insert some data from another table you can do it with
+BelongsTo referencing the model that has the data you need. 
+```php
+    public function fields()
+    {
+        return [
+            ID::make(),
+            BelongsTo::make('Currency')->rules('required'),
+        ];
+    }
+```
+Create the relationship in the model 
+```php
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
+```
+### HasMany
+
+If your resource has a relation of many you can use the HasMany, indicating the model it relates to
+```php
+    public function fields()
+    {
+        return [
+            ID::make(),
+            HasMany::make('Video')->rules('required'),
+        ];
+    }
+```
+Create the relationship in the model in plural
+```php
+    public function videos()
+    {
+        return $this->belongsTo(Video::class);
+    }
+```
 
 #### Massive editions
 
@@ -273,6 +313,8 @@ If you want to a relationship resource to be edited massively just add `enableMa
 ```php
 HasMany::make('Reservation')->enableMassive(),
 ```
+
+
 ### Filters
 
 You can add filters to a resource to filter the data, the filters are stored on `App\Front\Filters` folder. You can add filters by executing the command `php artisan front:filter FilterName`
@@ -340,6 +382,39 @@ public function actions()
     ];
 }
 ```
+### IndexActions
+IndexAction works the same as Actions, the difference is that the button will appear at the beginning of the resource, Actions appears when you visit a data. 
+```php
+namespace App\Front\Actions;
+
+use WeblaborMx\Front\Inputs\Text;
+use Illuminate\Http\Request;
+
+class ResendEmail extends IndexAction
+{
+    public function handle($object, Request $request)
+    {
+        // Execute what you want to do
+    }
+
+    public function fields()
+    {
+        // Do you need to ask some information? You can avoid this function if just want to execute an action
+        return [
+            Text::make('Note')->rules('required'),
+        ];
+    }
+}
+```
+
+```php
+public function index_actions()
+{
+    return [
+        new ResendEmail
+    ];
+}
+```
 
 ### Pages
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
@@ -398,8 +473,16 @@ class Fuel extends Resource
 
 The lenses have the same functionality as the Front Resources, so you customize fully the way it works.
 
+## Funtions 
+### indexQuery
+If your `resource` has data you don't want, you can create a query to decide which data to display
+```php
+    public function indexQuery($query)
+    {
+        return $query->where('team_id', Team::current()->id)->latest();
+    }
+```
 ## Customizing the theme
-
 ### Sidebar
 
 You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar`
