@@ -104,7 +104,17 @@ public $model;      // Direction of the model
 public $base_url;   // Url created on routes (Required)
 ```
 
-#### Modifying query of results
+## Funtions 
+### index
+If you need to run some algorithm just when you visit the resource you can use `Index()`.
+```php
+    public function index()
+    {
+        return $message;
+    }
+```
+#### indexQuery 
+Modifying query of results
 
 If you want to modify the results of CRUD you are able to modify it with `indexQuery` function
 
@@ -113,6 +123,35 @@ public function indexQuery($query)
 {
     return $query->where('team_id', 1)->with(['user'])->latest();
 }
+```
+### create
+If you need to insert a data that is not found between the fields of your resource, you can use the create function.
+
+```php
+    public function create($data)
+    {
+        return Team::current()->blog_entries()->create($data);
+    }
+```
+### Index_links
+you can create a button with the function `Index_links` which will appear in the main view of the resource.
+```php
+    public function index_links()
+    {
+        return [
+            '/admin/multimedia/create?is_directory=1&directory_id='.$this->currentFolder()  => '<i class="fa fa-folder"></i> '.__('Create').' '.__('Folder')
+        ];
+    }
+```
+### links
+It works in the same way as index_links, the difference is that the button will appear when visiting some data from our resource.
+```php
+    public function links()
+    {
+        return [
+            '/admin/multimedia/create?is_directory=1&directory_id='.$this->currentFolder()  => '<i class="fa fa-folder"></i> '.__('Create').' '.__('Folder')
+        ];
+    }
 ```
 
 #### Pagination
@@ -167,7 +206,7 @@ As noted above, Front will "snake case" the displayable name of the field to det
 ```php
 Text::make('Name', 'name_column')
 ```
-
+## Attributes of the fields
 #### Showing / Hidding Fields
 
 - hideFromIndex
@@ -180,7 +219,19 @@ Text::make('Name', 'name_column')
 - onlyOnEdit
 - onlyOnCreate
 - exceptOnForms
+
+#### Others
 - rules
+- creationRules
+- setValue
+- setDirectory
+- default
+- setWidth
+- filterQuery
+- options
+
+
+
 
 You may chain any of these methods onto your field's definition in order to instruct Frpmt where the field should be displayed:
 
@@ -486,15 +537,7 @@ class Fuel extends Resource
 
 The lenses have the same functionality as the Front Resources, so you customize fully the way it works.
 
-## Funtions 
-### indexQuery
-If your `resource` has data you don't want, you can create a query to decide which data to display
-```php
-    public function indexQuery($query)
-    {
-        return $query->where('team_id', Team::current()->id)->latest();
-    }
-```
+
 ## Customizing the theme
 ### Sidebar
 
