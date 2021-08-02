@@ -104,8 +104,8 @@ public $model;      // Direction of the model
 public $base_url;   // Url created on routes (Required)
 ```
 
-## Funtions 
-### index
+### Funtions 
+#### index
 If you need to run some algorithm just when you visit the resource you can use `Index()`.
 ```php
     public function index()
@@ -124,7 +124,7 @@ public function indexQuery($query)
     return $query->where('team_id', 1)->with(['user'])->latest();
 }
 ```
-### create
+#### create
 If you need to insert a data that is not found between the fields of your resource, you can use the create function.
 
 ```php
@@ -133,7 +133,7 @@ If you need to insert a data that is not found between the fields of your resour
         return Team::current()->blog_entries()->create($data);
     }
 ```
-### Index_links
+#### Index_links
 you can create a button with the function `Index_links` which will appear in the main view of the resource.
 ```php
     public function index_links()
@@ -143,7 +143,7 @@ you can create a button with the function `Index_links` which will appear in the
         ];
     }
 ```
-### links
+#### links
 It works in the same way as index_links, the difference is that the button will appear when visiting some data from our resource.
 ```php
     public function links()
@@ -206,7 +206,7 @@ As noted above, Front will "snake case" the displayable name of the field to det
 ```php
 Text::make('Name', 'name_column')
 ```
-## Attributes of the fields
+### Attributes of the fields
 #### Showing / Hidding Fields
 
 - hideFromIndex
