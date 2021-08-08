@@ -358,6 +358,27 @@ Create the relationship in the model in plural.
         return $this->belongsTo(Video::class);
     }
 ```
+#### MorphTo
+The `morphTo` field corresponds to a `morphTo` of the eloquent relation, for example if a `price` model has a polymorphic relation with the `courses` and `products` models, the relation can be added to the `price` resource in this way.
+```php
+    public function fields()
+    {
+        return [
+            MorphTo::make('Priceable')->types([
+                Course::class,
+                Product::class,
+            ]),
+        ];
+    }
+```
+in the course and products model
+```php
+    public function prices(){
+        return $this->morphMany(Price::class,'priceable');
+    }
+```
+Remember to follow the eloquent `able` structure for polymorphic relationships.
+
 
 #### Massive editions
 
