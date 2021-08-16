@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class Images extends Image
 {
+	public $original_name_column;
+
 	/*
 	 * Basic functions
 	 */
@@ -64,6 +66,11 @@ class Images extends Image
 			
 			// Assign data to request
 			$data[$this->column] = $url;
+			
+			// Save original name in a column if set
+			if(!is_null($this->original_name_column)) {
+				$data[$this->original_name_column] = $file->getClientOriginalName();
+			}
 			return $data;
 		})->all();
 	}
@@ -79,5 +86,11 @@ class Images extends Image
 			$name.'.*' => $attribute_name
 		];
 		\Validator::make($data, $rules, [], $attributes)->validate();
+	}
+
+	public function setOriginalNameColumn($value)
+	{
+		$this->original_name_column = $value;
+		return $this;
 	}
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 class File extends Input
 {
 	public $directory = 'files';
+	public $original_name_column;
 
 	public function form()
 	{
@@ -27,6 +28,11 @@ class File extends Input
 		}
 		$file = Storage::putFile($this->directory, $data[$this->column]);
 		$url = Storage::url($file);
+
+		// Save original name in a column if set
+		if(!is_null($this->original_name_column)) {
+			$data[$this->original_name_column] = $data[$this->column]->getClientOriginalName();
+		}
 		$data[$this->column] = $url;
 		return $data;
 	}
@@ -35,5 +41,11 @@ class File extends Input
 	{
 		$value = parent::getValue($object);
 		return view('front::inputs.file', compact('value'));
+	}
+
+	public function setOriginalNameColumn($value)
+	{
+		$this->original_name_column = $value;
+		return $this;
 	}
 }
