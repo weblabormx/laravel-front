@@ -39,7 +39,7 @@ trait HasBreadcrumbs
     public function getBreadcrumbsValues($object = null, $data = [])
     {
         $relation = $this->detectRelation();
-        $front = is_null($relation['front']) ? $this : $relation['front'];
+        $front = is_null($relation['front']) ? $this : $relation['front']->setObject($relation['object']);
 
         // New format
         $breadcrumbs = collect($front->breadcrumbs())->map(function($item, $key) {
@@ -94,8 +94,8 @@ trait HasBreadcrumbs
         if($front->source=='show' && !is_null($relation['front'])) {
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
-            $breadcrumbs[] = ['title' => $this->plural_label];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl()];
+            $breadcrumbs[] = ['title' => $this->plural_label, 'url' => $this->getIndexUrl()];
             $title = $this->title;
             $breadcrumbs[] = ['title' => strip_tags($object->$title), 'active' => true];
         }
@@ -110,7 +110,7 @@ trait HasBreadcrumbs
         if($front->source=='create' && !is_null($relation['front'])) {
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl()];
             $breadcrumbs[] = ['title' => __('Add new').' '.$this->label, 'active' => true];
         }
 
@@ -128,8 +128,8 @@ trait HasBreadcrumbs
         if($front->source=='edit' && !is_null($relation['front'])) {
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl($relation['object'])];
-            $breadcrumbs[] = ['title' => $this->plural_label];
+            $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl()];
+            $breadcrumbs[] = ['title' => $this->plural_label, 'url' => $this->getIndexUrl()];
             $title = $front->title;
             $breadcrumbs[] = ['title' => __('Edit').' '.$this->$title, 'active' => true];
         }
