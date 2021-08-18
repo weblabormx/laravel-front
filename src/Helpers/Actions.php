@@ -66,8 +66,25 @@ class Actions
         return $link;
     }
 
+    public function upUrl()
+    {
+        $link = $this->base_url.'/'.$this->object->getKey().'/sortable/up';
+        return $link;
+    }
+
+    public function downUrl()
+    {
+        $link = $this->base_url.'/'.$this->object->getKey().'/sortable/down';
+        return $link;
+    }
+
     private function isEloquent()
     {
         return is_subclass_of($this->object, 'Illuminate\Database\Eloquent\Model');
+    }
+
+    public function isSortable()
+    {
+        return isset(class_uses($this->object)['Spatie\EloquentSortable\SortableTrait']);
     }
 }

@@ -273,6 +273,24 @@ class FrontController extends Controller
     }
 
     /*
+     * Sortable
+     */
+
+    private function sortableUp($object) 
+    {
+        $object = $this->getObject($object);
+        $object->moveOrderUp();
+        return back();
+    }
+
+    private function sortableDown($object) 
+    {
+        $object = $this->getObject($object);
+        $object->moveOrderDown();
+        return back();
+    }
+
+    /*
      * More features
      */
 

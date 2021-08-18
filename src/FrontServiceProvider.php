@@ -185,6 +185,12 @@ class FrontServiceProvider extends ServiceProvider
         Route::post('{front_object}/masive_edit/{front_key}', function(Request $request) use ($controller) {
             return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
         });
+        Route::get('{front_object}/sortable/up', function() use ($controller) {
+            return $controller->sortableUp($controller->getParameter());
+        });
+        Route::get('{front_object}/sortable/down', function(Request $request) use ($controller) {
+            return $controller->sortableDown($controller->getParameter());
+        });
     }
 
     /**
