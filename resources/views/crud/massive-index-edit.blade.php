@@ -6,7 +6,7 @@
         <div class="sidenav-header small font-weight-semibold mb-2 text-uppercase">{{ __('Options') }}</div>
         {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
             <div class="card pt-3 sidenav-forms">
-                @foreach($input->getMassiveForms() as $form)
+                @foreach($front->getMassiveForms() as $form)
                     {!! $form->formHtml() !!}
                 @endforeach
             </div>
@@ -18,11 +18,11 @@
     
 @section('content')
     
-    @include('front::elements.breadcrumbs', ['data' => ['massive' => $input]])
+    @include('front::elements.breadcrumbs', ['data' => ['massive' => $front]])
     @include ('front::elements.errors')
 
 
-    <h4 class="font-weight-bold py-3">{{__('Edit')}} {{$input->title}}</h4>
+    <h4 class="font-weight-bold py-3">{{__('Edit')}} {{$front->plural_label}}</h4>
 
     {!! Form::open(array('url' => request()->url(), 'files' => true)) !!}
 
@@ -30,7 +30,7 @@
             <table class="table table-striped bg-white">
                 <thead class="thead-dark">
                     <tr>
-                        @foreach($input->getTableHeadings($object) as $title)
+                        @foreach($front->getTableHeadings() as $title)
                             <th>{{$title}}</th>
                         @endforeach
                     </tr>
@@ -38,12 +38,12 @@
                 <tbody>
                     @foreach($result as $object)
                         <tr>
-                            @foreach($input->getTableValues($object) as $value)
+                            @foreach($front->getTableValues($object) as $value)
                                 <td>{!! $value !!}</td>
                             @endforeach
                         </tr>
                     @endforeach
-                    @foreach($input->getExtraTableValues() as $row)
+                    @foreach($front->getExtraTableValues() as $row)
                         <tr>
                             @foreach($row as $value)
                                 <td>{!! $value !!}</td>
@@ -58,7 +58,7 @@
         @endforeach
 
         <div class="text-right mt-3">
-            @foreach($input->getTableButtons() as $name => $title)
+            @foreach($front->getTableButtons() as $name => $title)
                 <button type="submit" class="btn btn-primary" @if(strlen($name)>0) name="submitName" value="{{$name}}" @endif>{!! $title !!}</button>
             @endforeach
         </div>

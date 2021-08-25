@@ -161,6 +161,12 @@ class FrontServiceProvider extends ServiceProvider
         Route::get('lenses/{front_lense}', function($front_lense, Request $request) use ($controller) {
             return $controller->lenses($front_lense, $request);
         });
+        Route::get('massive_edit', function() use ($controller) {
+            return $controller->massiveIndexEditShow();
+        });
+        Route::post('massive_edit', function(Request $request) use ($controller) {
+            return $controller->massiveIndexEditStore($request);
+        });
         Route::get('{front_object}', function() use ($controller) {
             return $controller->show($controller->getParameter());
         });
@@ -179,10 +185,10 @@ class FrontServiceProvider extends ServiceProvider
         Route::post('{front_object}/action/{front_action}', function(Request $request) use ($controller) {
             return $controller->actionStore($controller->getParameter(), $controller->getParameter('action'), $request);
         });
-        Route::get('{front_object}/masive_edit/{front_key}', function() use ($controller) {
+        Route::get('{front_object}/massive_edit/{front_key}', function() use ($controller) {
             return $controller->massiveEditShow($controller->getParameter(), $controller->getParameter('key'));
         });
-        Route::post('{front_object}/masive_edit/{front_key}', function(Request $request) use ($controller) {
+        Route::post('{front_object}/massive_edit/{front_key}', function(Request $request) use ($controller) {
             return $controller->massiveEditStore($controller->getParameter(), $controller->getParameter('key'), $request);
         });
         Route::get('{front_object}/sortable/up', function() use ($controller) {

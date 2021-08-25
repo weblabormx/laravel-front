@@ -14,10 +14,11 @@ use WeblaborMx\Front\Traits\HasLenses;
 use WeblaborMx\Front\Traits\ResourceHelpers;
 use WeblaborMx\Front\Traits\IsValidated;
 use WeblaborMx\Front\Traits\HasPermissions;
+use WeblaborMx\Front\Traits\HasMassiveEditions;
 
 abstract class Resource
 {
-	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions;
+	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions, HasMassiveEditions;
 
 	public $data;
 	public $title = 'name';

@@ -41,9 +41,9 @@ trait InputWithLinks
         }
 
         // Add massive edit link
-        if(isset($this->masive_edit_link) && $this->show_massive && $can_edit) {
+        if(isset($this->massive_edit_link) && $this->show_massive && $can_edit) {
         	$links[] = Button::make("<i class='fa fa-edit'></i> ".__('Edit')." {$this->front->plural_label}")
-        		->addLink("{$front->getBaseUrl()}/{$object->getKey()}/masive_edit/{$key}{$this->masive_edit_link}");
+        		->addLink("{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}");
         }
         
         // Add create link

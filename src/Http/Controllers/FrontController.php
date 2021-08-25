@@ -13,6 +13,8 @@ use WeblaborMx\Front\Jobs\FrontDestroy;
 use WeblaborMx\Front\Jobs\FrontSearch;
 use WeblaborMx\Front\Jobs\ActionShow;
 use WeblaborMx\Front\Jobs\ActionStore;
+use WeblaborMx\Front\Jobs\MassiveIndexEditShow;
+use WeblaborMx\Front\Jobs\MassiveIndexEditStore;
 use WeblaborMx\Front\Jobs\MassiveEditShow;
 use WeblaborMx\Front\Jobs\MassiveEditStore;
 
@@ -232,6 +234,37 @@ class FrontController extends Controller
     /*
      * Massive Edition
      */
+
+    private function massiveIndexEditShow() 
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new MassiveIndexEditShow($front));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $data = collect(compact('front'))->merge($response)->all();
+        return view('front::crud.massive-index-edit', $this->getParameters($data));
+    }
+
+    private function massiveIndexEditStore(Request $request)
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new MassiveIndexEditStore($front, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Return
+        return back();
+    }
 
     private function massiveEditShow($object, $key) 
     {

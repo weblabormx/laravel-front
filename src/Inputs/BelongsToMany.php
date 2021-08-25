@@ -29,7 +29,7 @@ class BelongsToMany extends Input
 			$this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
 		}
 		
-		$this->masive_edit_link = '';
+		$this->massive_edit_link = '';
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 

@@ -2,11 +2,10 @@
 
 namespace WeblaborMx\Front\Traits;
 
-use WeblaborMx\Front\Inputs\Text;
-use WeblaborMx\Front\Inputs\Hidden;
-
 trait InputRelationship
 {
+	use HasMassiveEditions;
+
 	public $create_link;
 	public $edit_link = '{key}/edit';
 	public $show_link;
@@ -16,10 +15,12 @@ trait InputRelationship
 	public $force_query;
 	public $lense;
 	public $hide_columns;
-	public $massive_class;
-	public $show_massive = false;
 	public $block_edition = false;
 	public $headings;
+
+	/*
+	 * Functions 
+	 */
 
 	public function setCreateLink($function)
 	{
@@ -28,7 +29,7 @@ trait InputRelationship
 		}
 		$this->create_link_accessed = true;
 		$this->create_link = $function($this->create_link);
-		$this->masive_edit_link = $function($this->masive_edit_link);
+		$this->massive_edit_link = $function($this->massive_edit_link);
 		return $this;
 	}
 
@@ -130,112 +131,8 @@ trait InputRelationship
 		return $this;
 	}
 
-	/*
-	 * Helpers
-	 */
-
-	public function getMassiveForms()
+	public function getFront()
 	{
-		$forms = [];
-		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
-			$forms[] = Text::make(__('New rows'), 'rows');
-		}
-        foreach(request()->except('rows') as $key => $value) {
-        	$forms[] = Hidden::make($key, $key)->setValue($value);
-        }
-        return $forms;
-	}
-
-	public function getTableHeadings($object)
-	{
-		// Always show ID column
-		$headings = ['ID'];
-
-		// Get front 
-		$input_front = $this->front->setObject($this->getResults($object)->first());
-
-		// Show fields that are on index and that can be edited
-		$fields = $input_front->indexFields()->filter(function($item) {
-			return $item->show_on_edit;
-		});
-
-		// Save titles to the result
-        foreach($fields as $field) {
-            $headings[] = $field->title;
-        }
-        $this->headings = $headings;
-
-        // Return the headings
-        return $headings;
-	}
-
-	public function getTableValues($object)
-	{
-		// Get front
-		$input_front = $this->front->setObject($object);
-
-		// Get id value
-        $id = is_a($object, 'Illuminate\Database\Eloquent\Model') ? $object->getKey() : $object->id;
-
-        // Start the result with the id result
-		$values = [$id];
-
-		// Show fields that are on index and that can be edited
-		$fields = $input_front->indexFields()->filter(function($item) {
-			return $item->show_on_edit;
-		});
-
-		// Save values to the result
-        foreach($fields as $field) {
-            $column = $field->column;
-            $field = $field->setColumn($id.'['.$field->column.']')->default($object->$column, true);
-            if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
-            	$field = $field->size(80);
-            }
-            $values[] = $field->form($object);
-        }
-
-        // Return result
-        return $values;
-	}
-
-	public function getExtraTableValues($object)
-	{
-		$result = [];
-
-		// Show fields that are on index and that can be created
-		$fields = $this->front->indexFields()->filter(function($item) {
-			return $item->show_on_create;
-		});
-
-		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
-            for($i = 0; $i < (request()->rows ?? 5); $i++) {
-            	$values = collect($this->headings)->flip()->map(function($item) {
-            		return '';
-            	});
-            	foreach($fields as $field) {
-                    $column = $field->column; 
-                    $field = $field->setColumn('new'.$i.'['.$field->column.']');
-                    if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
-		            	$field = $field->size(80);
-		            }
-                    $values[$field->title] = $field->form($object);
-            	}
-        		$result[] = $values;
-            }
-		}
-        return $result;
-	}
-
-	public function getTableButtons()
-	{
-		$buttons = [];
-		if(isset($this->massive_class)) {
-            foreach($this->massive_class->buttons as $function => $title) {
-            	$buttons[$function] = $title;
-            }
-        }
-        $buttons[null] = '<i class="fa fa-save"></i> '.__('Save');
-        return $buttons;
+		return $this->front;
 	}
 }	

@@ -33,7 +33,7 @@ class HasMany extends Input
 		
 		$this->create_link = $this->front->getBaseUrl().'/create';
 		$this->show_before = $this->front->canIndex();
-		$this->masive_edit_link = '';
+		$this->massive_edit_link = '';
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 
