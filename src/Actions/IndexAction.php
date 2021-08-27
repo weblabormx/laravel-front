@@ -37,9 +37,15 @@ class IndexAction
 		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
 	}
 
+    public function load()
+    {
+        //
+    }
+
 	public function addData($data)
 	{
 		$this->data = $data;
+        $this->load();
 		return $this;
 	}
 
