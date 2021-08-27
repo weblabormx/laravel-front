@@ -10,7 +10,6 @@ class MassiveIndexEditStore
     public $object;
     public $key;
     public $request;
-    public $input_front;
 
     /**
      * Create a new job instance.
@@ -30,16 +29,6 @@ class MassiveIndexEditStore
      */
     public function handle()
     {
-        // Check if relationship exists
-        if(!isset($this->front->showRelations()[$this->key])) {
-            abort(406, 'Key isnt correct');
-        }
-
-        // Get relationship input
-        $input = $this->front->showRelations()[$this->key];
-        $input_front = $input->front->addData($this->front->data);
-        $this->input_front = $input_front;
-
         // Get data that should be added to all data
         $basic_data = collect($this->request->except(['_token', 'submitName', 'relation_front', 'relation_id', 'redirect_url']))->filter(function($item) {
             return !is_array($item) && !is_null($item);
@@ -49,20 +38,20 @@ class MassiveIndexEditStore
         $data = $this->request->all();
 
         // Modify data if exists a massive class
-        if(is_object($input->massive_class)) {
-            $data = $input->massive_class->processData($data);
+        if(is_object($this->front->massive_class)) {
+            $data = $this->front->massive_class->processData($data);
         }
 
         // Save data on table
-        $this->saveData($data, $input, $this->object, $basic_data);
+        $this->saveData($data, $basic_data);
 
         // Declare it as null
         $return = null;
 
         // If another button is pressed is because the presence of massive class
-        if(isset($this->request->submitName) && is_object($input->massive_class)) {
+        if(isset($this->request->submitName) && is_object($this->front->massive_class)) {
             $function = $this->request->submitName;
-            $return = $input->massive_class->$function($this->object, $data);
+            $return = $this->front->massive_class->$function($data);
         }
 
         // Show successfull message
@@ -71,7 +60,7 @@ class MassiveIndexEditStore
         }
     }
 
-    private function saveData($data, $input, $object, $basic_data) 
+    private function saveData($data, $basic_data) 
     {
         $objects = collect($data)->filter(function($item) {
             // Just show arrays
@@ -81,7 +70,7 @@ class MassiveIndexEditStore
             $values = collect($item)->values()->whereNotNull();
 
             // Get required fields
-            $required_fields = collect($this->input_front->getRules('index'))->filter(function($item) {
+            $required_fields = collect($this->front->getRules('index'))->filter(function($item) {
                 return in_array('required', $item);
             })->keys();
 
@@ -102,42 +91,42 @@ class MassiveIndexEditStore
                 flash()->warning('Row '.$key.' need the next required fields: '.$missing_columns.'. Update ignored.');
             }
             return $values->count() > 1 && $has_required_values; 
-        })->map(function($data, $key) use ($input, $object, $basic_data) {
+        })->map(function($data, $key) use ($basic_data) {
             // If there is a new column save it instead of updating
             if(Str::contains($key, 'new')) {
                 $data = $basic_data->merge($data)->toArray();
-                $model = $input->front->model;
+                $model = $this->front->model;
                 $object = $model::create($data);
 
                 // Call the action to be done after is created
-                $this->input_front->store($object, $data);
+                $this->front->store($object, $data);
                 return $object;
             }
 
             // Get models data
-            $results = $input->getResults($object);
+            $results = $this->front->globalIndexQuery()->limit($this->front->pagination)->get();
 
             // If results is not a query get it individually
             try {
                 $item = $results->find($key);    
             } catch (\Exception $e) {
-                $model = $this->input_front->model;
+                $model = $this->front->model;
                 $item = $model::find($key);
             }
 
             // Call the action to be done before is updated
-            $this->input_front->beforeUpdate($item, $data);
+            $this->front->beforeUpdate($item, $data);
 
             // Update data
             $item->update($data);
 
             // Call the action to be done after is updated
-            $this->input_front->update($item, $data);
+            $this->front->update($item, $data);
 
             return $item;
         });
 
         // Call the action to be done after is updated
-        $this->input_front->afterMassive($objects);
+        $this->front->afterMassive($objects);
     }
 }

@@ -85,6 +85,14 @@ trait HasLinks
             $links[] = Button::make($text)->addLink($link);
         }
 
+        // Show massive edition
+        if($this->enable_massive_edition) {
+            $query = str_replace(url()->current(), '', url()->full());
+            $url = $this->getBaseUrl()."/massive_edit".$query;
+            $text = '<span class="fa fa-edit"></span> '. __('Edit');
+            $links[] = Button::make($text)->addLink($url);
+        }
+
         // Show create button
         if($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;

@@ -143,11 +143,12 @@ trait InputSetters
 
 	public function default($value, $force = false)
 	{
-		if(!is_string($value) && is_callable($value)) {
-			$value = $value();
-		}
+		$this->default_value_force = $force;
 		if($this->source!='create' && !$force) {
 			return $this;
+		}
+		if(!is_string($value) && is_callable($value)) {
+			$value = $value();
 		}
 		$this->default_value = $value;
 		return $this;

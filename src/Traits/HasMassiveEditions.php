@@ -99,7 +99,7 @@ trait HasMassiveEditions
             if(get_class($field)=='WeblaborMx\Front\Inputs\Number') {
             	$field = $field->size(80);
             }
-            $values[] = $field->form($object);
+            $values[] = $field->form();
         }
 
         // Return result
@@ -117,7 +117,7 @@ trait HasMassiveEditions
 		});
 
 		if(!isset($this->massive_class) || (isset($this->massive_class) && $this->massive_class->new_rows_available)) {
-            for($i = 0; $i < (request()->rows ?? 5); $i++) {
+            for($i = 0; $i < (request()->rows ?? 0); $i++) {
             	$values = collect($this->headings)->flip()->map(function($item) {
             		return '';
             	});

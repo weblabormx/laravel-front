@@ -35,6 +35,7 @@ abstract class Resource
     public $index_views = [];
     public $cache = ['indexQuery', 'indexResult'];
     public $related_object;
+    public $enable_massive_edition = false;
 
 	public function __construct($source = null)
 	{
