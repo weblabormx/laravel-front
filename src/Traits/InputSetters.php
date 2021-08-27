@@ -11,6 +11,7 @@ trait InputSetters
 	public $display_using;
 	public $link;
 	public $class = '';
+	public $default_value_force = false;
 
 	public function setColumn($value)
 	{
