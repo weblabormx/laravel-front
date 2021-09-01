@@ -122,7 +122,7 @@ class PartialIndex
         
         $unused_columns = $rows->pluck('columns')->map(function($column) {
             $column = $column->filter(function($item) {
-                return $item->value=='--';
+                return $item->value==='--';
             })->keys();
             return $column;
         })->flatten()->countBy()->filter(function($item) use ($rows) {
