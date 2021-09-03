@@ -94,6 +94,7 @@ class PartialIndex
             $input = [];
             $input['class'] = $field->data_classes;
             $input['title'] = $field->title;
+            $input['column'] = $field->column;
             $result[] = (object) $input;
         }
         return $result;
