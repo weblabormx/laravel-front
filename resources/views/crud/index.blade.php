@@ -30,6 +30,15 @@
         </div>
     </h4>
 
+    @if($front->getLenses()->count() > 0)
+        <div>
+            <h4>Lenses</h4>
+            @foreach($front->getLenses() as $button)
+                {!! $button->form() !!}
+            @endforeach
+        </div>
+    @endif
+
     @include ('front::components.cards', ['cards' => $front->cards()])
     @include ($front->getCurrentView())
 

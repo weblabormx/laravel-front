@@ -63,23 +63,6 @@ trait HasLinks
             $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}?{$query}");
 	    }
 
-        // Show links to lenses
-        if($this->is_a_lense && isset($this->normal_front)) {
-            $icon = isset($this->normal_front->icon) ? '<i class="'.$this->normal_front->icon.'"></i> ': '';
-            $title = $this->normal_front->lense_title ?? __('Normal View');
-            $text = $icon.$title;
-            $links[] = Button::make($text)->addLink($this->getBaseUrl());
-        }
-        foreach($this->lenses() as $lense) {
-            if($this->is_a_lense && $lense->getLenseSlug()==$this->getLenseSlug()) {
-                continue;
-            }
-            $icon = isset($lense->icon) ? '<i class="'.$lense->icon.'"></i> ': '';
-            $title = $lense->lense_title;
-            $text = $icon.$title;
-            $links[] = Button::make($text)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}");
-        }
-
         // Show links added manually
         foreach($this->index_links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);
@@ -100,6 +83,36 @@ trait HasLinks
             $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($url);
         }
 	    return $links;
+    }
+
+    public function getLenses()
+    {
+        $links = collect([]);
+
+        // Show links to lenses
+        if($this->is_a_lense && isset($this->normal_front)) {
+            $icon = isset($this->normal_front->icon) ? '<i class="'.$this->normal_front->icon.'"></i> ': '';
+            $title = $this->normal_front->lense_title ?? __('Normal View');
+            $text = $icon.$title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl());
+        } else {
+            $icon = isset($this->icon) ? '<i class="'.$this->icon.'"></i> ': '';
+            $title = $this->lense_title ?? __('Normal View');
+            $text = $icon.$title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl())->setClass('active');
+        }
+        foreach($this->lenses() as $lense) {
+            $class = '';
+            if($this->is_a_lense && $lense->getLenseSlug()==$this->getLenseSlug()) {
+                $class = 'active';
+            }
+            $icon = isset($lense->icon) ? '<i class="'.$lense->icon.'"></i> ': '';
+            $title = $lense->lense_title;
+            $text = $icon.$title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}")->setClass($class);
+        }
+
+        return $links;
     }
 
     public function getPageLinks()
