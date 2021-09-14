@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 trait HasInputs
 {
-	private $relations = ['HasMany', 'MorphMany', 'MorphToMany', 'BelongsToMany'];
+	private $relations = ['HasMany', 'MorphMany'];
 	public $fields_function = 'fields';
 
 	/* 
@@ -232,11 +232,22 @@ trait HasInputs
     {
         // Get fields processing
         $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
-        $fields->filter(function($item) use ($inputs) {
+        $fields->filter(function($item) {
             return $item->is_input;
         })->each(function($item) use (&$inputs) {
             $inputs = $item->processDataAfterValidation($inputs);
         });
         return $inputs;
+    }
+
+    public function processAfterSave($object, $request)
+    {
+        // Get fields processing
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
+        $fields->filter(function($item) {
+            return $item->is_input;
+        })->each(function($item) use ($object, $request) {
+            $item->processAfterSave($object, $request);
+        });
     }
 }

@@ -52,6 +52,9 @@ class FrontStore
                 return $object;
             }
 
+            // Process actions after save
+            $this->front->processAfterSave($object, $this->request);
+
             // Call the action to be done after is created
             $this->front->store($object, $this->request);
         }

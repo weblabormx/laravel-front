@@ -181,6 +181,11 @@ class Input
 		return $data;
 	}
 
+	public function processAfterSave($object, $request)
+	{
+		//
+	}
+
 	/**
 	 * Can add extra validation to inputs in case is needed
 	 **/

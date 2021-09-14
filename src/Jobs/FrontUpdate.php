@@ -35,12 +35,15 @@ class FrontUpdate
 
         // Process data after validation
         $data = $this->front->processDataAfterValidation($data);
-        
+
         // Call the action to be done before is updated
         $this->front->beforeUpdate($this->object, $this->request);
 
         // Update the object
-        $this->object->update($data);
+        $this->object->fresh()->update($data);
+
+        // Process actions after save
+        $this->front->processAfterSave($this->object, $this->request);
 
         // Call the action to be done after is updated
         $this->front->update($this->object, $this->request);

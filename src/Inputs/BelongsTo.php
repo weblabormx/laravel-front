@@ -94,7 +94,12 @@ class BelongsTo extends Input
 				$serialized = serialize($wrapper);
 				$serialized = json_encode($serialized);
 			}
-			return Autocomplete::make($this->title, $this->column)->setUrl($relation_front->getBaseUrl().'/search?filter_query='.$serialized)->setText($title)->default($this->default_value, $this->default_value_force)->size($this->size)->form();
+			return Autocomplete::make($this->title, $this->column)
+				->setUrl($relation_front->getBaseUrl().'/search?filter_query='.$serialized)
+				->setText($title)
+				->default($this->default_value, $this->default_value_force)
+				->size($this->size)
+				->form();
 		}
 
 		$model = $this->relation_front->getModel();
@@ -120,7 +125,13 @@ class BelongsTo extends Input
 
 		$title = $this->search_field ?? $this->relation_front->search_title;
 		$options = $options->pluck($title, $model->getKeyName());
-		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value, $this->default_value_force)->size($this->size)->setEmptyTitle($this->empty_title)->withMeta($this->attributes)->setPlaceholder($this->show_placeholder);
+		$select = Select::make($this->title, $this->column)
+			->options($options)
+			->default($this->default_value, $this->default_value_force)
+			->size($this->size)
+			->setEmptyTitle($this->empty_title)
+			->withMeta($this->attributes)
+			->setPlaceholder($this->show_placeholder);
 		return $select->form();
 	}
 
