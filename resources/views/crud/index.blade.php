@@ -30,7 +30,7 @@
         </div>
     </h4>
 
-    @if($front->getLenses()->count() > 0)
+    @if($front->getLenses()->count() > 1)
         <div>
             <h4>Lenses</h4>
             @foreach($front->getLenses() as $button)
