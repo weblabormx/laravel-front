@@ -102,6 +102,7 @@ There are some basic variables that can be added on the resource
 public $title;      // Field name of the title (Name is the default value)
 public $model;      // Direction of the model
 public $base_url;   // Url created on routes (Required)
+public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']; // If you want to modify which actions to be available
 ```
 
 #### Modifying query of results
