@@ -9,7 +9,7 @@ class MorphTo extends Input
 {
 	public $types;
 	public $types_models;
-	public $hide = false;
+	public $input_formatted = false;
 
 	public function load()
 	{
@@ -114,7 +114,7 @@ class MorphTo extends Input
 
 			// Show autocomplete field
 			$field = Autocomplete::make($type->label, $column)
-				->setUrl($type->getBaseUrl().'/search')->conditional($type_field.'==\''.$model.'\'');
+				->setUrl($type->getBaseUrl().'/search')->conditionalOld($type_field, $model_org);
 
 			// if we have an object and a value, set it and its for this type
 			if(isset($this->resource) && isset($this->resource->object) && $this->resource->object->$type_field == $model && isset($this->resource->object->$morph_field)) {
@@ -139,17 +139,6 @@ class MorphTo extends Input
 		return $fields->map(function($item) {
 			return $item->formHtml();
 		})->implode('');
-	}
-
-	public function formHtml()
-	{
-		return $this->form();
-	}
-
-	public function hideWhenValuesSet()
-	{
-		$this->hide = true;
-		return $this;
 	}
 
 	public function editRules($rules)

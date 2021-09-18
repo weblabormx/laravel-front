@@ -26,6 +26,7 @@ class Input
 	public $source; 
 	public $value;
 	public $size;
+	public $input_formatted = true;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -108,8 +109,19 @@ class Input
 		return;
 	}
 
+	public function hideForm()
+	{
+		return Hidden::make($this->title, $this->column)->form();
+	}
+
 	public function formHtml()
 	{
+		if( $this->hide && (request()->filled($this->column) || $this->source=='edit') ) {
+			return $this->hideForm();
+		}
+		if( !$this->input_formatted ) {
+			return $this->form();
+		}
 		$input = $this;
 		$html = view('front::input-form', compact('input'))->render();
 		return $this->form_before.$html.$this->form_after;

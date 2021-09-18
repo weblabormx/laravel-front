@@ -12,7 +12,8 @@ trait InputSetters
 	public $link;
 	public $class = '';
 	public $default_value_force = false;
-
+	public $hide = false;
+	
 	public function setColumn($value)
 	{
 		$this->column = $value;
@@ -67,6 +68,15 @@ trait InputSetters
 	public function sortable()
 	{
 		// Do nothing
+		return $this;
+	}
+
+	public function conditionalOld($column, $value)
+	{
+		// This work on form
+		$this->form_before = '<div data-type="conditional" data-cond-option="'.$column.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
+		$this->form_after = '</div>';
+		$this->conditional = $column.'='.$value;
 		return $this;
 	}
 
@@ -164,5 +174,11 @@ trait InputSetters
 	public function editRules($rules)
 	{
 		return $rules;
+	}
+
+	public function hideWhenValuesSet()
+	{
+		$this->hide = true;
+		return $this;
 	}
 }
