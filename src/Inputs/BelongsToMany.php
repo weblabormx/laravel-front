@@ -28,6 +28,9 @@ class BelongsToMany extends Input
 		}
 
 		$this->relation_front = getFront($this->model_name, $this->source);
+		if(!$this->relation_front->canIndex()) {
+			$this->show = false;
+		}
 		$class = $this->relation_front->getModel();
 		$this->title = $this->relation_front->label;
 		$this->load();

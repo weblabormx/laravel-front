@@ -2,8 +2,12 @@
 
 namespace WeblaborMx\Front\Jobs;
 
+use WeblaborMx\Front\Traits\ValidateResponse;
+
 class FrontUpdate
 {
+    use ValidateResponse;
+    
     public $request;
     public $front;
     public $object;
