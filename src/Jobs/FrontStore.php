@@ -31,7 +31,10 @@ class FrontStore
     {
         // Get data to be saved
         $data = $this->front->processData($this->request->all());
-
+        if($this->isResponse($data)) {
+            return $data;
+        }
+        
         // Validate
         $this->front->validate($data);
 
