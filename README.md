@@ -196,6 +196,21 @@ Sometimes we would want to hide an input if we set the value on the request side
 BelongsTo::make('Module')->hideWhenValuesSet()
 ```
 
+#### Conditional values
+
+If we want to show an input based on the value of another input we can do it using the `conditional($condition)` function or `conditionalOld($column, $value)` functions. To this to work is required to have [conditionize2](https://github.com/rguliev/conditionize2.js) (Already loaded with the [EasyJsLibrary](https://weblabormx.github.io/Easy-JS-Library/))
+
+```php
+Select::make('Type')->options([
+    'normal' => 'Normal',
+    'specific' => 'Specific'
+]),
+Text::make('Name')->conditional("type=='normal'"),
+Text::make('Another Name')->conditionalOld("type", 'specific'),
+```
+
+The only differences between conditional and conditionalOld are the versions of conditionize2 library.
+
 #### Field Panels
 
 If your resource contains many fields, your resource "detail" screen can become crowded. For that reason, you may choose to break up groups of fields into their own "panels":
