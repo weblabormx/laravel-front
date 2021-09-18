@@ -188,6 +188,14 @@ You may chain any of these methods onto your field's definition in order to inst
 Text::make('Name')->hideFromIndex()
 ```
 
+#### Dont show input if there are values set
+
+Sometimes we would want to hide an input if we set the value on the request side or if we are using the create button on a relationship, for that we can use of function called `hideWhenValuesSet`, this is compatible with all inputs.
+
+```php
+BelongsTo::make('Module')->hideWhenValuesSet()
+```
+
 #### Field Panels
 
 If your resource contains many fields, your resource "detail" screen can become crowded. For that reason, you may choose to break up groups of fields into their own "panels":
