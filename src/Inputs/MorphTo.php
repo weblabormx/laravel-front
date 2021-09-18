@@ -114,7 +114,7 @@ class MorphTo extends Input
 
 			// Show autocomplete field
 			$field = Autocomplete::make($type->label, $column)
-				->setUrl($type->getBaseUrl().'/search')->conditionalOld($type_field, $model_org);
+				->setUrl($type->getBaseUrl().'/search')->conditionalOld($type_field, $model);
 
 			// if we have an object and a value, set it and its for this type
 			if(isset($this->resource) && isset($this->resource->object) && $this->resource->object->$type_field == $model && isset($this->resource->object->$morph_field)) {
