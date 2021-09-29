@@ -34,6 +34,7 @@ class IndexAction
         if(is_null($this->save_button)) {
             $this->save_button = __('Save changes');
         }
+        $this->title = __($this->title);
 		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
 	}
 
@@ -103,6 +104,7 @@ class IndexAction
             return $this;
         }
         $this->title = $title;
+        $this->title = __($this->title);
         $this->button_text = "<i class='{$this->icon}'></i> $this->title";
         return $this;
     }
