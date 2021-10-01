@@ -2,285 +2,365 @@
 
 namespace WeblaborMx\Front\Http\Controllers;
 
-use WeblaborMx\Front\Http\Repositories\FrontRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Traits\IsRunable;
+use WeblaborMx\Front\Jobs\FrontStore;
+use WeblaborMx\Front\Jobs\FrontShow;
+use WeblaborMx\Front\Jobs\FrontIndex;
+use WeblaborMx\Front\Jobs\FrontUpdate;
+use WeblaborMx\Front\Jobs\FrontDestroy;
+use WeblaborMx\Front\Jobs\FrontSearch;
+use WeblaborMx\Front\Jobs\ActionShow;
+use WeblaborMx\Front\Jobs\ActionStore;
+use WeblaborMx\Front\Jobs\MassiveIndexEditShow;
+use WeblaborMx\Front\Jobs\MassiveIndexEditStore;
+use WeblaborMx\Front\Jobs\MassiveEditShow;
+use WeblaborMx\Front\Jobs\MassiveEditStore;
 
 class FrontController extends Controller
 {
-    private $repository;
+    use IsRunable;
+
     private $front;
+    private $model;
 
-    public function __construct(FrontRepository $repository)
+    public function __construct($model)
 	{
-        $this->repository = $repository;
-        $this->front = $this->getFront();
+        $this->model = $model;
     }
 
-    public function index()
+    public function __call($method, $arguments) 
     {
-        $this->authorize('viewAny', $this->front->getModel());
-
-        // Front code
-        $front = $this->front->setSource('index');
-        $redirect_url = $front->redirects();
-        if(isset($redirect_url)) {
-            return redirect($redirect_url);
+        if(method_exists($this, $method)) {
+            $this->front = getFront($this->model);
+            return call_user_func_array(array($this,$method),$arguments);
         }
-
-        $objects = $this->repository->index($front);
-        if(get_class($objects)!='Illuminate\Pagination\LengthAwarePaginator') {
-            return $objects;
-        }
-        return view('front::crud.index', compact('objects', 'front'));
-    }
-
-    public function create()
-	{
-        $this->authorize('create', $this->front->getModel());
-        
-        $front = $this->front->setSource('create');
-        return view('front::crud.create', compact('front'));
-    }
-
-    public function store(Request $request)
-	{
-        $this->authorize('create', $this->front->getModel());
-
-        $model = $this->front->getModel();
-        $front = $this->front->setSource('store')->validate();
-
-        $inputs = $front->processData($request->all());
-        $object = $model::create($inputs);
-        $front->store($object, $request);
-
-        $message = config('front.messages.crud_success_create');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
-
-        $redirect_url = $front->base_url;
-        if($request->filled('redirect_url')) {
-            $redirect_url = $request->redirect_url;
-        }
-        return redirect($redirect_url);
-    }
-
-    public function show($object) 
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-        
-        $this->authorize('view', $object);
-        $front = $this->front->setSource('show')->setObject($object);
-        $front->show($object);
-        return view('front::crud.show', compact('object', 'front'));
-    }
-
-    public function edit($object)
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-
-        $this->authorize('update', $object);
-        $front = $this->front->setSource('edit')->setObject($object);
-        return view('front::crud.edit', compact('object', 'front'));
-    }
-
-    public function update($object, Request $request)
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-        
-        $this->authorize('update', $object);
-        $front = $this->front->setSource('update')->setObject($object)->validate();
-        $data = $front->processData($request->all());
-        $front->update($object, $request);
-        $object->update($data);
-
-        if($request->filled('redirect')) {
-            return redirect($request->redirect);
-        }
-
-        $message = config('front.messages.crud_sucesss_update');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
-
-        return back();
-    }
-
-    public function destroy($object)
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-
-        $this->authorize('delete', $object);
-        $front = $this->front->setSource('show')->setObject($object);
-        $front->destroy($object);
-        $object->delete();
-        
-        $message = config('front.messages.crud_sucesss_destroy');
-        $message = str_replace('{title}', $front->label, $message);
-        flash($message)->success();
-
-        return redirect($this->front->base_url);
-    }
-
-    public function indexActionShow($action) 
-    {
-        $this->authorize('update', $this->front->getModel());
-        
-        $sport = $this->repository->findSport($sport);
-        $sportable = $this->sportable;
-
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        
-        return view('front::crud.index-action', compact('action', 'front', 'sportable'));
-    }
-
-    public function indexActionStore($action, Request $request)
-    {
-        $this->authorize('update', $this->front->getModel());
-
-        $sport = $this->repository->findSport($sport);
-        $class = $sport->getClass($this->sportable->db_class);
-        $front = getFront($class, 'create')->addData(compact('sport'));
-        $action = $this->repository->getIndexAction($action, $front);
-        $action->validate();
-
-        $result = $action->handle($request);
-        if(!isset($result)) {
-            $message = config('front.messages.action_sucess');
-            $message = str_replace('{title}', $action->title, $message);
-            flash($message)->success();
-        } else {
-            $request->flash();
-        }
-        
-        return back();
-    }
-
-    public function actionShow($object, $action) 
-    {
-        $original_object = $object;
-        $original_action = $action;
-        
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-
-        $this->authorize('update', $object);
-        $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front);
-        if(!is_object($action)) {
-            abort(406, "Action wasn't found: {$original_action}");
-        }
-        $action = $action->setObject($object);
-
-        // Detect if dont have fields process inmediately
-        if(count($action->fields())==0) {
-            return $this->actionStore($original_object, $original_action, request());
-        }
-
-        return view('front::crud.action', compact('action', 'front', 'object'));
-    }
-
-    public function actionStore($object, $action, Request $request)
-    {
-        $model = $this->front->getModel();
-        $object = $model::find($object);
-        if(!is_object($object)) {
-            abort(404);
-        }
-
-        $this->authorize('update', $object);
-        $front = $this->front->setSource('create')->setObject($object);
-        $action = $this->repository->getAction($action, $front);
-        if(!is_object($action)) {
-            abort(406, "Action wasn't found: {$original_action}");
-        }
-        $action = $action->setObject($object);
-        $action->validate();
-
-        $result = $action->handle($object, $request);
-        if(!isset($result)) {
-            $message = config('front.messages.action_sucess');
-            $message = str_replace('{title}', $action->title, $message);
-            flash($message)->success();
-        } else {
-            $request->flash();
-        }
-        
-        return back();
-    }
-
-    public function lenses($lense, Request $request)
-    {
-        $this->authorize('viewAny', $this->front->getModel());
-
-        // Front code
-        $front = $this->front->setSource('index');
-        $objects = $this->repository->index($front)->getLense($lense);
-        if(get_class($objects)!='Illuminate\Pagination\LengthAwarePaginator') {
-            return $objects;
-        }
-        return view('front::crud.index', compact('objects', 'front'));
-    }
-
-    public function search(Request $request)
-    {
-        $title = $this->front->title;
-        $result = $this->front->globalIndexQuery();
-
-        // Get query if sent
-        if($request->filled('filter_query')) {
-            $query = json_decode($request->filter_query);
-            $query = unserialize($query);
-            $query = $query->getClosure();
-            $result = $query($result);
-        }
-        
-        $result  = $result->search($request->term)->limit(10)->get()->map(function($item) use ($title) {
-            return [
-                'label' => $item->$title, 
-                'id' => $item->getKey(), 
-                'value' => $item->$title 
-            ];
-        })->sortBy('label');
-        print json_encode($result);
     }
 
     /*
-     * Internal Functions
+     * CRUD Functions
      */
 
-    private function getFront()
+    private function index()
     {
-        $action = request()->route()->getAction();
-        if(!is_array($action) || !isset($action['prefix'])) {
-            return;
+        $this->authorize('viewAny', $this->front->getModel());
+        $this->frontAuthorize('index');
+
+        // Front code
+        $front = $this->front->setSource('index');
+        $base_url = $front->getBaseUrl();
+
+        $response = $this->run(new FrontIndex($front, $base_url));
+        if($this->isResponse($response)) {
+            return $response;
         }
-        $action = explode('/', $action['prefix']);
-        $action = $action[count($action)-1];
-        $action = Str::camel(Str::singular($action));
-        $action = ucfirst($action);
-        $class = 'App\Front\\'.$action;
-        return new $class;
+        
+        // Show view
+        $result = $response;
+        return view('front::crud.index', $this->getParameters(compact('result', 'front')));
     }
 
+    private function create()
+	{
+        $this->authorize('create', $this->front->getModel());
+        $this->frontAuthorize('create');
+        
+        $front = $this->front->setSource('create');
+        return view('front::crud.create', $this->getParameters(compact('front')));
+    }
+
+    private function store(Request $request)
+	{
+        $this->authorize('create', $this->front->getModel());
+        $this->frontAuthorize('store');
+
+        // Front code
+        $front = $this->front->setSource('store');
+        $response = $this->run(new FrontStore($request, $front));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+        
+        // Redirect to index page
+        return redirect($front->createRedirectionUrl());
+    }
+
+    private function show($object)
+    {
+        // Get object
+        $object = $this->getObject($object);
+        
+        // Validate policy
+        $this->authorize('view', $object);
+        $this->frontAuthorize('show');
+
+        // Front code
+        $front = $this->front->setSource('show')->setObject($object);
+        $response = $this->run(new FrontShow($object, $front));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $object = $response;
+        return view('front::crud.show', $this->getParameters(compact('object', 'front')));
+    }
+
+    private function edit($object)
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate policy
+        $this->authorize('update', $object);
+        $this->frontAuthorize('edit');
+
+        // Front code
+        $front = $this->front->setSource('edit')->setObject($object);
+
+        // Show view
+        return view('front::crud.edit', $this->getParameters(compact('object', 'front')));
+    }
+
+    private function update($object, Request $request)
+    {
+        // Get object
+        $object = $this->getObject($object);
+        
+        // Validate policy
+        $this->authorize('update', $object);
+        $this->frontAuthorize('update');
+
+        // Front code
+        $front = $this->front->setSource('update')->setObject($object);
+        $response = $this->run(new FrontUpdate($request, $front, $object));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Redirect
+        return back();
+    }
+
+    private function destroy($object)
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate Policy
+        $this->authorize('delete', $object);
+        $this->frontAuthorize('destroy');
+
+        // Front code
+        $front = $this->front->setSource('show')->setObject($object);
+        $response = $this->run(new FrontDestroy($front, $object));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Redirect
+        return redirect($this->front->getBaseUrl());
+    }
+
+    /*
+     * Actions
+     */
+
+    private function actionShow($object, $action) 
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new ActionShow($front, $object, $action, function() use ($object, $action) {
+            return $this->actionStore($object->getKey(), $action, request());
+        }));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $action = $response;
+        return view('front::crud.action', $this->getParameters(compact('action', 'front', 'object')));
+    }
+
+    private function actionStore($object, $action, Request $request)
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new ActionStore($front, $object, $action, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Redirect back
+        return back();
+    }
+
+    private function indexActionShow($action) 
+    {
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new ActionShow($front, null, $action, function() use ($action) {
+            return $this->indexActionStore($action, request());
+        }));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $action = $response;
+        return view('front::crud.action', $this->getParameters(compact('action', 'front')));
+    }
+
+    private function indexActionStore($action, Request $request)
+    {
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new ActionStore($front, null, $action, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Return
+        return back();
+    }
+
+    /*
+     * Massive Edition
+     */
+
+    private function massiveIndexEditShow() 
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new MassiveIndexEditShow($front));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $data = collect(compact('front'))->merge($response)->all();
+        return view('front::crud.massive-index-edit', $this->getParameters($data));
+    }
+
+    private function massiveIndexEditStore(Request $request)
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('create');
+        $response = $this->run(new MassiveIndexEditStore($front, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Return
+        return back();
+    }
+
+    private function massiveEditShow($object, $key) 
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate Policy
+        $this->authorize('update', $object);
+        
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new MassiveEditShow($front, $object, $key));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Show view
+        $data = collect(compact('object', 'front'))->merge($response)->all();
+        return view('front::crud.massive-edit', $this->getParameters($data));
+    }
+
+    private function massiveEditStore($object, $key, Request $request)
+    {
+        // Get object
+        $object = $this->getObject($object);
+
+        // Validate Policy
+        $this->authorize('update', $object);
+
+        // Front code
+        $front = $this->front->setSource('create')->setObject($object);
+        $response = $this->run(new MassiveEditStore($front, $object, $key, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+
+        // Return
+        return back();
+    }
+
+    /*
+     * Sortable
+     */
+
+    private function sortableUp($object) 
+    {
+        $object = $this->getObject($object);
+        $object->moveOrderUp();
+        return back();
+    }
+
+    private function sortableDown($object) 
+    {
+        $object = $this->getObject($object);
+        $object->moveOrderDown();
+        return back();
+    }
+
+    /*
+     * More features
+     */
+
+    private function lenses($lense, Request $request)
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('index')->getLense($lense);
+        $base_url = $front->getBaseUrl();
+
+        $response = $this->run(new FrontIndex($front, $base_url));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+        
+        // Show view
+        $result = $response;
+        return view('front::crud.index', $this->getParameters(compact('result', 'front')));
+    }
+
+    private function search(Request $request)
+    {
+        $this->authorize('viewAny', $this->front->getModel());
+
+        // Front code
+        $front = $this->front->setSource('index');
+        $response = $this->run(new FrontSearch($front, $request));
+        if($this->isResponse($response)) {
+            return $response;
+        }
+    }
+
+    private function frontAuthorize($method)
+    {
+        if(!in_array($method, $this->front->actions)) {
+            abort(403, 'This action is unauthorized.');
+        }
+    }
 }

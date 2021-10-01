@@ -15,23 +15,25 @@ class HasMany extends Input
 	public $show_on_edit = false;
 	public $show_on_create = false;
 	public $show_on_index = false;
+	public $index_view = 'front::crud.partial-index';
+	public $show_filters = false;
 
 	public function __construct($front, $title = null, $column = null, $source = null)
 	{
-		$front = 'App\Front\\'.$front;
-		$this->front = new $front($source);
+		$this->front = getFront($front, $source);
 		$this->column = $column;
 		$this->source = $source;
 		if(!is_null($title)) {
 			$this->title = $title;
 			$this->relationship = Str::snake(Str::plural($this->title));
 		} else {
-			$this->title = Str::plural($this->front->label);
+			$this->title = $this->front->plural_label;
 			$this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
 		}
 		
-		$this->create_link = $this->front->base_url.'/create';
-		$this->show_before = \Auth::user()->can('viewAny', $this->front->getModel());
+		$this->create_link = $this->front->getBaseUrl().'/create';
+		$this->show_before = $this->front->canIndex();
+		$this->massive_edit_link = '';
 	}
 
 	public static function make($title = null, $column = null, $extra = null) 
@@ -58,24 +60,26 @@ class HasMany extends Input
 			$this->front = $this->front->hideColumns($this->getColumnsToHide());
 		}
 
+		$relation_front = str_replace('\\', '.', str_replace(config('front.resources_folder').'\\', '', get_class($resource)));
+
 		// If any link has been set so add to select by default the relationhip
 		if(!isset($this->create_link_accessed)) {
-			$this->setCreateLink(function($link) use ($resource, $base_url) {
-				return $link.'?'.$base_url.'&relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->base_url.'/'.$resource->object->getKey();
+			$this->setCreateLink(function($link) use ($resource, $base_url, $relation_front) {
+				return $link.'?'.$base_url.'&relation_front='.$relation_front.'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->getBaseUrl().'/'.$resource->object->getKey();
 			});
 		}
 
 		// The same for edit
 		if(!isset($this->edit_link_accessed)) {
-			$this->setEditLink(function($link) use ($resource) {
-				return $link.'?relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey();;
+			$this->setEditLink(function($link) use ($resource, $relation_front) {
+				return $link.'?relation_front='.$relation_front.'&relation_id='.$resource->object->getKey();;
 			});
 		}
 
 		// The same for show
 		if(!isset($this->show_link_accessed)) {
-			$this->setShowLink(function($link) use ($resource) {
-				return $link.'?relation_front='.class_basename(get_class($resource)).'&relation_id='.$resource->object->getKey();
+			$this->setShowLink(function($link) use ($resource, $relation_front) {
+				return $link.'?relation_front='.$relation_front.'&relation_id='.$resource->object->getKey();
 			});
 		}
 
@@ -95,22 +99,66 @@ class HasMany extends Input
 			});
 		}
 
-		$relation = $this->relationship;
+		// Get results
+		$pagination_name = $this->relationship;
+		if(isset($this->title)) {
+			$pagination_name = Str::slug($this->title, '_');
+		}
+		$pagination_name = $pagination_name.'_page';
 
-		$pagination_name = $relation.'_page';
-		$objects = $object->$relation()->with($this->with);
-		$objects = $this->front->globalIndexQuery($objects);
+		$result = $this->getResults($object);
+		if(!Str::endsWith(get_class($result), 'Collection')) {
+			$result = $result->paginate($this->front->pagination, ['*'], $pagination_name);
+		}
+		$result = $this->front->indexResult($result);
+
+		$front = $this->front->setRelatedObject($this);
+		$edit_link = $this->edit_link;
+		$show_link = $this->show_link;
+		$show_filters = $this->show_filters;
+
+		return view($this->index_view, compact('result', 'front', 'pagination_name', 'edit_link', 'show_link', 'show_filters'))->render();
+	}
+
+	public function getResults($object)
+	{
+		// Set lense
+		if(isset($this->lense)) {
+   			$this->front = $this->front->getLense($this->lense);
+   		}
+
+   		$this->index_view = $this->front->getCurrentView();
+
+		// Get objects
+		$relationship = $this->relationship;
+		$objects = $object->$relationship()->with($this->with);
+
+		// Force query if set
+		if(isset($this->force_query)) {
+			$force_query = $this->force_query;
+			$objects = $force_query($objects);
+		} else {
+			$objects = $this->front->globalIndexQuery($objects);	
+		}
+
+		// Filter query
 		if(isset($this->filter_query)) {
 			$filter_query = $this->filter_query;
 			$objects = $filter_query($objects);
 		}
-		$objects = $objects->paginate(50, ['*'], $pagination_name);
-		
-		$front = $this->front;
-		$edit_link = $this->edit_link;
-		$show_link = $this->show_link;
+		return $objects;
+	}
 
-		return view('front::crud.partial-index', compact('objects', 'front', 'pagination_name', 'edit_link', 'show_link'))->render();
+	public function setIndexView($value)
+	{
+		$this->index_view = $value;
+		return $this;
+	}
+
+	public function showFilters()
+	{
+		$this->show_filters = true;
+		return $this;
 	}
 
 	/*

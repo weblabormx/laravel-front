@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class NumericCard extends Card
 {
     public $view = 'front::cards.numeric';
-    public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage'];
+    public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage', 'background', 'style'];
 
     /*
      * Editable functions
@@ -19,6 +19,11 @@ class NumericCard extends Card
     }
 
     public function old()
+    {
+        return;
+    }
+
+    public function link()
     {
         return;
     }
@@ -36,7 +41,16 @@ class NumericCard extends Card
     public function cacheName()
     {
         $name = get_class($this);
-        return 'Card:'.$name.':'.\Auth::user()->currentTeam->id;
+        return 'Card:'.$name;
+    }
+
+    public function getStyle()
+    {
+        $style = $this->style ?? '';
+        if(isset($this->background)) {
+            $style .= ' background: '.$this->background;
+        }
+        return $style;
     }
 
     /*
@@ -46,7 +60,7 @@ class NumericCard extends Card
     public function load()
     {
         
-        $values = Cache::remember($this->cacheName(), $this->cacheFor(), function() {
+        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function() {
             return [
                 'number' => $this->value(),
                 'porcentage' => $this->calculatePorcentage($this->value(), $this->old())

@@ -4,6 +4,8 @@ namespace WeblaborMx\Front\Traits;
 
 trait InputRelationship
 {
+	use HasMassiveEditions;
+
 	public $create_link;
 	public $edit_link = '{key}/edit';
 	public $show_link;
@@ -13,7 +15,12 @@ trait InputRelationship
 	public $force_query;
 	public $lense;
 	public $hide_columns;
-	public $massive_class;
+	public $block_edition = false;
+	public $headings;
+
+	/*
+	 * Functions 
+	 */
 
 	public function setCreateLink($function)
 	{
@@ -22,6 +29,7 @@ trait InputRelationship
 		}
 		$this->create_link_accessed = true;
 		$this->create_link = $function($this->create_link);
+		$this->massive_edit_link = $function($this->massive_edit_link);
 		return $this;
 	}
 
@@ -82,7 +90,7 @@ trait InputRelationship
 		return $this;
 	}
 
-	// Same that filtelQuery but now dont access to the globalIndexQuery
+	// Same that filterQuery but now dont access to the globalIndexQuery
 
 	public function forceQuery($query)
 	{
@@ -109,5 +117,22 @@ trait InputRelationship
 		}
 		$this->massive_class = $class;
 		return $this;
+	}
+
+	public function enableMassive($value = true)
+	{
+		$this->show_massive = $value;
+		return $this;
+	}
+
+	public function blockEdition($block_edition = true)
+	{
+		$this->block_edition = $block_edition;
+		return $this;
+	}
+
+	public function getFront()
+	{
+		return $this->front;
 	}
 }	

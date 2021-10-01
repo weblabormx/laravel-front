@@ -12,10 +12,9 @@ class FrontIndex extends Component
 
 	public function __construct($front_class, $column = null, $extra = null, $source = null)
 	{
-		$front_class = '\App\Front\\'.$front_class;
 		$this->source = $source;
-		$this->front_class = new $front_class($this->source);
-		$this->show_before = \Auth::user()->can('viewAny', $this->front_class->getModel());
+		$this->front_class = getFront($front_class, $this->source);
+		$this->show_before = $this->front_class->canIndex();
 	}
 
 	public function form()
@@ -29,8 +28,9 @@ class FrontIndex extends Component
 			$function = $this->query;
 			$query = $function($query);
 		}
-		$objects = $query->get();
-		return view('front::crud.partial-index', compact('objects', 'front'))->render();
+		$result = $query->get();
+		$style = 'margin-bottom: 30px;';
+		return view('front::crud.partial-index', compact('result', 'front', 'style'))->render();
 	}
 
 	public function setRequest($request)

@@ -18,7 +18,6 @@ class Filter
         }
     }
 
-
     /*
      * Needed functions
      */
@@ -63,9 +62,12 @@ class Filter
         return $this;
     }
 
-    public function show($function)
+    public function show($result)
     {
-        $this->show = $function();
+        if(!is_string($result) && is_callable($result)) {
+            $result = $result();
+        } 
+        $this->show = $result;
         return $this;
     }
 }

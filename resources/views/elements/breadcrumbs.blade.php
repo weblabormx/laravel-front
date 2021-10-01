@@ -1,20 +1,13 @@
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="/admin">Home</a>
+        <a href="/admin">{{ __('Home') }}</a>
     </li>
+    @isset($slot)
+    	{{$slot}}
+    @endisset
 	@isset($front)
-	    @foreach($front->getBreadcrumbs(isset($object) ? $object : null) as $breadcrumb)
-	        <li class="breadcrumb-item @isset($breadcrumb['active']) active @endisset">
-	        	@isset($breadcrumb['url'])
-		        	<a href="{{$breadcrumb['url']}}">
-		        @endisset
-		        	{{$breadcrumb['title']}}
-		        @isset($breadcrumb['url'])
-		        	</a>
-		        @endisset
-		    </li>
+	    @foreach($front->getBreadcrumbs($object ?? null, $data ?? null) as $breadcrumb)
+	        <li class="breadcrumb-item @isset($breadcrumb['active']) active @endisset">{!! $breadcrumb['html'] !!}</li>
 	    @endforeach
-	@else
-		{{$slot}}
     @endisset
 </ol>

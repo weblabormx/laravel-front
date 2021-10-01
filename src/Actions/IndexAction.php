@@ -4,16 +4,22 @@ namespace WeblaborMx\Front\Actions;
 
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\Panel;
+use WeblaborMx\Front\Traits\HasInputs;
+use WeblaborMx\Front\Traits\IsValidated;
+use WeblaborMx\Front\Jobs\FrontIndex;
 
 class IndexAction
 {
+    use HasInputs, IsValidated;
+    
 	public $title;
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
 	public $data;
-    public $save_button = 'Save changes';
+    public $save_button;
     public $slug;
+    public $front;
 
 	public function __construct()
 	{
@@ -25,12 +31,22 @@ class IndexAction
         if(is_null($this->slug)) {
             $this->slug = Str::slug(Str::snake(class_basename(get_class($this))));
         }
+        if(is_null($this->save_button)) {
+            $this->save_button = __('Save changes');
+        }
+        $this->title = __($this->title);
 		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
 	}
+
+    public function load()
+    {
+        //
+    }
 
 	public function addData($data)
 	{
 		$this->data = $data;
+        $this->load();
 		return $this;
 	}
 
@@ -44,14 +60,10 @@ class IndexAction
         return [];
     }
 
-    public function validate()
+    public function validate($data)
     {
-    	$rules = collect($this->fields())->filter(function($item) {
-    		return strlen($item->getRules())>0;
-    	})->mapWithKeys(function($item) {
-            return [$item->column => $item->getRules()];
-        })->toArray();
-    	\Validator::make(request()->all(), $rules)->validate();
+        $this->makeValidation($data);
+        return $this;
     }
 
     public function getFieldsWithPanel()
@@ -71,15 +83,45 @@ class IndexAction
         return $components->sortKeys()->values();
     }
 
-    public function show($function)
+    public function show($result)
     {
-    	$this->show = $function();
-    	return $this;
+    	if(!is_string($result) && is_callable($result)) {
+            $result = $result();
+        } 
+        $this->show = $result;
+        return $this;
     }
 
     public function setObject($object)
     {
         $this->object = $object;
+        return $this;
+    }   
+
+    public function setTitle($title)
+    {
+        if(is_null($title)) {
+            return $this;
+        }
+        $this->title = $title;
+        $this->title = __($this->title);
+        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
+        return $this;
+    }
+
+    public function setIcon($icon)
+    {
+        if(is_null($icon)) {
+            return $this;
+        }
+        $this->icon = $icon;
+        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
+        return $this;
+    }
+
+    public function showButton($show = true)
+    {
+        $this->show_button = $show;
         return $this;
     }
 
@@ -103,6 +145,19 @@ class IndexAction
         if (isset($this->object) && isset($this->object->$name)) {
             return $this->object->$name;
         }
+    }
+
+    public function setFront($front)
+    {
+        $this->front = $front;
+        return $this;
+    }
+
+    public function results()
+    {
+        $result = $this->front->globalIndexQuery()->get();
+        $front_index = new FrontIndex($this->front, null);
+        return $front_index->result($result);
     }
 
 }

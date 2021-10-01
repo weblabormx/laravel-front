@@ -4,12 +4,15 @@ namespace WeblaborMx\Front\Traits;
 
 trait IsALense
 {
-	public $lense_slug = null;
+	//$lense_slug;
+	//$lense_title;
+	//$lense_icon
+	public $is_a_lense = true;
 
 	public function getLenseSlug()
     {
     	if(isset($this->lense_slug)) {
-    		return $lense_slug;
+    		return $this->lense_slug;
     	}
         return class_basename(get_class($this));
     }

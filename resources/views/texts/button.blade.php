@@ -1,0 +1,1 @@
+<a href="{{$button->link}}" class="btn {{$button->type}} rounded-pill {{$button->class}}" style="{{$button->style}}" {!! $button->extra !!}>{!! $button->text !!}</a>

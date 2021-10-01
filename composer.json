@@ -18,9 +18,13 @@
         "laravelcollective/html": ">=5",
         "opis/closure": "^3.1",
         "laravel/framework": ">5.5",
-        "weblabormx/file-modifier": "*"
+        "weblabormx/file-modifier": "*",
+        "intervention/image": "^2.5"
     },
     "autoload": {
+        "files": [
+            "src/Http/helpers.php"
+        ],
         "psr-4": {
             "WeblaborMx\\Front\\": "src/"
         }

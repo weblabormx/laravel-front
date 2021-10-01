@@ -2,7 +2,9 @@
 
 namespace WeblaborMx\Front\Inputs;
 
-class MorphToMany extends HasMany
+use Illuminate\Support\Str;
+
+class MorphToMany extends BelongsToMany
 {
-	//
+	// 
 }

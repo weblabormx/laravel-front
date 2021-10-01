@@ -13,34 +13,38 @@ class BelongsTo extends Input
 	public $relation;
 	public $relation_front;
 	public $searchable = false;
+	public $search_field;
+	public $empty_title;
+	public $show_placeholder = true;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
-		parent::__construct($title, $column, $extra, $source);
-		$this->loadAttributes();
-	}
-
-	public function loadAttributes() 
-	{
+		$this->column = $column;
+		$this->extra = $extra;
+		$this->source = $source;
 		$this->relation = Str::snake($this->column);
 
 		if(!isset($this->extra)) {
 			$front = Str::singular($this->relation);
 			$front = ucfirst(Str::camel($front));
-			$this->extra = $this->title;
+			$this->extra = $title;
 		}
 
 		$this->model_name = $this->extra;
-		$class = 'App\Front\\'.$this->model_name;
-		$this->relation_front = new $class($this->source);
+		$this->relation_front = getFront($this->model_name, $this->source);
 		$class = $this->relation_front->getModel();
 		$this->title = $this->relation_front->label;
 
+		$this->load();
 	}
 
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
+		if(!method_exists($resource, 'getModel')) {
+			return parent::setResource($resource);
+		}
+		
 		$class = $resource->getModel();
 		$model = new $class;
 		if(method_exists($model, $relation)) {
@@ -59,11 +63,10 @@ class BelongsTo extends Input
 			return '--';
 		}
 
-		$relation_front = $this->relation_front;
-		$title_field = $relation_front->title;
+		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
 		if(!isset($this->link)) {
-			$this->link = $this->relation_front->base_url.'/'.$object->$relation->getKey();	
+			$this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();	
 		}
 		if(!isset($value)) {
 			return '--';
@@ -77,7 +80,7 @@ class BelongsTo extends Input
 
 		// If searchable make a way to search
 		if($this->searchable) {
-			$title_field = $relation_front->title;
+			$title_field = $this->search_field ?? $this->relation_front->search_title;
 			$value = isset($this->default_value) ? $this->default_value : \Form::getValueAttribute($this->column);
 			$title = null;
 			if(isset($value)) {
@@ -91,7 +94,12 @@ class BelongsTo extends Input
 				$serialized = serialize($wrapper);
 				$serialized = json_encode($serialized);
 			}
-			return Autocomplete::make($this->title, $this->column)->setUrl($relation_front->base_url.'/search?filter_query='.$serialized)->setText($title)->default($this->default_value)->form();
+			return Autocomplete::make($this->title, $this->column)
+				->setUrl($relation_front->getBaseUrl().'/search?filter_query='.$serialized)
+				->setText($title)
+				->default($this->default_value, $this->default_value_force)
+				->size($this->size)
+				->form();
 		}
 
 		$model = $this->relation_front->getModel();
@@ -115,15 +123,39 @@ class BelongsTo extends Input
 			$options = $filter_collection($options);
 		}
 
-		$title = $relation_front->title;
+		$title = $this->search_field ?? $this->relation_front->search_title;
 		$options = $options->pluck($title, $model->getKeyName());
-		$select = Select::make($this->title, $this->column)->options($options)->default($this->default_value);
+		$select = Select::make($this->title, $this->column)
+			->options($options)
+			->default($this->default_value, $this->default_value_force)
+			->size($this->size)
+			->setEmptyTitle($this->empty_title)
+			->withMeta($this->attributes)
+			->setPlaceholder($this->show_placeholder);
 		return $select->form();
 	}
 
 	public function searchable($searchable = true)
 	{
 		$this->searchable = $searchable;
+		return $this;
+	}
+
+	public function setSearchField($field)
+	{
+		$this->search_field = $field;
+		return $this;
+	}
+
+	public function setEmptyTitle($value)
+	{
+		$this->empty_title = $value;
+		return $this;
+	}
+
+	public function hidePlaceholder()
+	{
+		$this->show_placeholder = false;
 		return $this;
 	}
 }

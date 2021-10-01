@@ -3,50 +3,44 @@
 @section('sidebar')
 
     @if(count($front->filters())>0)
-        <div class="sidenav-inner py-1 mb-4">
-            <div class="sidenav-header small font-weight-semibold">FILTER {{strtoupper($front->plural_label)}}</div>
-            <!-- Dashboards -->
-            {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!}
-                {!! Form::hidden('search') !!}
+        <div class="sidenav-header small font-weight-semibold mb-2">{{ __('FILTER :name', ['name' => strtoupper($front->plural_label)]) }}</div>
+        {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
+            <div class="card pt-3 sidenav-forms">
+                {!! Form::hidden($front->getCurrentViewRequestName()) !!}
                 @foreach($front->getFilters() as $filter)
-                    <div class="sidenav-forms">
-                        {!! $filter->formHtml() !!}
-                    </div>
+                    {!! $filter->formHtml() !!}
                 @endforeach
-                <div class="sidenav-forms mt-2">
-                    {!! Form::submit('Search') !!}
-                </div>
-            {!! Form::close() !!}
-        </div>
+            </div>
+            {!! Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
+        {!! Form::close() !!}
     @endif
-
+    
 @endsection
     
 @section('content')
     
-    <!-- Content -->
-    <div class="container-fluid flex-grow-1 container-p-y">
-        @include('front::elements.breadcrumbs')
+    @include('front::elements.breadcrumbs')
 
-        <h4 class="d-flex justify-content-between align-items-center w-100 font-weight-bold py-3 mb-4">
-            <div>{{$front->plural_label}}</div>
-            @if($front->show_create_button_on_index && Auth::user()->can('create', $front->getModel()))
-                <a href="{{$front->base_url}}/create" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Create {{$front->label}}</a>
-            @endif
-            @include('front::elements.index-actions')
-            @foreach($front->index_links() as $link => $button)
-                <a href="{{$link}}" class="btn btn-primary rounded-pill d-block">{!! $button !!}</a>
+    <h4 class="d-flex justify-content-between align-items-center mb-4">
+        <div>{{$front->plural_label}}</div>
+        <div class="d-print-none">
+            @foreach($front->getIndexLinks() as $button)
+                {!! $button->form() !!}
             @endforeach
-        </h4>
+        </div>
+    </h4>
 
-        @if(count($front->cards())>0)
-            @include ('front::components.cards', ['cards' => $front->cards()])
-        @endif
+    @if($front->getLenses()->count() > 1)
+        <div>
+            <h4>Lenses</h4>
+            @foreach($front->getLenses() as $button)
+                {!! $button->form() !!}
+            @endforeach
+        </div>
+    @endif
 
-        @include ('front::crud.partial-index', ['object' => $objects])
-
-    </div>
-   
+    @include ('front::components.cards', ['cards' => $front->cards()])
+    @include ($front->getCurrentView())
 
 @endsection
 

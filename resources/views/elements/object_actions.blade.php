@@ -1,19 +1,20 @@
-@php 
-    $link = $base_url.'/'.$object->getKey();
-    $edit = $edit_link ?? '{key}/edit';
-    $edit = str_replace('{key}', $object->getKey(), $edit);
-@endphp
-<td class="text-center">
-	@if( Auth::user()->can('view', $object) )
-    	<!-- Edit button -->
-        <a href="{{$link}}{{$show_link ?? ''}}" class="btn btn-default btn-xs icon-btn md-btn-flat article-tooltip" aria-hidden="true" title="See"><i class="fa fa-eye"></i></a>
+@php $helper = $front->getActionsHelper($object, $base_url, $edit_link ?? null, $show_link ?? null); @endphp
+<td class="text-center d-print-none">
+    @if( $helper->isSortable() )
+        <!-- Edit button -->
+        <a href="{{$helper->upUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Up') }}"><i class="fa fa-arrow-up"></i></a>
+        <a href="{{$helper->downUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Down') }}"><i class="fa fa-arrow-down"></i></a>
     @endif
-    @if( Auth::user()->can('update', $object) )
+	@if( $helper->canShow() )
     	<!-- Edit button -->
-        <a href="{{$base_url}}/{{$edit}}" class="btn btn-default btn-xs icon-btn md-btn-flat article-tooltip" aria-hidden="true" title="Edit"><i class="fa fa-edit"></i></a>
+        <a href="{{$helper->showUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('See') }}"><i class="fa fa-eye"></i></a>
+    @endif
+    @if( $helper->canUpdate() )
+    	<!-- Edit button -->
+        <a href="{{$helper->updateUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Edit') }}"><i class="fa fa-edit"></i></a>
     @endif
     <!-- Remove button -->
-    @if( Auth::user()->can('delete', $object) )
-        <a data-type="confirm" title="Do you really want to remove this item?" data-info="Do you really want to remove this item?" data-button-yes="Yes" data-button-no="No" data-action="{{url($link)}}" data-redirection="{{url($base_url)}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default btn-xs icon-btn md-btn-flat article-tooltip" href="#"><i class="fa fa-times"></i></a>
+    @if( $helper->canRemove() )
+        <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($helper->removeUrl())}}" data-redirection="{{url($front->removeRedirectionUrl())}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default p-0" href="#"><i class="fa fa-times"></i></a>
     @endif
 </td>

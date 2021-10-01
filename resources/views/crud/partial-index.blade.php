@@ -1,44 +1,50 @@
-@if($objects->count() > 0)
-    @php $appends = isset($pagination_name) ? request()->except($pagination_name) : request()->except('page'); @endphp
-    <div class="card">
-        @if($objects instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $objects->appends($appends)->links() }}
-        @endif
-        <div class="card-datatable table-responsive">
-            <table class="table table-striped table-bordered mb-0">
-                <thead>
-                    <tr>
-                        @php $front->setObject($objects->first()); @endphp
-                        @foreach($front->indexFields() as $field)
-                            <th class="{{$field->data_classes}}">{{$field->title}}</th>
-                        @endforeach
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($objects as $object)
-                        @php $front->setObject($object); @endphp
+@php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null, $show_filters ?? null); @endphp
+<div class="card" @isset($style) style="{{$style}}" @endisset>
+    <div class="card-body">
+        <div class="pb-4">
+            {{ $helper->views() }}
+            {{ $helper->totals() }}
+            {{ $helper->filters() }}
+        </div>
+        @if($result->count() > 0)
+            <div class="card-datatable table-responsive">
+                <table class="table table-striped table-bordered mb-0">
+                    <thead>
                         <tr>
-                            @foreach($front->indexFields() as $field)
-                                <td class="{{$field->data_classes}}">
-                                    {!! $field->getValueProcessed($object) !!}
-                                </td>
+                            @foreach($helper->headers() as $field)
+                                <th class="{{$field->class}}">{{$field->title}}</th>
                             @endforeach
-                            @include('front::elements.object_actions', ['base_url' => $front->base_url, 'object' => $object])
+                            @if($helper->show_actions)
+                                <th class="d-print-none">{{ __('Actions') }}</th>
+                            @endif
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        @if($objects instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $objects->appends($appends)->links() }}
+                    </thead>
+                    <tbody>
+                        @foreach($helper->rows() as $row)
+                            <tr>
+                                @foreach($row->columns as $field)
+                                    <td class="{{$field->class}}">
+                                        {!! $field->value !!}
+                                    </td>
+                                @endforeach
+                                @if($helper->show_actions)
+                                    @include('front::elements.object_actions', ['base_url' => $front->getBaseUrl(), 'object' => $row->object])
+                                @endif
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="text-center">
+                {{ __('No data to show') }}
+            </div>
         @endif
-    </div>
-@else
-    <div class="card">
-        <div class="card-body">
-            No data to show
+        
+        <div class="mt-4">
+            {{ $helper->links() }}
         </div>
+        
     </div>
-@endif
-    
+        
+</div>

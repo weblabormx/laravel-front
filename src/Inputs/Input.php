@@ -20,14 +20,21 @@ class Input
 	public $data_classes = '';
 	public $title;
 	public $set_title_executed = false;
+	public $needs_to_be_on_panel = true;
 	public $column;
 	public $extra;
 	public $source; 
 	public $value;
+	public $size;
+	public $input_formatted = true;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
-		$this->title = $title;
+		if(is_string($title)) {
+			$this->title = __($title);
+		} else {
+			$this->title = $title;
+		}
 		$this->column = $column;
 		$this->extra = $extra;
 		$this->source = $source;
@@ -37,7 +44,7 @@ class Input
 	public static function make($title = null, $column = null, $extra = null) 
 	{
 		if(is_null($column) && !is_null($title) && is_string($title)) {
-			$column = $title;
+			$column = class_basename($title);
 			$column = Str::snake($column);
 		}
 
@@ -64,6 +71,9 @@ class Input
 	{
 		if(isset($this->value)) {
 			return $this->value;
+		}
+		if(!isset($object)) {
+			return;
 		}
 		$column = $this->column;
 		if(!is_string($column) && is_callable($column)) {
@@ -99,8 +109,19 @@ class Input
 		return;
 	}
 
+	public function hideForm()
+	{
+		return Hidden::make($this->title, $this->column)->form();
+	}
+
 	public function formHtml()
 	{
+		if( $this->hide && (request()->filled($this->column) || $this->source=='edit') ) {
+			return $this->hideForm();
+		}
+		if( !$this->input_formatted ) {
+			return $this->form();
+		}
 		$input = $this;
 		$html = view('front::input-form', compact('input'))->render();
 		return $this->form_before.$html.$this->form_after;
@@ -121,15 +142,27 @@ class Input
 
 	public function setTitle($title)
 	{
-		$this->title = $title;
+		$this->title = __($title);
 		$this->set_title_executed = true;
 		return $this;
 	}
 
-	public function size($size)
+	public function size($size = null)
 	{
+		if(isset($this->attributes['style']) || is_null($size)) {
+			return $this;
+		}
+		$this->size = $size;
 		$this->attributes['style'] = 'width: '.$size.'px';
 		return $this;
+	}
+
+	public function massiveSize($size = null)
+	{
+		if(\Cache::store('array')->get('is_massive')!==true) {
+			return $this;
+		}
+		return $this->size($size);
 	}
 
 	// In case there default attributes for the model
@@ -146,4 +179,40 @@ class Input
 		return $this;
 	}
 
+	/**
+	 * Allow to edit the data passed to create function of the object, returns the request gotten
+	 **/
+
+	public function processData($data)
+	{
+		return $data;
+	}
+
+	public function processDataAfterValidation($data)
+	{
+		return $data;
+	}
+
+	public function processAfterSave($object, $request)
+	{
+		//
+	}
+
+	/**
+	 * Can add extra validation to inputs in case is needed
+	 **/
+
+	public function validate($data)
+	{
+		return;
+	}
+
+	/**
+	 * Action that is executed bofore an object is removed
+	 **/
+
+	public function removeAction($object)
+	{
+		return;
+	}
 }

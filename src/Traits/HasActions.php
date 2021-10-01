@@ -9,20 +9,25 @@ trait HasActions
         return [];
     }
 
-    public function indexActions()
+    public function index_actions()
     {
         return [];
     }
 
     public function getIndexActions($all = false)
     {
-    	$actions = collect($this->indexActions());
+    	$actions = collect($this->index_actions());
     	if($all) {
     		$actions = collect($this->fields())->filter(function($item) {
 	    		return isset($item->actions) && count($item->actions)>0;
 	    	})->pluck('actions')->flatten(1)->merge($actions);
     	}
-    	return $actions->map(function($item) {
+    	return $actions->filter(function($item) use ($all) {
+            if($all) {
+                return true;
+            }
+            return $item->show && $item->show_button;
+        })->map(function($item) {
     		return $item->addData($this->data);
     	});
     }
@@ -39,9 +44,23 @@ trait HasActions
     		if($all) {
     			return true;
     		}
-    		return $item->show;
+    		return $item->show && $item->show_button;
     	})->map(function($item) {
     		return $item->addData($this->data);
     	});
+    }
+
+    public function searchIndexAction($slug)
+    {
+        return collect($this->getIndexActions(true))->filter(function($item) use ($slug) {
+            return $item->slug == $slug;
+        })->first();
+    }
+
+    public function searchAction($slug)
+    {
+        return collect($this->getActions(true))->filter(function($item) use ($slug) {
+            return $item->slug == $slug;
+        })->first();
     }
 }
