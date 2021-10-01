@@ -105,7 +105,17 @@ public $base_url;   // Url created on routes (Required)
 public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']; // If you want to modify which actions to be available
 ```
 
-#### Modifying query of results
+### Funtions 
+#### index
+If you need to run some algorithm just when you visit the resource you can use `Index()`.
+```php
+    public function index()
+    {
+        return $message;
+    }
+```
+#### indexQuery 
+Modifying query of results
 
 If you want to modify the results of CRUD you are able to modify it with `indexQuery` function
 
@@ -114,6 +124,35 @@ public function indexQuery($query)
 {
     return $query->where('team_id', 1)->with(['user'])->latest();
 }
+```
+#### create
+If you need to insert a data that is not found between the fields of your resource, you can use the create function.
+
+```php
+    public function create($data)
+    {
+        return Team::current()->blog_entries()->create($data);
+    }
+```
+#### Index_links
+you can create a button with the function `Index_links` which will appear in the main view of the resource.
+```php
+    public function index_links()
+    {
+        return [
+            '/admin/multimedia/create?is_directory=1&directory_id='.$this->currentFolder()  => '<i class="fa fa-folder"></i> '.__('Create').' '.__('Folder')
+        ];
+    }
+```
+#### links
+It works in the same way as index_links, the difference is that the button will appear when visiting some data from our resource.
+```php
+    public function links()
+    {
+        return [
+            '/admin/multimedia/create?is_directory=1&directory_id='.$this->currentFolder()  => '<i class="fa fa-folder"></i> '.__('Create').' '.__('Folder')
+        ];
+    }
 ```
 
 #### Pagination
@@ -168,7 +207,7 @@ As noted above, Front will "snake case" the displayable name of the field to det
 ```php
 Text::make('Name', 'name_column')
 ```
-
+### Attributes of the fields
 #### Showing / Hidding Fields
 
 - hideFromIndex
@@ -181,6 +220,19 @@ Text::make('Name', 'name_column')
 - onlyOnEdit
 - onlyOnCreate
 - exceptOnForms
+
+#### Others
+- rules
+- creationRules
+- setValue
+- setDirectory
+- default
+- setWidth
+- filterQuery
+- options
+
+
+
 
 You may chain any of these methods onto your field's definition in order to instruct Frpmt where the field should be displayed:
 
@@ -271,6 +323,7 @@ All the fields available on front:
 - Time
 - Trix
 
+
 #### Text types
 
 - Alert
@@ -289,6 +342,67 @@ All the fields available on front:
 - ShowCards
 - Welcome
 
+Laravel Front is growing so it is normal that we are adding new types of fields and it is not documented yet, if you want to see all the types of fields that your Laravel Front project has go to `vendor\weblabormx\laravel-front\src\inputs`
+
+#### BelongsTo
+if you want to insert some data from another table you can do it with
+BelongsTo referencing the model that has the data you need. 
+```php
+    public function fields()
+    {
+        return [
+            ID::make(),
+            BelongsTo::make('Currency')->rules('required'),
+        ];
+    }
+```
+Create the relationship in the model 
+```php
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
+```
+#### HasMany
+
+If your resource has a relation of many you can use the HasMany, indicating the model it relates to:
+```php
+    public function fields()
+    {
+        return [
+            ID::make(),
+            HasMany::make('Video')->rules('required'),
+        ];
+    }
+```
+Create the relationship in the model in plural.
+```php
+    public function videos()
+    {
+        return $this->belongsTo(Video::class);
+    }
+```
+#### MorphTo
+The `morphTo` field corresponds to a `morphTo` of the eloquent relation, for example if a `price` model has a polymorphic relation with the `courses` and `products` models, the relation can be added to the `price` resource in this way.
+```php
+    public function fields()
+    {
+        return [
+            MorphTo::make('Priceable')->types([
+                Course::class,
+                Product::class,
+            ]),
+        ];
+    }
+```
+in the course and products model
+```php
+    public function prices(){
+        return $this->morphMany(Price::class,'priceable');
+    }
+```
+Remember to follow the eloquent `able` structure for polymorphic relationships.
+
 
 #### Massive editions
 
@@ -297,6 +411,19 @@ If you want to a relationship resource to be edited massively just add `enableMa
 ```php
 HasMany::make('Reservation')->enableMassive(),
 ```
+#### Images
+
+If you need to use the `Image` field you will have to change `FILESYSTEM_DRIVER = local` to `FILESYSTEM_DRIVER = public` in the `.env` file.
+
+```php
+Image::make('Photo')->rules('required'),
+```
+Sometimes you also need to change to public on the route `config\filesystems.php`.
+
+```php
+'default' => env('FILESYSTEM_DRIVER', 'public'),
+```
+
 ### Filters
 
 You can add filters to a resource to filter the data, the filters are stored on `App\Front\Filters` folder. You can add filters by executing the command `php artisan front:filter FilterName`
@@ -364,6 +491,39 @@ public function actions()
     ];
 }
 ```
+### IndexActions
+IndexAction works the same as Actions, the difference is that the button will appear at the beginning of the resource, Actions appears when you visit a data. 
+```php
+namespace App\Front\Actions;
+
+use WeblaborMx\Front\Inputs\Text;
+use Illuminate\Http\Request;
+
+class ResendEmail extends IndexAction
+{
+    public function handle($object, Request $request)
+    {
+        // Execute what you want to do
+    }
+
+    public function fields()
+    {
+        // Do you need to ask some information? You can avoid this function if just want to execute an action
+        return [
+            Text::make('Note')->rules('required'),
+        ];
+    }
+}
+```
+
+```php
+public function index_actions()
+{
+    return [
+        new ResendEmail
+    ];
+}
+```
 
 ### Pages
 You can create pages on the system, on the routes you need to add it easily with `Route::page('PageName', '/');` and execute the command `php artisan front:page PageName`
@@ -422,8 +582,8 @@ class Fuel extends Resource
 
 The lenses have the same functionality as the Front Resources, so you customize fully the way it works.
 
-## Customizing the theme
 
+## Customizing the theme
 ### Sidebar
 
 You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar`
