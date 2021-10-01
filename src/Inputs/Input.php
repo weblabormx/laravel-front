@@ -116,7 +116,7 @@ class Input
 
 	public function formHtml()
 	{
-		if( $this->hide && (request()->filled($this->column) || $this->source=='edit') ) {
+		if( $this->hide && (request()->filled($this->column))) {
 			return $this->hideForm();
 		}
 		if( !$this->input_formatted ) {
