@@ -589,5 +589,12 @@ The lenses have the same functionality as the Front Resources, so you customize 
 You can customize the sidebar of the Front Panel editing the file on `resources/front/sidebar`
 
 
-## Premium Support
-If you'd like to implement this package in your project and need our help, or you just want to help this package to continue being develop please write us to carlosescobar@weblabor.mx and we can talk about prices for premium support.
+## Support us
+
+Weblabor is a web design agency based in México. You'll find an overview of all our open source projects [on our website](http://weblabor.mx).
+
+Does your business depend on our contributions? Reach out and support us
+All pledges will be dedicated to allocating workforce on maintenance and new awesome stuff.
+
+- Support us on Patreon - https://www.patreon.com/weblabormx
+- Support us with a Paypal donation - https://paypal.me/weblabormx 
