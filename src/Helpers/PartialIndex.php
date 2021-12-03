@@ -28,7 +28,7 @@ class PartialIndex
 
         // If not check if there are enough actions to show
         } else if(!isset($this->show_actions)) {
-            $this->show_actions = Arr::hasAny(collect($front->actions)->keys(), collect(['show', 'edit', 'destroy'])->keys());
+            $this->show_actions = Arr::hasAny($front->actions, ['show', 'edit', 'destroy']);    
         }
 
         // Check if individual object has permissions
