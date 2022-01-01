@@ -28,13 +28,18 @@ class ToolsController extends Controller
 
         $response = new \StdClass;
         $response->link = $url;
-        echo stripslashes(json_encode($response));
+        return response(stripslashes(json_encode($response)));
     }
 
     private function getFileName($file)
     {
         $file_name = Str::random(9);
-        $extension = $file->guessExtension();
+        if(is_string($file)) {
+            $extension = explode('.', $file);
+            $extension = $extension[count($extension)-1];
+        } else {
+            $extension = $file->guessExtension();
+        }
         $file_name .= '.'.$extension;
         return $file_name;
     }

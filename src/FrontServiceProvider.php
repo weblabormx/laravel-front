@@ -90,7 +90,7 @@ class FrontServiceProvider extends ServiceProvider
             });
         });
 
-        Route::post('laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
+        Route::post('api/laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
 
         $this->app->make('form')->considerRequest(true);
     }

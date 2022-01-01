@@ -15,7 +15,7 @@ class Trix extends Input
 	{
 		$this->attributes['data-type'] = 'wysiwyg';
 		$this->attributes['data-lang'] = \App::getLocale();
-		$this->attributes['data-upload-url'] = url('laravel-front/upload-image').'?variables='.json_encode($this->variables);
+		$this->attributes['data-upload-url'] = url('api/laravel-front/upload-image').'?variables='.json_encode($this->variables);
 		return \Form::textarea($this->column, $this->default_value, $this->attributes);
 	}
 
