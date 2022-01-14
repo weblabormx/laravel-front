@@ -5,6 +5,9 @@ function getThumb($full_name, $prefix, $force = false)
     if(function_exists('validateGetThumb') && !$force) {
         $execute = validateGetThumb($full_name);
         if(!$execute) {
+            if(function_exists('editGetThumb')) {
+                return editGetThumb($full_name);
+            }
             return $full_name;
         }
     }
@@ -17,6 +20,10 @@ function getThumb($full_name, $prefix, $force = false)
     
     $full_name[$key] = $name;
     $full_name = implode('/', $full_name);
+
+    if(function_exists('editGetThumb')) {
+        return editGetThumb($full_name);
+    }
 
     return $full_name;
 }
