@@ -160,4 +160,9 @@ class IndexAction
         return $front_index->result($result);
     }
 
+    public function hasHandle()
+    {
+        return method_exists($this, 'handle');
+    }
+
 }
