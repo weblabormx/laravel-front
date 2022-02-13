@@ -19,9 +19,12 @@
         @foreach($action->createPanels() as $panel)
             {!! $panel->formHtml() !!}
         @endforeach
-        <div class="text-right mt-3">
-            <button type="submit" class="btn btn-primary">{{ $action->save_button }}</button>
-        </div>
+
+        @if($action->hasHandle())
+            <div class="text-right mt-3">
+                <button type="submit" class="btn btn-primary">{{ $action->save_button }}</button>
+            </div>
+        @endif
 
     {!! Form::close() !!}
     
