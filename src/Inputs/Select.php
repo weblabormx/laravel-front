@@ -31,7 +31,9 @@ class Select extends Input
 		if(is_callable($array)) {
 			$array = $array();
 		}
-		$this->options = $array;
+		$this->options = collect($array)->map(function($item) {
+			return __($item);
+		});
 		return $this;
 	}
 
