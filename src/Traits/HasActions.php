@@ -22,7 +22,12 @@ trait HasActions
 	    		return isset($item->actions) && count($item->actions)>0;
 	    	})->pluck('actions')->flatten(1)->merge($actions);
     	}
-    	return $actions->filter(function($item) use ($all) {
+    	return $actions->map(function($item) {
+            if(is_string($item)) {
+                return new $item;
+            }
+            return $item;
+        })->filter(function($item) use ($all) {
             if($all) {
                 return true;
             }
@@ -40,7 +45,12 @@ trait HasActions
 	    		return isset($item->actions) && count($item->actions)>0;
 	    	})->pluck('actions')->flatten(1)->merge($actions);
     	}
-    	return $actions->filter(function($item) use ($all) {
+    	return $actions->map(function($item) {
+            if(is_string($item)) {
+                return new $item;
+            }
+            return $item;
+        })->filter(function($item) use ($all) {
     		if($all) {
     			return true;
     		}
