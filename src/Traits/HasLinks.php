@@ -27,7 +27,10 @@ trait HasLinks
         $links = [];
 
         // Show index actions
-        foreach($this->getActions() as $action) {
+        $actions = $this->getActions()->filter(function($item) use ($object) {
+            return $item->hasPermissions($object);
+        });
+        foreach($actions as $action) {
             $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/{$object->getKey()}/action/{$action->slug}");
         }
 

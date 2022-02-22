@@ -87,4 +87,14 @@ class Actions
     {
         return isset(class_uses($this->object)['Spatie\EloquentSortable\SortableTrait']);
     }
+
+    public function getActions($object)
+    {
+        return $this->front->getActions()->where('show_on_index', 1)->filter(function($item) use ($object) {
+            return $item->hasPermissions($object);
+        })->map(function($item) use ($object) {
+            $item->url = $this->front->getBaseUrl()."/{$object->getKey()}/action/{$item->slug}";
+            return $item;
+        });
+    }
 }

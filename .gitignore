@@ -1,2 +1,3 @@
 /vendor
 *.bak
+.DS_Store
