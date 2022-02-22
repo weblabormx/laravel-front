@@ -60,6 +60,11 @@ class IndexAction
         return [];
     }
 
+    public function hasPermissions($object)
+    {
+        return true;
+    }
+
     public function validate($data)
     {
         $this->makeValidation($data);
