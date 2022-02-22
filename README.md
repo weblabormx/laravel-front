@@ -466,6 +466,8 @@ use Illuminate\Http\Request;
 
 class ResendEmail extends Action
 {
+    public $show_on_index = true; // If true it will show the icon on the index page
+
     public function handle($object, Request $request)
     {
         // Execute what you want to do
@@ -477,6 +479,12 @@ class ResendEmail extends Action
         return [
             Text::make('Note')->rules('required'),
         ];
+    }
+
+    // if you want to create a permission
+    public function hasPermissions($object)
+    {
+        return true;
     }
 }
 ```
