@@ -15,6 +15,7 @@ use WeblaborMx\Front\Traits\ResourceHelpers;
 use WeblaborMx\Front\Traits\IsValidated;
 use WeblaborMx\Front\Traits\HasPermissions;
 use WeblaborMx\Front\Traits\HasMassiveEditions;
+use Illuminate\Support\Arr;
 
 abstract class Resource
 {
@@ -338,7 +339,7 @@ abstract class Resource
         $base_url = $this->base_url;
 
         // Get all route parameters
-        $parameters = request()->route()->parameters();
+        $parameters = Arr::dot(collect(request()->route()->parameters())->toArray());
 
         // Find which values are required on base_url
         preg_match_all('#\{(.*?)\}#', $this->base_url, $match);
