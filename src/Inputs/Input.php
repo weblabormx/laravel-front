@@ -78,6 +78,10 @@ class Input
 		$column = $this->column;
 		if(!is_string($column) && is_callable($column)) {
 			$return = $column($object);
+		} else if(Str::contains($column, '.')) {
+			$explode = explode('.', $column);
+			$column = $explode[0];
+			$return = $object->$column[$explode[1]] ?? null;
 		} else {
 			$return = $object->$column;	
 		}
@@ -93,7 +97,7 @@ class Input
 			$this->link_target = '_blank';
 		}
 		$link = $this->link;
-		if(isset($link)) {
+		if(isset($link) && $return!='--') {
 			$add = isset($this->link_target) ? ' target="'.$this->link_target.'"' : '';
 			$return = "<a href='{$link}'{$add}>{$return}</a>";
 		}
@@ -102,6 +106,19 @@ class Input
 			$return = $function($return);
 		}
 		return $return;
+	}
+
+	public function getColumn() 
+	{
+		$column = $this->column;
+		if(!Str::contains($column, '.')) {
+			return $column;
+		}
+
+		$explode = explode('.', $column);
+		$column = $explode[0];
+		$key = $explode[1];
+		return "{$column}[{$key}]";
 	}
 
 	public function form()
