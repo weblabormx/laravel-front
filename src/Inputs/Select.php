@@ -32,6 +32,9 @@ class Select extends Input
 			$array = $array();
 		}
 		$this->options = collect($array)->map(function($item) {
+			if(!is_string($item)) {
+				return $item;
+			}
 			return __($item);
 		});
 		return $this;
