@@ -4,8 +4,8 @@
     
     @include('front::elements.breadcrumbs')
 
-    <h4 class="d-flex justify-content-between align-items-center mb-4">
-        <div>{!! $front->getTitle($object) !!}</div>
+    <h4 class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <div class="mb-4">{!! $front->getTitle($object) !!}</div>
         <div>
             @foreach($front->getLinks($object) as $button)
                 {!! $button->form() !!}
