@@ -53,7 +53,7 @@ class HasMany extends Input
 			$this->column = $relation_function->getForeignKeyName();
 		}
 
-		$base_url = $this->getBaseUrl($resource, $relation_function);
+		$base_url = $this->getBaseUrl($resource, $relation_function ?? null);
 		
 		// Hide column of the resource by default if there isnt any hide columns
 		if(!isset($this->hide_columns)) {
