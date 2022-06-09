@@ -4,9 +4,12 @@ namespace WeblaborMx\Front\Inputs;
 
 class Boolean extends Input
 {
+	public $true_value = 1;
+	public $false_value = 0;
+
 	public function form()
 	{
-		return \Form::hidden($this->column, 0).\Form::checkbox($this->column, 1,  !is_null($this->default_value) ? $this->default_value == 1 : null);
+		return \Form::hidden($this->column, $this->false_value).\Form::checkbox($this->column, $this->true_value,  !is_null($this->default_value) ? $this->default_value == $this->true_value : null);
 	}
 
 	public function getValue($object)
@@ -19,9 +22,21 @@ class Boolean extends Input
 			}
 			return '<span style="color: #e74344;">✘</span>';
 		}
-		if($value) {
+		if($value == $this->true_value) {
 			return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> '.__('Yes');
 		}
 		return '<span style="color: #e74344; padding-right: 10px;">✘</span> '.__('No');
+	}
+
+	public function setTrueValue($value)
+	{
+		$this->true_value = $value;
+		return $this;
+	}
+
+	public function setFalseValue($value)
+	{
+		$this->false_value = $value;
+		return $this;
 	}
 }
