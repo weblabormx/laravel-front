@@ -197,6 +197,9 @@ class FrontServiceProvider extends ServiceProvider
         Route::get('{front_object}/sortable/down', function(Request $request) use ($controller) {
             return $controller->sortableDown($controller->getParameter());
         });
+        Route::post('{front_object}/sortable', function (Request $request) use ($controller) {
+            return $controller->sortable($controller->getParameter(), $request->input('order'), $request->input('start'));
+        });
     }
 
     /**
