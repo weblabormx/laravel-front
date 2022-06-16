@@ -323,6 +323,14 @@ class FrontController extends Controller
         return back();
     }
 
+    private function sortable($object, $order, $start_object = null)
+    {
+        $start = is_null($start_object) ? 0 : $this->getObject($start_object)->order_column;
+        $object = $this->getObject($object);
+        $object::setNewOrder($order, $start);
+        return back();
+    }
+
     /*
      * More features
      */
