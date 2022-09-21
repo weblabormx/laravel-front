@@ -114,6 +114,15 @@ class IndexAction
         return $this;
     }
 
+    public function setSlug($slug)
+    {
+        if(is_null($slug)) {
+            return $this;
+        }
+        $this->slug = $slug;
+        return $this;
+    }
+
     public function setIcon($icon)
     {
         if(is_null($icon)) {
