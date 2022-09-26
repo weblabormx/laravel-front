@@ -78,7 +78,7 @@ return [
     | Default Buttons
     |--------------------------------------------------------------------------
     |
-    | Buttons used on the system
+    | Buttons used on the system by default
     |
     */
 
@@ -120,5 +120,18 @@ return [
             'class' => ''
         ]
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Input Attributes
+    |--------------------------------------------------------------------------
+    |
+    | Change here in case you want to change the default attributes for the inputs
+    |
+    */
+
+    'default_input_attributes' => [
+        'class' => 'form-control'
+    ]
 
 ];

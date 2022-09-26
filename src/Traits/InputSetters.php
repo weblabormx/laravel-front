@@ -5,7 +5,6 @@ namespace WeblaborMx\Front\Traits;
 trait InputSetters
 {
 	public $default_value = null;
-	public $attributes = ['class' => 'form-control'];
 	public $conditional;
 	public $resource;
 	public $display_using;

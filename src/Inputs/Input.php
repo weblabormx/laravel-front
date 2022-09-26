@@ -27,6 +27,7 @@ class Input
 	public $value;
 	public $size;
 	public $input_formatted = true;
+	public $attributes;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -38,6 +39,7 @@ class Input
 		$this->column = $column;
 		$this->extra = $extra;
 		$this->source = $source;
+		$this->attributes = config('front.default_input_attributes');
 		$this->load();
 	}
 
