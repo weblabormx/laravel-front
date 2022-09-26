@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Texts;
 
+use Illuminate\Support\Str;
+
 class Button extends Text
 {
 	public $link  = '#';
@@ -9,10 +11,11 @@ class Button extends Text
 	public $extra = '';
 	public $class = '';
 	public $type = 'btn-primary';
+	public $icon = '';
 
 	public function load()
 	{
-		$this->text = $this->title;
+		$this->generateText();
 	}
 
 	public function form()
@@ -49,5 +52,27 @@ class Button extends Text
 	{
 		$this->type = $type;
 		return $this;
+	}
+
+	public function setIcon($icon)
+	{
+		if(!Str::contains($icon, '<')) {
+			$icon = "<i class='$icon'></i>";
+		}
+		$this->icon = $icon;
+		$this->generateText();
+		return $this;
+	}
+
+	public function setTitle($title)
+	{
+		parent::setTitle($title);
+		$this->generateText();
+		return $this;
+	}
+
+	private function generateText()
+	{
+		$this->text = $this->icon.$this->title;
 	}
 }

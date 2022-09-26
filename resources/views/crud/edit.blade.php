@@ -15,7 +15,7 @@
 
         <div class="text-right mt-3">
             @if( $front->canRemove($object) )
-                <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($front->getBaseUrl().'/'.$object->getKey())}}" data-redirection="{{url($front->getBaseUrl())}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-danger" href="#"><i class="fa fa-times pr-2"></i> {{ __('Delete') }}</a>
+                {!! getButtonByName('delete', $front, $object)->form() !!}
             @endif
             <button type="submit" class="btn btn-primary"><i class="fa fa-save pr-2"></i> {{ __('Save Changes') }}</button>
         </div>

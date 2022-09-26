@@ -73,4 +73,22 @@ return [
 
     'hidden_value' => 'column',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Buttons
+    |--------------------------------------------------------------------------
+    |
+    | Buttons used on the system
+    |
+    */
+
+    'buttons' => [
+        'delete' => [
+            'icon' => 'fa fa-times pr-2',
+            'name' => 'Delete',
+            'type' => 'btn-danger',
+            'class' => ''
+        ]
+    ],
+
 ];
