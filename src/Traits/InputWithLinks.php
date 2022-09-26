@@ -30,8 +30,8 @@ trait InputWithLinks
         // Add actions links
         if(isset($this->actions) && count($this->actions)>0) {
             foreach($this->actions as $action) {
-            	$links[] = Button::make($action->button_text)
-            		->addLink("{$this->front->getBaseUrl()}/{$object->getKey()}/action/{$action->slug}");
+                $url = "{$this->front->getBaseUrl()}/{$object->getKey()}/action/{$action->slug}";
+            	$links[] = Button::make($action->button_text)->addLink($url);
             }
         }
 
@@ -42,15 +42,14 @@ trait InputWithLinks
 
         // Add massive edit link
         if(isset($this->massive_edit_link) && $this->show_massive && $can_edit) {
-        	$links[] = Button::make("<i class='fa fa-edit'></i> ".__('Edit')." {$this->front->plural_label}")
-        		->addLink("{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}");
+            $url = "{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}";
+            $links[] = getButtonByName('edit')->addLink($url)->setTitle(__('Edit')." {$this->front->plural_label}");
         }
         
         // Add create link
         if(isset($this->create_link) && $this->front->canCreate() && $can_edit) {
             $title = Str::singular($this->title) ?? $this->front->label;
-        	$links[] = Button::make("<span class='fa fa-plus'></span> ".__('Add')." {$title}")
-        		->addLink($this->create_link);
+            $links[] = getButtonByName('create')->addLink($this->create_link)->setTitle(__('Add')." {$title}");
         }
 
         return $links;

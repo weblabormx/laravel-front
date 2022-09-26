@@ -83,10 +83,40 @@ return [
     */
 
     'buttons' => [
+        'show' => [
+            'icon' => 'fa fa-eye',
+            'name' => 'See',
+            'type' => 'btn-primary',
+            'class' => ''
+        ],
+        'edit' => [
+            'icon' => 'fa fa-edit',
+            'name' => 'Edit',
+            'type' => 'btn-primary',
+            'class' => ''
+        ],
+        'create' => [
+            'icon' => 'fa fa-plus',
+            'name' => 'Create',
+            'type' => 'btn-primary',
+            'class' => ''
+        ],
         'delete' => [
             'icon' => 'fa fa-times pr-2',
             'name' => 'Delete',
             'type' => 'btn-danger',
+            'class' => ''
+        ],
+        'up' => [
+            'icon' => 'fa fa-arrow-up',
+            'name' => 'Up',
+            'type' => 'btn-primary',
+            'class' => ''
+        ],
+        'down' => [
+            'icon' => 'fa fa-arrow-down',
+            'name' => 'Down',
+            'type' => 'btn-primary',
             'class' => ''
         ]
     ],

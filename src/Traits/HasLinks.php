@@ -47,7 +47,8 @@ trait HasLinks
         // Add update button
         if($this->canUpdate($object)) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
-            $links[] = Button::make('<span class="fa fa-edit"></span> '. __('Edit'))->addLink("{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}");
+            $url = "{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}";
+            $links[] = getButtonByName('edit')->addLink($url);
         }
 
         return $links;
@@ -74,15 +75,14 @@ trait HasLinks
         if($this->enable_massive_edition) {
             $query = str_replace(url()->current(), '', url()->full());
             $url = $this->getBaseUrl()."/massive_edit".$query;
-            $text = '<span class="fa fa-edit"></span> '. __('Edit');
-            $links[] = Button::make($text)->addLink($url);
+            $links[] = getButtonByName('edit')->addLink($url);
         }
 
         // Show create button
         if($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;
             $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
-            $links[] = Button::make('<span class="fa fa-plus"></span> '. __('Create') .' '.$this->label)->addLink($url);
+            $links[] = getButtonByName('create')->setTitle(__('Create') .' '.$this->label)->addLink($url);
         }
 	    return $links;
     }
