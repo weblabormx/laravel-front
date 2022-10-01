@@ -11,6 +11,7 @@ class Panel extends Component
 	use InputWithActions, InputWithLinks;
 	
 	public $is_panel = true;
+	public $description;
 	
 	public function load()
 	{
@@ -69,5 +70,11 @@ class Panel extends Component
 	public function fields($model = null)
 	{
 		return $this->filterFields($this->source, $model);
+	}
+
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
 	}
 }
