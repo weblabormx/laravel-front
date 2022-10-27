@@ -130,6 +130,8 @@ trait HasBreadcrumbs
             $title = $front->title;
             $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl()];
             $breadcrumbs[] = ['title' => $this->plural_label, 'url' => $this->getIndexUrl()];
+            $title = $this->title;
+            $breadcrumbs[] = ['title' => strip_tags($object->$title), 'url' => $this->getShowUrl()];
             $title = $front->title;
             $breadcrumbs[] = ['title' => __('Edit').' '.$this->$title, 'active' => true];
         }
