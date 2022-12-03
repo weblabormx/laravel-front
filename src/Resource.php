@@ -117,6 +117,13 @@ abstract class Resource
         //
     }
 
+    // To edit the object before saving it
+
+    public function processDataBeforeSaving($data)
+    {
+        return $data;
+    }
+
     // To execute before updating an object
 
     public function beforeUpdate($object, $request)

@@ -41,6 +41,9 @@ class FrontStore
         // Process data after validation
         $data = $this->front->processDataAfterValidation($data);
 
+        // Process data Before saving
+        $data = $this->front->processDataBeforeSaving($data);
+
         // Make work with arrays
         if(!$this->isArrayOfArrays($data)) {
             $data = [$data];
