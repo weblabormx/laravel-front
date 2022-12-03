@@ -91,7 +91,13 @@ trait InputSetters
 	private function validateConditional($object)
 	{
 		if(isset($this->conditional)) {
-			$conditional = '$object->'.$this->conditional;
+			$object = collect($object->all())->whereNotNull()->sortByDesc(function($item, $key) {
+				return strlen($key);
+			})->all();
+			$conditional = $this->conditional;
+			foreach($object as $key => $value) {
+				$conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
+			}
 			try {
 				$conditional = eval("return $conditional;");
 				return $conditional;
