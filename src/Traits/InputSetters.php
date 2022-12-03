@@ -202,4 +202,11 @@ trait InputSetters
 		$this->get_value_from = $value;
 		return $this;
 	}
+
+	public function finalColumn($value)
+	{
+		$this->renameAfter($value);
+		$this->getValueFrom($value);
+		return $this;
+	}
 }
