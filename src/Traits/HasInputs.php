@@ -118,7 +118,13 @@ trait HasInputs
 			}
 			return !in_array($item->column, $columns);
 		});
-		$return = collect($return)->merge($sum);
+		$return = collect($return)->merge($sum)->map(function($item) {
+			if(isset($item->get_value_from)) {
+				$column = $item->get_value_from;
+				$item->setValue($this->object?->$column);
+			}
+			return $item;
+		});
 		return $return;
 	}
 
