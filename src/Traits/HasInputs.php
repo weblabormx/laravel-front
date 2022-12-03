@@ -237,10 +237,18 @@ trait HasInputs
     public function processDataAfterValidation($inputs)
     {
         // Get fields processing
-        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true);
-        $fields->filter(function($item) {
+        $fields = $this->filterFields($this->source=='update' ? 'edit' : 'create', true)->filter(function($item) {
             return $item->is_input;
+        });
+
+        // Remove inputs of conditionals not true
+        $fields->filter(function($item) {
+        	return !$item->validateConditional(request()->all());
         })->each(function($item) use (&$inputs) {
+        	unset($inputs[$item->column]);
+        });
+        // Process data on inputs
+        $fields->each(function($item) use (&$inputs) {
             $inputs = $item->processDataAfterValidation($inputs);
         });
         return $inputs;
