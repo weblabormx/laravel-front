@@ -12,6 +12,7 @@ trait InputSetters
 	public $class = '';
 	public $default_value_force = false;
 	public $hide = false;
+	public $rename_after;
 	
 	public function setColumn($value)
 	{
@@ -186,6 +187,12 @@ trait InputSetters
 	public function hideWhenValuesSet()
 	{
 		$this->hide = true;
+		return $this;
+	}
+
+	public function renameAfter($value)
+	{
+		$this->rename_after = $value;
 		return $this;
 	}
 }
