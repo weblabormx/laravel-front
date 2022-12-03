@@ -28,6 +28,7 @@ class Input
 	public $size;
 	public $input_formatted = true;
 	public $attributes;
+	public $rename_after;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -195,6 +196,12 @@ class Input
 		if(isset($attributes[$this->column])) {
 			$this->default($attributes[$this->column]);
 		}
+		return $this;
+	}
+
+	public function renameAfter($value)
+	{
+		$this->rename_after = $value;
 		return $this;
 	}
 

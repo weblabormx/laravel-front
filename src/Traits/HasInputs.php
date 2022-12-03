@@ -247,10 +247,25 @@ trait HasInputs
         })->each(function($item) use (&$inputs) {
         	unset($inputs[$item->column]);
         });
+
+        // Show only validated inputs
+        $fields = $fields->filter(function($item) {
+        	return $item->validateConditional(request()->all());
+        });
+
         // Process data on inputs
         $fields->each(function($item) use (&$inputs) {
             $inputs = $item->processDataAfterValidation($inputs);
         });
+
+        // Rename inputs if needed
+        $fields->filter(function($item) {
+        	return isset($item->rename_after);
+        })->each(function($item) use (&$inputs) {
+        	$inputs[$item->rename_after] = $inputs[$item->column];	
+        	unset($inputs[$item->column]);
+        });
+
         return $inputs;
     }
 
