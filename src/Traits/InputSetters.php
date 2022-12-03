@@ -88,10 +88,11 @@ trait InputSetters
 		return $this;
 	}
 
-	private function validateConditional($object)
+	public function validateConditional($object)
 	{
 		if(isset($this->conditional)) {
-			$object = collect($object->all())->whereNotNull()->sortByDesc(function($item, $key) {
+			$data = is_object($object) ? $object->all() : $object;
+			$object = collect($data)->whereNotNull()->sortByDesc(function($item, $key) {
 				return strlen($key);
 			})->all();
 			$conditional = $this->conditional;
@@ -99,9 +100,10 @@ trait InputSetters
 				$conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
 			}
 			try {
-				$conditional = eval("return $conditional;");
-				return $conditional;
+				return eval("return $conditional;");
 			} catch (\Exception $e) {
+				return false;
+			} catch (\Throwable $e) { 
 				return false;
 			}
 		}
