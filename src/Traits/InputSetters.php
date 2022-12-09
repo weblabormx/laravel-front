@@ -93,7 +93,7 @@ trait InputSetters
 	public function validateConditional($object)
 	{
 		if(isset($this->conditional)) {
-			$data = is_object($object) ? $object->all() : $object;
+			$data = is_object($object) ? $object->toArray() : $object;
 			$object = collect($data)->whereNotNull()->sortByDesc(function($item, $key) {
 				return strlen($key);
 			})->all();
