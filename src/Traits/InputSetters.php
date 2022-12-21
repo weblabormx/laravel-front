@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use Illuminate\Support\Str;
+
 trait InputSetters
 {
 	public $default_value = null;
@@ -100,6 +102,9 @@ trait InputSetters
 			$conditional = $this->conditional;
 			foreach($object as $key => $value) {
 				$conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
+				if(!Str::contains($conditional, '=')) {
+					$conditional = str_replace($key, '$object["'.$key.'"] ?? false', $conditional);
+				}
 			}
 			try {
 				return eval("return $conditional;");
