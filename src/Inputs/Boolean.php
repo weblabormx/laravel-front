@@ -9,7 +9,7 @@ class Boolean extends Input
 
 	public function form()
 	{
-		return \Form::hidden($this->column, $this->false_value).\Form::checkbox($this->column, $this->true_value,  !is_null($this->default_value) ? $this->default_value == $this->true_value : null);
+		return \Form::checkbox($this->column, $this->true_value,  !is_null($this->default_value) ? $this->default_value == $this->true_value : null);
 	}
 
 	public function getValue($object)
@@ -38,5 +38,13 @@ class Boolean extends Input
 	{
 		$this->false_value = $value;
 		return $this;
+	}
+
+	public function processData($data)
+	{
+		if(!isset($data[$this->column])) {
+			$data[$this->column] = $this->false_value;
+		}
+		return $data;
 	}
 }
