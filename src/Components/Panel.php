@@ -63,6 +63,9 @@ class Panel extends Component
 			return $item->setDefaultValueFromAttributes($model);
 		})->filter(function($item) use ($where) {
 			$field = 'show_on_'.$where;
+			if(!isset($item->$field)) {
+				return true;
+			}
 			return $item->$field && $item->shouldBeShown();
 		});
 	}
