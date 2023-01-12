@@ -61,9 +61,9 @@ class FrontSearch
 
         // If there aren't results show that nothing was found
         $result = [[
-            'label' => __('Nothing founded'), 
+            'label' => __('Nothing found'), 
             'id' => 0, 
-            'value' => __('Nothing founded')
+            'value' => __('Nothing found')
         ]];
         print json_encode($result);
     }
