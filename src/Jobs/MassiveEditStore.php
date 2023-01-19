@@ -105,6 +105,8 @@ class MassiveEditStore
             }
             return $values->count() > 1 && $has_required_values; 
         })->map(function($data, $key) use ($input, $object, $basic_data) {
+            $data = $this->input_front->processData($data);
+
             // If there is a new column save it instead of updating
             if(Str::contains($key, 'new')) {
                 $data = $basic_data->merge($data)->toArray();
