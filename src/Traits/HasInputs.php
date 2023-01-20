@@ -69,8 +69,17 @@ trait HasInputs
 			})->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
 				return $item->$field && $item->shouldBeShown();
-			})->map(function($item) {
-				return $item->column;
+			})->map(function($panel) {
+				return collect($panel->column)->map(function($field) use ($panel) {
+					if(is_array($field)) {
+						return $field;
+					}
+					$field->show_on_index = !$panel->show_on_index ? false : $field->show_on_index;
+					$field->show_on_show = !$panel->show_on_show ? false : $field->show_on_show;
+					$field->show_on_edit = !$panel->show_on_edit ? false : $field->show_on_edit;
+					$field->show_on_create = !$panel->show_on_create ? false : $field->show_on_create;
+					return $field;
+				})->all();
 			})->flatten()->filter(function($item) use ($where) {
 				$field = 'show_on_'.$where;
 				return $item->$field && $item->shouldBeShown();
