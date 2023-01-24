@@ -80,7 +80,7 @@ class Images extends Image
 		$name = $this->column;
 		$attribute_name = $this->title;
 		$rules = [
-			$name.'.*' => ['image','mimes:jpeg,png,jpg,gif,svg', 'max:'.$this->max_size]
+			$name.'.*' => ['image','mimes:jpeg,png,jpg,gif,svg,webp', 'max:'.$this->max_size]
 		];
 		$attributes = [
 			$name.'.*' => $attribute_name
