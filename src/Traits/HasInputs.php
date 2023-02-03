@@ -70,7 +70,7 @@ trait HasInputs
 				$field = 'show_on_'.$where;
 				return $item->$field && $item->shouldBeShown();
 			})->map(function($panel) {
-				return collect($panel->column)->map(function($field) use ($panel) {
+				return collect($panel->column)->flatten()->map(function($field) use ($panel) {
 					if(is_array($field)) {
 						return $field;
 					}
