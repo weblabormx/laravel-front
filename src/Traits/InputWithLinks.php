@@ -42,7 +42,11 @@ trait InputWithLinks
 
         // Add massive edit link
         if(isset($this->massive_edit_link) && $this->show_massive && $can_edit) {
-            $url = "{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}";
+            $extra_query = http_build_query(request()->all());
+            if(strlen($extra_query)>0) {
+                $extra_query = '&'.$extra_query;
+            }
+            $url = "{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}{$extra_query}";
             $links[] = getButtonByName('edit')->addLink($url)->setTitle(__('Edit')." {$this->front->plural_label}");
         }
         
