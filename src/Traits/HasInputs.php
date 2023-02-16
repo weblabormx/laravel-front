@@ -238,9 +238,7 @@ trait HasInputs
             unset($inputs[$item]);
         });
 
-        $fields->filter(function($item) use ($inputs) {
-            return $item->is_input;
-        })->each(function($item) use (&$inputs) {
+        $fields->each(function($item) use (&$inputs) {
             $inputs = $item->processData($inputs);
             if($this->isResponse($inputs)) {
             	return false;

@@ -53,7 +53,7 @@ class Panel extends Component
 		})->implode('');
 	}
 
-	private function filterFields($where, $model)
+	private function filterFields($where, $model = null)
 	{
 		$where = $where=='update' ? 'edit' : $where;
 		$where = $where=='store' ? 'create' : $where;
@@ -62,6 +62,9 @@ class Panel extends Component
 		})->flatten()->map(function($item) use ($model) {
 			return $item->setDefaultValueFromAttributes($model);
 		})->filter(function($item) use ($where) {
+			if(is_null($where)) {
+				return true;
+			}
 			$field = 'show_on_'.$where;
 			if(!isset($item->$field)) {
 				return true;
@@ -79,5 +82,16 @@ class Panel extends Component
 	{
 		$this->description = $description;
 		return $this;
+	}
+
+	public function processData($inputs)
+	{
+		// Get fields processing
+        $fields = $this->filterFields(null);
+
+        $fields->each(function($item) use (&$inputs) {
+            $inputs = $item->processData($inputs);
+        });
+		return $inputs;
 	}
 }
