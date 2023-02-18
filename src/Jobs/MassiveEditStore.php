@@ -43,7 +43,7 @@ class MassiveEditStore
         $this->input_front = $input_front;
 
         // Get data that should be added to all data
-        $basic_data = collect($this->request->except(['_token', 'submitName', 'relation_front', 'relation_id', 'redirect_url']))->filter(function($item) {
+        $basic_data = collect($this->request->except(['_token', 'submitName', 'relation_front', 'relation_id', 'redirect_url', 'relation_url']))->filter(function($item) {
             return !is_array($item) && !is_null($item);
         });
 
