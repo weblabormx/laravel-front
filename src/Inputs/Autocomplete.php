@@ -27,7 +27,7 @@ class Autocomplete extends Input
 		}
 
 		if(isset($this->attributes['disabled'])) {
-			return \Form::text($this->column.'_hidden', $this->attributes['data-selected-text'], ['disabled' => 'disabled']);
+			return \Form::text($this->column.'_hidden', $this->attributes['data-selected-text'] ?? false, ['disabled' => 'disabled']);
 		}
 
 		return \Form::text($this->column, $this->default_value, $this->attributes);

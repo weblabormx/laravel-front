@@ -110,6 +110,7 @@ class PartialIndex
                 $input['title'] = $column->title;
                 $input['value'] = $column->getValueProcessed($object);
                 $input['column'] = $column->column;
+                $input['extra_data'] = $column->extra_data;
                 return (object) $input;
             })->values();
             return (object) compact('columns', 'object');

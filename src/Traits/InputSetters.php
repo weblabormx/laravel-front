@@ -16,7 +16,19 @@ trait InputSetters
 	public $hide = false;
 	public $rename_after;
 	public $get_value_from;
+	public $extra_data = [];
 	
+	public function setData($column, $value)
+	{
+		$this->extra_data[$column] = $value;
+		return $this;
+	}
+
+	public function getData($column)
+	{
+		return $this->extra_data[$column];
+	}
+
 	public function setColumn($value)
 	{
 		$this->column = $value;
