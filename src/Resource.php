@@ -68,12 +68,28 @@ abstract class Resource
                 ]
             ];
         }
+        if(is_array($this->indexViews())) {
+            $this->index_views = $this->indexViews();
+        }
+        if(is_numeric($this->pagination())) {
+            $this->pagination = $this->pagination();
+        }
         $this->load();
 	}
 
     /* 
      * Functions that can be modified
      */
+
+    // Functions to modify the attribute on traits 
+    
+    public function indexViews() {
+        //
+    }
+
+    public function pagination() {
+        //
+    }
 
     // Function that is called after the constructor is called
 
