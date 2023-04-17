@@ -28,6 +28,7 @@ class Input
 	public $size;
 	public $input_formatted = true;
 	public $attributes;
+	public $format;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
@@ -94,6 +95,11 @@ class Input
 	public function getValueProcessed($object)
 	{
 		$return = $this->getValue($object);
+		if($return!='--' && isset($this->format)) {
+			$format = $this->format;
+			$return = $format($return);
+		}
+		
 		if(Str::startsWith($return, 'http') && !isset($this->link)) {
 			$this->link = $return;
 			$this->link_target = '_blank';
@@ -195,6 +201,12 @@ class Input
 		if(isset($attributes[$this->column])) {
 			$this->default($attributes[$this->column]);
 		}
+		return $this;
+	}
+
+	public function setFormat($format)
+	{
+		$this->format = $format;
 		return $this;
 	}
 
