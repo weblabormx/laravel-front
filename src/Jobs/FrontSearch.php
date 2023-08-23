@@ -45,7 +45,7 @@ class FrontSearch
 
         // Search results and map with format
         $result = $search_filter->apply($result, $this->request->term);
-        $result = $result->limit(10)->get()->map(function($item) use ($title) {
+        $result = $result->limit($this->front->search_limit)->get()->map(function($item) use ($title) {
             return [
                 'label' => $item->$title, 
                 'id' => $item->getKey(), 

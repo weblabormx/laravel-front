@@ -30,6 +30,7 @@ abstract class Resource
 	public $show_title = true;
     public $show_create_button_on_index = true;
     public $pagination = 50;
+    public $search_limit = 10;
     public $layout;
     public $functions_values = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
