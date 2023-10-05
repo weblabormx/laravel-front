@@ -28,11 +28,11 @@ trait InputRelationship
 			return $this;
 		}
 		$this->create_link_accessed = true;
-		$this->create_link = $function($this->create_link);
-		$this->massive_edit_link = $function($this->massive_edit_link);
+		$this->create_link = is_callable($function) ? $function($this->create_link) : $function;
+		$this->massive_edit_link = is_callable($function) ? $function($this->massive_edit_link) : $function;
 		return $this;
 	}
-
+	
 	public function setEditLink($function)
 	{
 		if(!$this->showOnHere()) {
