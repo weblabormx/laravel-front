@@ -9,6 +9,13 @@ use Illuminate\Support\Str;
 trait InputWithLinks
 {
 	public $links = [];
+    public $create_button_title;
+
+    public function setCreateButtonTitle($title)
+    {
+        $this->create_button_title = $title;
+        return $this;
+    }
 	
 	public function addLinks($links)
 	{
@@ -49,11 +56,12 @@ trait InputWithLinks
             $url = "{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}{$extra_query}";
             $links[] = getButtonByName('edit')->addLink($url)->setTitle(__('Edit')." {$this->front->plural_label}");
         }
-        
+
         // Add create link
-        if(isset($this->create_link) && $this->front->canCreate() && $can_edit) {
+        if(isset($this->create_link) && strlen($this->create_link)>0 && $this->front->canCreate() && $can_edit) {
             $title = Str::singular($this->title) ?? $this->front->label;
-            $links[] = getButtonByName('create')->addLink($this->create_link)->setTitle(__('Add')." {$title}");
+            $title = $this->create_button_title ?? __('Add')." {$title}";
+            $links[] = getButtonByName('create')->addLink($this->create_link)->setTitle($title);
         }
 
         return $links;
