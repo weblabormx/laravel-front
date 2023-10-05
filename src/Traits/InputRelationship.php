@@ -32,7 +32,13 @@ trait InputRelationship
 		$this->massive_edit_link = is_callable($function) ? $function($this->massive_edit_link) : $function;
 		return $this;
 	}
-	
+
+	public function setMassiveEditLink($function)
+	{
+		$this->massive_edit_link = $function($this->massive_edit_link);
+		return $this;
+	}
+
 	public function setEditLink($function)
 	{
 		if(!$this->showOnHere()) {
