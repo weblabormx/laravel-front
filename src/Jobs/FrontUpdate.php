@@ -50,7 +50,7 @@ class FrontUpdate
         $this->front->beforeUpdate($this->object, $this->request);
 
         // Update the object
-        $this->object->fresh()->update($data);
+        $this->object->update($data);
 
         // Process actions after save
         $this->front->processAfterSave($this->object, $this->request);
