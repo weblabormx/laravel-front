@@ -88,6 +88,21 @@ class Input
 		} else {
 			$return = $object->$column;	
 		}
+
+		// Prevents model `$casts` exceptions
+		// PHP 7.1 compatible
+		if (isset($return) && !is_string($return)) {
+			if (is_scalar($return)) {
+				$return = strval($return);
+			} else if (gettype($return) === 'object') {
+				if (method_exists($return, '__toString')) {
+					$return = $return->__toString();
+				} else if (in_array('BackedEnum', class_implements($return))) {
+					$return = $return->value;
+				}
+			}
+		}
+		
 		$return = isset($return) && strlen($return)>0 ? $return : '--';
 		return $return;
 	}
