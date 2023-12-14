@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Front;
+namespace App\Front\Resources;
 
 use WeblaborMx\Front\Resource as Base;
 
