@@ -80,7 +80,7 @@ class CreateResource extends Command
 
         $parent = config('front.resources_folder') . '\\Resource';
 
-        $namespace = config('front.models_folder') . "\\" . collect([
+        $namespace = config('front.resources_folder') . "\\" . collect([
             $classVendor->toString(),
             $classBasename->toString()
         ])->filter()->implode('\\');
