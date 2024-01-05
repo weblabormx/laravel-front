@@ -80,12 +80,15 @@ class CreateResource extends Command
 
         $parent = config('front.resources_folder') . '\\Resource';
 
-        $namespace = config('front.resources_folder') . "\\" . collect([
+        $namespace =  collect([
+            config('front.resources_folder'),
             $classVendor->toString(),
-            $classBasename->toString()
         ])->filter()->implode('\\');
 
-        $url = $classVendor->lower()->replace('\\', '/')->append("/$slug");
+        $url = $classVendor->lower()
+            ->replace('\\', '/')
+            ->append($slug)
+            ->trim('/');
 
         if (!is_dir($dirname = dirname($filename))) {
             mkdir($dirname, 0755, true);
@@ -97,7 +100,7 @@ class CreateResource extends Command
             ->replace('{{ model }}', "App\\Models\\$class")
             ->replace('{{ class }}', $classBasename)
             ->replace('{{ parent }}', $parent)
-            ->replace('{{ default_base_url }}', config('front.default_base_url'))
+            ->replace('{{ default_base_url }}', rtrim(config('front.default_base_url'), '/'))
             ->replace('{{ url }}', $url)
             ->replace('{{ namespace }}', $namespace)
             ->execute();
