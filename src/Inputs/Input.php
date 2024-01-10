@@ -258,7 +258,7 @@ class Input
 	/**
 	 * Ensures that the returned value is a string
 	 */
-	protected function castReturnValue(mixed $return): string
+	protected function castReturnValue(mixed $return): ?string
 	{
 		// Prevents model `$casts` exceptions
 		// PHP 7.1 compatible
