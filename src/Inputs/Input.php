@@ -78,6 +78,7 @@ class Input
 		if(!isset($object)) {
 			return;
 		}
+		$return = '';
 		$column = $this->column;
 		if(!is_string($column) && is_callable($column)) {
 			$return = $column($object);
@@ -89,20 +90,10 @@ class Input
 			$return = $object->$column;	
 		}
 
-		// Prevents model `$casts` exceptions
-		// PHP 7.1 compatible
-		if (isset($return) && !is_string($return)) {
-			if (is_scalar($return)) {
-				$return = strval($return);
-			} else if (is_array($return)) {
-				$return = json_encode($return);
-			} else if (gettype($return) === 'object') {
-				if (method_exists($return, '__toString')) {
-					$return = $return->__toString();
-				} else if (in_array('BackedEnum', class_implements($return))) {
-					$return = $return->value;
-				}
-			}
+		try {
+			$return = $this->castReturnValue($return);
+		} catch (\TypeError $th) {
+			throw new \TypeError("Column '$column' can't be casted to string to be shown on input", 0, $th);
 		}
 		
 		$return = isset($return) && strlen($return)>0 ? $return : '--';
@@ -262,5 +253,29 @@ class Input
 	public function removeAction($object)
 	{
 		return;
+	}
+
+	/**
+	 * Ensures that the returned value is a string
+	 */
+	protected function castReturnValue(mixed $return): string
+	{
+		// Prevents model `$casts` exceptions
+		// PHP 7.1 compatible
+		if (isset($return) && !is_string($return)) {
+			if (is_scalar($return)) {
+				$return = strval($return);
+			} else if (is_array($return)) {
+				$return = json_encode($return);
+			} else if (gettype($return) === 'object') {
+				if (method_exists($return, '__toString')) {
+					$return = $return->__toString();
+				} else if (in_array('BackedEnum', class_implements($return))) {
+					$return = $return->value;
+				}
+			}
+		}
+
+		return $return;
 	}
 }
