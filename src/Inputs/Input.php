@@ -94,6 +94,8 @@ class Input
 		if (isset($return) && !is_string($return)) {
 			if (is_scalar($return)) {
 				$return = strval($return);
+			} else if (is_array($return)) {
+				$return = json_encode($return);
 			} else if (gettype($return) === 'object') {
 				if (method_exists($return, '__toString')) {
 					$return = $return->__toString();
