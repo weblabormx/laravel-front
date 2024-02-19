@@ -36,7 +36,7 @@ trait InputRules
 			$extra_rules = $this->creation_rules;
 		}
 		if(isset($extra_rules)) {
-			$extra_rules = is_string($extra_rules) ? [$extra_rules] : $rules;
+			$extra_rules = is_string($extra_rules) ? [$extra_rules] : $extra_rules;
 			$rules = collect($rules)->merge($extra_rules)->toArray();
 		}
 		if(!$this->validateConditional(request())) {
