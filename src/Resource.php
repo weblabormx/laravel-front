@@ -186,7 +186,7 @@ abstract class Resource
 
     // Change url for redirection after a creation is done
     
-    public function createRedirectionUrl()
+    public function createRedirectionUrl($object)
     {
         return $this->getBaseUrl();
     }

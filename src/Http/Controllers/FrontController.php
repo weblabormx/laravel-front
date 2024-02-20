@@ -83,7 +83,7 @@ class FrontController extends Controller
         }
         
         // Redirect to index page
-        return redirect($front->createRedirectionUrl());
+        return redirect($front->createRedirectionUrl($response));
     }
 
     private function show($object)
