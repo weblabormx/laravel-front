@@ -83,9 +83,15 @@ class Input
 		if(!is_string($column) && is_callable($column)) {
 			$return = $column($object);
 		} else if(Str::contains($column, '.')) {
-			$explode = explode('.', $column);
-			$column = $explode[0];
-			$return = $object->$column[$explode[1]] ?? null;
+			$return = collect(explode('.', $column))->reduce(function($carry, $item) use ($object) {
+				if(is_null($carry)) {
+					$carry = $object;
+				}
+				if(is_object($carry)) {
+					return $carry->$item;
+				}
+				return $carry[$item];
+			});
 		} else {
 			$return = $object->$column;	
 		}
