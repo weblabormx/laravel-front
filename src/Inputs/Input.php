@@ -88,12 +88,12 @@ class Input
 					$carry = $object;
 				}
 				if(is_object($carry)) {
-					return $carry->$item;
+					return $carry?->$item;
 				}
-				return $carry[$item];
+				return $carry[$item] ?? null;
 			});
 		} else {
-			$return = $object->$column;	
+			$return = $object?->$column;	
 		}
 
 		try {
