@@ -276,8 +276,10 @@ class Input
 			} else if (gettype($return) === 'object') {
 				if (method_exists($return, '__toString')) {
 					$return = $return->__toString();
-				} else if (in_array('BackedEnum', class_implements($return))) {
+				} else if ($return instanceof \BackedEnum) {
 					$return = $return->value;
+				} else if($return instanceof \JsonSerializable){
+					$return = json_encode($return);
 				}
 			}
 		}
