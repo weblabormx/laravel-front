@@ -38,6 +38,9 @@ abstract class Resource
     public $cache = ['indexQuery', 'indexResult'];
     public $related_object;
     public $enable_massive_edition = false;
+    public $view_title;
+    public $plural_label;
+    public $object;
 
 	public function __construct($source = null)
 	{

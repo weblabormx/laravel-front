@@ -17,6 +17,7 @@ class HasMany extends Input
 	public $show_on_index = false;
 	public $index_view = 'front::crud.partial-index';
 	public $show_filters = false;
+	public $front, $relationship, $massive_edit_link;
 
 	public function __construct($front, $title = null, $column = null, $source = null)
 	{
