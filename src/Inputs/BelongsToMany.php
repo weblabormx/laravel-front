@@ -40,6 +40,11 @@ class BelongsToMany extends Input
 	{
 		$relation = $this->relation;
 		$this->column = $relation.'_mtm';
+		if(is_object($resource->object)) {
+			$this->default_value = $resource->object->{$this->relation}->pluck('id');
+			$this->default_value_force = true;
+		}
+		
 		return parent::setResource($resource);
 	}
 
