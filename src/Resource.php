@@ -211,7 +211,23 @@ abstract class Resource
         if(is_null($query)) {
             $query = new $class;
         }
-            
+        
+        // Execute filters
+        try {
+            $filters = $this->getFilters();
+        } catch (\Exception $e) {
+            return $query;
+        }
+        foreach ($filters as $filter) {
+            $field = $filter->slug;
+            if(!request()->filled($field)) {
+                continue;
+            }
+            $filter->setResource($this);
+            $value = request()->$field;
+            $query = $filter->apply($query, $value);
+        }
+
 		$query = $this->indexQuery($query);
 
         // Detect if the indexQuery value is not the model empty
@@ -219,21 +235,6 @@ abstract class Resource
             $query = $query->oldest();
         }
 
-        // Execute filters
-        try {
-            $filters = $this->getFilters();
-        } catch (\Exception $e) {
-            return $query;
-        }
-		foreach ($filters as $filter) {
-			$field = $filter->slug;
-			if(!request()->filled($field)) {
-				continue;
-			}
-			$filter->setResource($this);
-			$value = request()->$field;
-			$query = $filter->apply($query, $value);
-		}
 		return $query;
 	}
 	
