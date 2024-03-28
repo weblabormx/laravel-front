@@ -222,6 +222,8 @@ abstract class Resource
         // Execute before
         foreach ($filters as $filter) {
             $field = $filter->slug;
+            $field = str_replace('[', '', $field);
+            $field = str_replace(']', '', $field);
             if(!request()->filled($field) || !$filter->execute_before) {
                 continue;
             }
@@ -235,6 +237,8 @@ abstract class Resource
         // Execute after
         foreach ($filters as $filter) {
             $field = $filter->slug;
+            $field = str_replace('[', '', $field);
+            $field = str_replace(']', '', $field);
             if(!request()->filled($field) || $filter->execute_before) {
                 continue;
             }
