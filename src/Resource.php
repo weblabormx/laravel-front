@@ -212,15 +212,17 @@ abstract class Resource
             $query = new $class;
         }
         
-        // Execute filters
+        // Get filters
         try {
             $filters = $this->getFilters();
         } catch (\Exception $e) {
             return $query;
         }
+
+        // Execute before
         foreach ($filters as $filter) {
             $field = $filter->slug;
-            if(!request()->filled($field)) {
+            if(!request()->filled($field) || !$filter->execute_before) {
                 continue;
             }
             $filter->setResource($this);
@@ -229,6 +231,17 @@ abstract class Resource
         }
 
 		$query = $this->indexQuery($query);
+
+        // Execute after
+        foreach ($filters as $filter) {
+            $field = $filter->slug;
+            if(!request()->filled($field) || $filter->execute_before) {
+                continue;
+            }
+            $filter->setResource($this);
+            $value = request()->$field;
+            $query = $filter->apply($query, $value);
+        }
 
         // Detect if the indexQuery value is not the model empty
         if($class == get_class($query) && is_null($query->getKey()) ) {
