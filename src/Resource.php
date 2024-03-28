@@ -289,7 +289,13 @@ abstract class Resource
             return isset($item) && strlen($item);
         });
 
-        $filters_with_default_values_are_set = $filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
+        $clean_filters = $filters->mapWithKeys(function($item, $key) {
+            $key = str_replace('[', '', $key);
+            $key = str_replace(']', '', $key);
+            return [$key => $item];
+        });
+
+        $filters_with_default_values_are_set = $clean_filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
 
     	// Only will acess if the url doesnt have the required variables
     	if($filters_with_default_values_are_set && !request()->filled('is_redirect')) {
