@@ -7,6 +7,7 @@ trait InputRelationship
 	use HasMassiveEditions;
 
 	public $create_link;
+	public $add_create_link;
 	public $edit_link = '{key}/edit';
 	public $show_link;
 	public $with = [];
@@ -30,6 +31,15 @@ trait InputRelationship
 		$this->create_link_accessed = true;
 		$this->create_link = is_callable($function) ? $function($this->create_link) : $function;
 		$this->massive_edit_link = is_callable($function) ? $function($this->massive_edit_link) : $function;
+		return $this;
+	}
+
+	public function addCreateLink($function)
+	{
+		if(!$this->showOnHere()) {
+			return $this;
+		}
+		$this->add_create_link = is_callable($function) ? $function($this->create_link) : $function;
 		return $this;
 	}
 

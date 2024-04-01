@@ -69,6 +69,9 @@ class HasMany extends Input
 				return $link.'?'.$base_url.'&relation_front='.$relation_front.'&relation_id='.$resource->object->getKey().'&redirect_url='.$resource->getBaseUrl().'/'.$resource->object->getKey();
 			});
 		}
+		if(isset($this->add_create_link)) {
+			$this->create_link .= $this->add_create_link;	
+		}
 
 		// The same for edit
 		if(!isset($this->edit_link_accessed)) {
