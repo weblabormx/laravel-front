@@ -198,7 +198,7 @@ abstract class Resource
 
     public function removeRedirectionUrl()
     {
-        return $this->getBaseUrl();
+        return $this->getRelatedLink() ?? $this->getBaseUrl();
     }
 
 	/* 
@@ -462,6 +462,22 @@ abstract class Resource
     {
         $this->related_object = $related_object;
         return $this;
+    }
+
+    /*
+     * Private functions
+     */    
+    private function getRelatedLink()
+    {
+        $relatedInput = $this->related_object;
+        $relatedResource = $relatedInput?->resource;
+
+        if (is_null($relatedInput) || is_null($relatedResource)) {
+            return null;
+        }
+
+        $helper = $this->getActionsHelper($relatedResource->object, $relatedResource->getBaseUrl(), null, null);
+        return $helper->showUrl();
     }
 
     /* 
