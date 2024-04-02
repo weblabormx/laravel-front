@@ -26,7 +26,9 @@ class FrontDestroy
     public function handle()
     {
         // Call the action to be done before is deleted
-        $this->front->destroy($this->object);
+        if (!$this->front->destroy($this->object)) {
+            return false;
+        }
 
         // Process inputs actions for when is removed
         $this->front->processRemoves($this->object);
