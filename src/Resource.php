@@ -158,8 +158,13 @@ abstract class Resource
         //
     }
 
-    // To execute before destroying an object
-
+    /** 
+     * To execute before destroying an object. 
+     * 
+     * Return `false` to prevent the destroy process.
+     * 
+     * @return false|null
+     */
     public function destroy($object)
     {
         //

@@ -25,8 +25,8 @@ class FrontDestroy
      */
     public function handle()
     {
-        // Call the action to be done before is deleted
-        if (!$this->front->destroy($this->object)) {
+        $continue = $this->front->destroy($this->object);
+        if (is_bool($continue) && !$continue) {
             return false;
         }
 
@@ -35,7 +35,7 @@ class FrontDestroy
 
         // Delete the object
         $this->object->delete();
-        
+
         // Show success message
         flash(__(':name deleted successfully', ['name' => $this->front->label]))->success();
 
