@@ -33,7 +33,15 @@ abstract class Resource
     public $search_limit = 10;
     public $layout;
     public $functions_values = [];
-    public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+    public $actions = [
+        Source::ACTION_INDEX,
+        Source::ACTION_CREATE,
+        Source::ACTION_STORE,
+        Source::ACTION_SHOW,
+        Source::ACTION_EDIT,
+        Source::ACTION_UPDATE,
+        Source::ACTION_DESTROY,
+    ];
     public $index_views = [];
     public $cache = ['indexQuery', 'indexResult'];
     public $related_object;
