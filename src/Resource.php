@@ -21,26 +21,19 @@ abstract class Resource
 {
 	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions, HasMassiveEditions;
 
-	public $data;
+	public $data, $model, $search_title, $label, $base_url, $layout, $view_title, $plural_label, $object, $hide_columns;
 	public $title = 'name';
-    public $search_title;
-	public $label;
-	public $base_url;
 	public $ignore_if_null = [];
 	public $show_title = true;
     public $show_create_button_on_index = true;
     public $pagination = 50;
     public $search_limit = 10;
-    public $layout;
     public $functions_values = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
     public $index_views = [];
     public $cache = ['indexQuery', 'indexResult'];
     public $related_object;
     public $enable_massive_edition = false;
-    public $view_title;
-    public $plural_label;
-    public $object;
 
 	public function __construct($source = null)
 	{

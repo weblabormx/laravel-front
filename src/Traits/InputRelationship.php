@@ -6,18 +6,11 @@ trait InputRelationship
 {
 	use HasMassiveEditions;
 
-	public $create_link;
-	public $add_create_link;
+	public $create_link, $create_link_accessed, $add_create_link, $show_link, $filter_query, $filter_collection, $force_query, $lense, $hide_columns, $headings;
+	public $edit_link_accessed, $show_link_accessed;
 	public $edit_link = '{key}/edit';
-	public $show_link;
 	public $with = [];
-	public $filter_query;
-	public $filter_collection;
-	public $force_query;
-	public $lense;
-	public $hide_columns;
 	public $block_edition = false;
-	public $headings;
 
 	/*
 	 * Functions 
