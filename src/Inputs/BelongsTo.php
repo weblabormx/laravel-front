@@ -10,11 +10,8 @@ class BelongsTo extends Input
 {
 	use InputRelationship;
 
-	public $relation;
-	public $relation_front;
+	public $relation, $model_name, $relation_front, $search_field, $empty_title;
 	public $searchable = false;
-	public $search_field;
-	public $empty_title;
 	public $show_placeholder = true;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)

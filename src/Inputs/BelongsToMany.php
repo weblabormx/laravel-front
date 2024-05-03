@@ -9,10 +9,7 @@ class BelongsToMany extends Input
 {
 	use InputRelationship;
 
-	public $relation;
-	public $relation_front;
-	public $search_field;
-	public $empty_title;
+	public $relation, $model_name, $relation_front, $search_field, $empty_title;
 	public $show_placeholder = true;
 
 	public function __construct($title, $relation = null, $model_name = null, $source = null)
