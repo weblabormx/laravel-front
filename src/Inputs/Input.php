@@ -93,7 +93,7 @@ class Input
 				return $carry[$item] ?? null;
 			});
 		} else {
-			$return = $object?->$column;	
+			$return = $object?->$column;
 		}
 
 		try {

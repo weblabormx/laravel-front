@@ -11,6 +11,7 @@ class Checkboxes extends Input
 	public function getValue($object)
 	{
 		$return = parent::getValue($object);
+		$return = collect(json_decode($return));
 		$return = $return->map(function($item) {
 			return "<li>".$item."</li>";
 		});
