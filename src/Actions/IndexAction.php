@@ -31,7 +31,7 @@ class IndexAction
             $this->save_button = __('Save changes');
         }
         $this->title = __($this->title);
-		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
+		$this->button_text = "<i class='{$this->icon} pr-2'></i> $this->title";
 	}
 
     public function load()
