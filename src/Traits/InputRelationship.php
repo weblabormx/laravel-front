@@ -144,4 +144,10 @@ trait InputRelationship
 	{
 		return $this->front;
 	}
+
+	public function hideLink()
+	{
+		$this->hide_link = true;
+		return $this;
+	}
 }	
