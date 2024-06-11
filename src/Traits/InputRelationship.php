@@ -7,7 +7,7 @@ trait InputRelationship
 	use HasMassiveEditions;
 
 	public $create_link, $create_link_accessed, $add_create_link, $show_link, $filter_query, $filter_collection, $force_query, $lense, $hide_columns, $headings;
-	public $edit_link_accessed, $show_link_accessed;
+	public $edit_link_accessed, $show_link_accessed, $hide_link = false;
 	public $edit_link = '{key}/edit';
 	public $with = [];
 	public $block_edition = false;

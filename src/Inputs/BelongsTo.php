@@ -68,7 +68,7 @@ class BelongsTo extends Input
 
 		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
-		if(!isset($this->link)) {
+		if(!$this->hide_link && !isset($this->link)) {
 			$this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();	
 		}
 		if(!isset($value)) {
