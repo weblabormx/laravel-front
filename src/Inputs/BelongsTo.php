@@ -38,6 +38,7 @@ class BelongsTo extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
+		$relation_camel = ucfirst(Str::camel($relation));
 		if(!method_exists($resource, 'getModel')) {
 			return parent::setResource($resource);
 		}
@@ -45,6 +46,11 @@ class BelongsTo extends Input
 		$class = $resource->getModel();
 		$model = new $class;
 		if(method_exists($model, $relation)) {
+			$relation_function = $model->$relation();
+			$this->column = $relation_function->getForeignKeyName();
+		} else if(method_exists($model, $relation_camel)) {
+			$this->relation = $relation_camel;
+			$relation = $relation_camel;
 			$relation_function = $model->$relation();
 			$this->column = $relation_function->getForeignKeyName();
 		} else {
