@@ -10,6 +10,7 @@ class Filter
 	public $resource, $slug; 
 	public $default = '';
     public $show = true;
+    public $visible = true;
     public $execute_before = true;
     
     public function __construct()
