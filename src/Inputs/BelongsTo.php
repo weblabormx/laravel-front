@@ -38,7 +38,7 @@ class BelongsTo extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
-		$relation_camel = ucfirst(Str::camel($relation));
+		$relation_camel = Str::camel($relation);
 		if(!method_exists($resource, 'getModel')) {
 			return parent::setResource($resource);
 		}
