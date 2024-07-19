@@ -87,10 +87,13 @@ class Input
 				if(is_null($carry)) {
 					$carry = $object;
 				}
+				if(isset($carry[$item])) {
+					return $carry[$item];
+				}
 				if(is_object($carry)) {
 					return $carry?->$item;
 				}
-				return $carry[$item] ?? null;
+				return null;
 			});
 		} else {
 			$return = $object?->$column;
