@@ -40,7 +40,7 @@ class CreateResource extends Command
         $class = $model
             ->prepend(config('front.models_folder') . '\\')
             ->replace('App\\Models', '')
-            ->replace('App', '')
+            ->replace('App\\', '\\')
             ->trim('/')
             ->trim('\\');
 
