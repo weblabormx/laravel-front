@@ -19,7 +19,7 @@ class Textarea extends Input
 		if($this->limit_on_index!=false && $this->source=='index') {
 			return Str::limit($value, $this->limit_on_index);
 		}
-		return $value;
+		return nl2br($value);
 	}
 
 	public function limitOnIndex($limit = 80)
