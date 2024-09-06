@@ -9,7 +9,11 @@ class Percentage extends Input
 	public function form()
 	{
 		$this->attributes['step'] = '.01';
-		$input = \Form::number($this->column, $this->default_value, $this->attributes);
+
+		$input = html()
+			->number($this->column, $this->default_value)
+			->attributes($this->attributes);
+
 		return InputGroup::make(null, $input, '%')->form();
 	}
 
@@ -22,9 +26,9 @@ class Percentage extends Input
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if(is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
-			return $value.'%';
+		if (is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
+			return $value . '%';
 		}
-		return round($value, $this->decimals).'%';
+		return round($value, $this->decimals) . '%';
 	}
 }

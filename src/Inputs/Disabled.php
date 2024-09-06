@@ -10,13 +10,20 @@ class Disabled extends Input
 	{
 		$attributes = $this->attributes;
 		$attributes['disabled'] = 'disabled';
-		return \Form::text($this->column, $this->default_value, $attributes).\Form::hidden($this->column, $this->default_value, $this->attributes);
+
+		return html()
+			->text($this->column, $this->default_value)
+			->attributes($attributes)
+			.
+			html()
+			->hidden($this->column, $this->default_value)
+			->attributes($this->attributes);
 	}
 
 	public function processData($data)
 	{
-		if(!$this->process_input) {
-			unset($data[$this->column]);	
+		if (!$this->process_input) {
+			unset($data[$this->column]);
 		}
 		return $data;
 	}
@@ -27,5 +34,4 @@ class Disabled extends Input
 		$this->process_input = $value;
 		return $this;
 	}
-
 }

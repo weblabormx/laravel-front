@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image as Intervention;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,7 @@ class Image extends Input
 
 	public function load()
 	{
-		$this->url_returned = function($file_name) {
+		$this->url_returned = function ($file_name) {
 			return Storage::url($file_name);
 		};
 	}
@@ -40,14 +41,14 @@ class Image extends Input
 	public function form()
 	{
 		$input = $this;
-		$id = 'file_'.rand();
+		$id = 'file_' . rand();
 		return view('front::inputs.image-form', compact('input', 'id'));
 	}
 
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if($value=='--') {
+		if ($value == '--') {
 			return;
 		}
 		$original = $value;
@@ -79,7 +80,7 @@ class Image extends Input
 
 	public function useThumbs(array $thumbs)
 	{
-		$this->thumbnails = collect($this->thumbnails)->filter(function($item) use ($thumbs) {
+		$this->thumbnails = collect($this->thumbnails)->filter(function ($item) use ($thumbs) {
 			return in_array($item['prefix'], $thumbs);
 		})->values()->toArray();
 		return $this;
@@ -146,31 +147,31 @@ class Image extends Input
 
 	public function processData($data)
 	{
-		if(!isset($data[$this->column.'_new'])) {
+		if (!isset($data[$this->column . '_new'])) {
 			unset($data[$this->column]);
 			return $data;
 		}
-		$file = $data[$this->column.'_new'];
+		$file = $data[$this->column . '_new'];
 
 		// Assign data to request
 		$data[$this->column] = $file;
-		unset($data[$this->column.'_new']);
+		unset($data[$this->column . '_new']);
 		return $data;
 	}
 
 	public function processDataAfterValidation($data)
 	{
-		if(!isset($data[$this->column])) {
+		if (!isset($data[$this->column])) {
 			return $data;
 		}
-		if(!$this->save) {
+		if (!$this->save) {
 			unset($data['image']);
 			return $data;
 		}
 		$file = $data[$this->column];
 
 		// Remove old files
-		if(isset($this->resource) && isset($this->resource->object)) {
+		if (isset($this->resource) && isset($this->resource->object)) {
 			$object = $this->resource->object;
 			$this->removeAction($object);
 		}
@@ -182,9 +183,9 @@ class Image extends Input
 
 		// New sizes
 		foreach ($this->thumbnails as $thumbnail) {
-			$this->saveNewSize($file, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']); 
+			$this->saveNewSize($file, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']);
 		}
-		
+
 		// Assign data to request
 		$data[$this->column] = $url;
 		return $data;
@@ -194,13 +195,16 @@ class Image extends Input
 	{
 		$name = $this->column;
 		$attribute_name = $this->title;
+
 		$rules = [
-			$name => ['image','mimes:jpeg,png,jpg,gif,svg,webp', 'max:'.$this->max_size]
+			$name => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:' . $this->max_size]
 		];
+
 		$attributes = [
 			$name => $attribute_name
 		];
-		\Validator::make($data, $rules, [], $attributes)->validate();
+
+		Validator::make($data, $rules, [], $attributes)->validate();
 	}
 
 	public function removeAction($object)
@@ -235,19 +239,20 @@ class Image extends Input
 	{
 		// Make smaller the image
 		$new_file = Intervention::make($file);
-		if($is_fit) {
-			$new_file = $new_file->fit($width, $height);	
+
+		if ($is_fit) {
+			$new_file = $new_file->fit($width, $height);
 		} else if ($new_file->height() > $height || $new_file->width() > $width) {
-			$new_file = $new_file->resize($width, $height, function($constraint) {
-			    $constraint->aspectRatio();
+			$new_file = $new_file->resize($width, $height, function ($constraint) {
+				$constraint->aspectRatio();
 			});
 		}
 
 		// Save the image
 		$new_name = getThumb($file_name, $prefix, true);
-		$file_name = $this->directory.'/'.$new_name;
+		$file_name = $this->directory . '/' . $new_name;
 		$storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
-		if($storage_file==false) {
+		if ($storage_file == false) {
 			abort(406, "{$file_name} wasn't uploaded");
 		}
 		$url_returned = $this->url_returned;
@@ -257,15 +262,15 @@ class Image extends Input
 	public function getFileName($data, $file)
 	{
 		$file_name = $this->file_name;
-		if(is_callable($file_name)) {
+		if (is_callable($file_name)) {
 			$file_name = $file_name($data);
 		}
-		if(is_null($file_name)) {
+		if (is_null($file_name)) {
 			$file_name = Str::random(9);
 		}
-		if(!is_null($file_name)) {
+		if (!is_null($file_name)) {
 			$extension = $this->extension ?? $file->guessExtension();
-			$file_name .= '.'.$extension;
+			$file_name .= '.' . $extension;
 		}
 		return $file_name;
 	}
@@ -276,21 +281,21 @@ class Image extends Input
 		$set_file_name = $this->getFileName($data, $file);
 
 		// If original sizes were defined then save as thumb
-		if(!is_null($this->original_size) && is_array($this->original_size)) {
+		if (!is_null($this->original_size) && is_array($this->original_size)) {
 			$url = $this->saveNewSize($file, $set_file_name, $this->original_size['width'], $this->original_size['height'], '', $this->original_size['fit']);
 			return ['file_name' => $set_file_name, 'url' => $url];
 		}
 
 		// Save original file
-		if(!is_null($set_file_name)) {
+		if (!is_null($set_file_name)) {
 			$storage_file = Storage::putFileAs($this->directory, $file, $set_file_name, $this->visibility);
 		} else {
 			$storage_file = Storage::putFile($this->directory, $file, $this->visibility);
 		}
-		
+
 		$file_name = class_basename($storage_file);
 		$url_returned = $this->url_returned;
-		$url = $url_returned($this->directory.'/'.$file_name);
+		$url = $url_returned($this->directory . '/' . $file_name);
 		return compact('file_name', 'url');
 	}
 }

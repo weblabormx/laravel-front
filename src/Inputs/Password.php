@@ -9,6 +9,8 @@ class Password extends Input
 
 	public function form()
 	{
-		return \Form::password($this->column, $this->attributes);
+		return html()
+			->password($this->column)
+			->attributes($this->attributes);
 	}
 }

@@ -14,12 +14,12 @@
     ],
     "require": {
         "php": ">=7.1.0",
+        "intervention/image": ">=2.5",
         "laracasts/flash": ">=3",
-        "laravelcollective/html": ">=5",
-        "opis/closure": "^3.1",
         "laravel/framework": ">5.5",
-        "weblabormx/file-modifier": "*",
-        "intervention/image": ">=2.5"
+        "opis/closure": "^3.1",
+        "spatie/laravel-html": "^3.11",
+        "weblabormx/file-modifier": "*"
     },
     "autoload": {
         "files": [

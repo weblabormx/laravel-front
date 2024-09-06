@@ -11,7 +11,14 @@ class Time extends Input
 	{
 		$this->attributes['pattern'] = $this->pattern;
 		$type = $this->input_type;
-		return \Form::$type($this->column, $this->default_value, $this->attributes);
+
+		if ($type === 'text') {
+			$form = html()->text($this->column, $this->default_value);
+		} elseif ($type === 'time') {
+			$form = html()->time($this->column, $this->default_value);
+		}
+
+		return $form->attributes($this->attributes);
 	}
 
 	public function ignoreSeconds()
