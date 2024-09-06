@@ -61,7 +61,9 @@ abstract class Resource
         }
         $this->label = __($this->label);
 
-		$this->setSource($source);
+		$this->setSource($source); // Just assign source from the Sourceable trait
+        session()->put('source', $source, now()->addMinute()); // Actually save it to session
+        
         if(!isset($this->view_title)) {
             $this->view_title = $this->title;
         }
