@@ -23,7 +23,7 @@ trait Sourceable
     {
         $source = $this->source;
 
-        if (is_null($source)) {
+        if (empty($source)) {
             return null;
         }
 
