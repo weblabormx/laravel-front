@@ -8,14 +8,14 @@ trait Sourceable
 {
     /** 
      * @var string|null
-     * @deprecated v2.1.35 
+     * @deprecated 2.3.0 Use `source()` method instead.
      */
     public $source = null;
 
     /** @var Source */
     private $sourceClass;
 
-    /** @return Source */
+    /** @return Source|null */
     public function source()
     {
         $source = $this->source;
