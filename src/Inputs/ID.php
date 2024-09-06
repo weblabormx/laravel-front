@@ -10,7 +10,7 @@ class ID extends Input
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{
 		parent::__construct($title, $column, $extra, $source);
-		if(is_null($title)) {
+		if (is_null($title)) {
 			$this->title = 'ID';
 		}
 	}

@@ -12,7 +12,7 @@ trait InputSetters
 	public $default_value_force = false;
 	public $hide = false;
 	public $extra_data = [];
-	
+
 	public function setData($column, $value)
 	{
 		$this->extra_data[$column] = $value;
@@ -48,7 +48,7 @@ trait InputSetters
 		return $this;
 	}
 
-	public function style($css) 
+	public function style($css)
 	{
 		$this->attributes['style'] = $css;
 		return $this;
@@ -56,15 +56,15 @@ trait InputSetters
 
 	public function withLink($link)
 	{
-		if(is_callable($link)) {
+		if (is_callable($link)) {
 			try {
 				$link = $link();
 			} catch (\Exception $e) {
 				$link = null;
 			}
 		}
-		if(!is_null($link) && strlen($link) > 0) {
-			$this->link = $link;	
+		if (!is_null($link) && strlen($link) > 0) {
+			$this->link = $link;
 		}
 		return $this;
 	}
@@ -84,16 +84,16 @@ trait InputSetters
 	public function conditionalOld($column, $value)
 	{
 		// This work on form
-		$this->form_before = '<div data-type="conditional" data-cond-option="'.$column.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
+		$this->form_before = '<div data-type="conditional" data-cond-option="' . $column . '" data-cond-value="' . $value . '" style="' . $this->style_width() . '">';
 		$this->form_after = '</div>';
-		$this->conditional = $column.'='.$value;
+		$this->conditional = $column . '=' . $value;
 		return $this;
 	}
 
 	public function conditional($conditional)
 	{
 		// This work on form
-		$this->form_before = '<div data-type="conditional2" data-condition="'.$conditional.'" style="'.$this->style_width().'">';
+		$this->form_before = '<div data-type="conditional2" data-condition="' . $conditional . '" style="' . $this->style_width() . '">';
 		$this->form_after = '</div>';
 		$this->conditional = $conditional;
 		return $this;
@@ -101,23 +101,23 @@ trait InputSetters
 
 	public function validateConditional($object)
 	{
-		if(isset($this->conditional)) {
+		if (isset($this->conditional)) {
 			$data = is_object($object) ? $object->toArray() : $object;
-			$object = collect($data)->whereNotNull()->sortByDesc(function($item, $key) {
+			$object = collect($data)->whereNotNull()->sortByDesc(function ($item, $key) {
 				return strlen($key);
 			})->all();
 			$conditional = $this->conditional;
-			foreach($object as $key => $value) {
-				$conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
-				if(!Str::contains($conditional, '=')) {
-					$conditional = str_replace($key, '$object["'.$key.'"] ?? false', $conditional);
+			foreach ($object as $key => $value) {
+				$conditional = str_replace($key . '=', '$object["' . $key . '"]=', $conditional);
+				if (!Str::contains($conditional, '=')) {
+					$conditional = str_replace($key, '$object["' . $key . '"] ?? false', $conditional);
 				}
 			}
 			try {
 				return eval("return $conditional;");
 			} catch (\Exception $e) {
 				return false;
-			} catch (\Throwable $e) { 
+			} catch (\Throwable $e) {
 				return false;
 			}
 		}
@@ -176,10 +176,10 @@ trait InputSetters
 	public function default($value, $force = false)
 	{
 		$this->default_value_force = $force;
-		if($this->source!='create' && !$force) {
+		if ($this->source != 'create' && !$force) {
 			return $this;
 		}
-		if(!is_string($value) && is_callable($value)) {
+		if (!is_string($value) && is_callable($value)) {
 			$value = $value();
 		}
 		$this->default_value = $value;

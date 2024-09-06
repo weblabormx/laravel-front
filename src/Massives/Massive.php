@@ -24,7 +24,7 @@ class Massive
 	/**
 	 * If you want to modify the request data gotten just update it with this funciton
 	 **/
-	
+
 	public function processData($request)
 	{
 		return $request;

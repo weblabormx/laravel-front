@@ -2,13 +2,14 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use Illuminate\Support\Facades\URL;
 use WeblaborMx\Front\Texts\Button;
 
 trait HasLinks
 {
     public $create_link = '{base_url}/create';
 
-	public function index_links()
+    public function index_links()
     {
         return [];
     }
@@ -18,34 +19,34 @@ trait HasLinks
         return [];
     }
 
-    public function getLinks($object=null)
+    public function getLinks($object = null)
     {
-        if(is_null($object)) {
+        if (is_null($object)) {
             return $this->getPageLinks();
         }
 
         $links = [];
 
         // Show index actions
-        $actions = $this->getActions()->filter(function($item) use ($object) {
+        $actions = $this->getActions()->filter(function ($item) use ($object) {
             return $item->hasPermissions($object);
         });
-        foreach($actions as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/{$object->getKey()}/action/{$action->slug}");
+        foreach ($actions as $action) {
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
-        foreach($this->links() as $link => $text) {
+        foreach ($this->links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);
         }
 
-         // Add delete button
-        if($this->canRemove($object)) {
+        // Add delete button
+        if ($this->canRemove($object)) {
             $links[] = getButtonByName('delete', $this, $object);
         }
 
         // Add update button
-        if($this->canUpdate($object)) {
+        if ($this->canUpdate($object)) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
             $url = "{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}";
             $links[] = getButtonByName('edit')->addLink($url);
@@ -56,35 +57,35 @@ trait HasLinks
 
     public function getIndexLinks()
     {
-    	$links = [];
+        $links = [];
 
-    	// Show index actions
-	    foreach($this->getIndexActions() as $action) {
+        // Show index actions
+        foreach ($this->getIndexActions() as $action) {
             $query = request()->fullUrl();
             $query = explode('?', $query)[1] ?? '';
-            $query = strlen($query) > 0 ? '?'.$query : '';
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}{$query}");
-	    }
+            $query = strlen($query) > 0 ? '?' . $query : '';
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
+        }
 
         // Show links added manually
-        foreach($this->index_links() as $link => $text) {
+        foreach ($this->index_links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);
         }
 
         // Show massive edition
-        if($this->enable_massive_edition) {
-            $query = str_replace(url()->current(), '', url()->full());
-            $url = $this->getBaseUrl()."/massive_edit".$query;
+        if ($this->enable_massive_edition) {
+            $query = str_replace(url()->current(), '', URL::full());
+            $url = $this->getBaseUrl() . "/massive_edit" . $query;
             $links[] = getButtonByName('edit')->addLink($url);
         }
 
         // Show create button
-        if($this->show_create_button_on_index && $this->canCreate()) {
+        if ($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;
             $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
-            $links[] = getButtonByName('create')->setTitle(__('Create') .' '.$this->label)->addLink($url);
+            $links[] = getButtonByName('create')->setTitle(__('Create') . ' ' . $this->label)->addLink($url);
         }
-	    return $links;
+        return $links;
     }
 
     public function getLenses()
@@ -92,26 +93,26 @@ trait HasLinks
         $links = collect([]);
 
         // Show links to lenses
-        if($this->is_a_lense && isset($this->normal_front)) {
-            $icon = isset($this->normal_front->icon) ? '<i class="'.$this->normal_front->icon.'"></i> ': '';
+        if ($this->is_a_lense && isset($this->normal_front)) {
+            $icon = isset($this->normal_front->icon) ? '<i class="' . $this->normal_front->icon . '"></i> ' : '';
             $title = $this->normal_front->lense_title ?? __('Normal View');
-            $text = $icon.$title;
+            $text = $icon . $title;
             $links[] = Button::make($text)->addLink($this->getBaseUrl());
         } else {
-            $icon = isset($this->icon) ? '<i class="'.$this->icon.'"></i> ': '';
+            $icon = isset($this->icon) ? '<i class="' . $this->icon . '"></i> ' : '';
             $title = $this->lense_title ?? __('Normal View');
-            $text = $icon.$title;
+            $text = $icon . $title;
             $links[] = Button::make($text)->addLink($this->getBaseUrl())->setClass('active');
         }
-        foreach($this->lenses() as $lense) {
+        foreach ($this->lenses() as $lense) {
             $class = '';
-            if($this->is_a_lense && $lense->getLenseSlug()==$this->getLenseSlug()) {
+            if ($this->is_a_lense && $lense->getLenseSlug() == $this->getLenseSlug()) {
                 $class = 'active';
             }
-            $icon = isset($lense->icon) ? '<i class="'.$lense->icon.'"></i> ': '';
+            $icon = isset($lense->icon) ? '<i class="' . $lense->icon . '"></i> ' : '';
             $title = $lense->lense_title;
-            $text = $icon.$title;
-            $links[] = Button::make($text)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}")->setClass($class);
+            $text = $icon . $title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl() . "/lenses/{$lense->getLenseSlug()}")->setClass($class);
         }
 
         return $links;
@@ -122,7 +123,7 @@ trait HasLinks
         $links = [];
 
         // Show links added manually
-        foreach($this->links() as $link => $text) {
+        foreach ($this->links() as $link => $text) {
             $links[] = Button::make($text)->addLink($link);
         }
 

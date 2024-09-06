@@ -8,6 +8,9 @@ class NumericCard extends Card
 {
     public $view = 'front::cards.numeric';
     public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage', 'background', 'style'];
+    public $background;
+    public $number;
+    public $porcentage; // This is badly written
 
     /*
      * Editable functions
@@ -41,14 +44,14 @@ class NumericCard extends Card
     public function cacheName()
     {
         $name = get_class($this);
-        return 'Card:'.$name;
+        return 'Card:' . $name;
     }
 
     public function getStyle()
     {
         $style = $this->style ?? '';
-        if(isset($this->background)) {
-            $style .= ' background: '.$this->background;
+        if (isset($this->background)) {
+            $style .= ' background: ' . $this->background;
         }
         return $style;
     }
@@ -59,8 +62,8 @@ class NumericCard extends Card
 
     public function load()
     {
-        
-        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function() {
+
+        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function () {
             return [
                 'number' => $this->value(),
                 'porcentage' => $this->calculatePorcentage($this->value(), $this->old())
@@ -72,7 +75,7 @@ class NumericCard extends Card
 
     public function calculatePorcentage($now, $before)
     {
-        if($before==0) {
+        if ($before == 0) {
             return 0;
         }
         $diff = $now - $before;

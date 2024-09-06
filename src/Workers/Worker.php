@@ -11,6 +11,7 @@ class Worker
 
 	public $is_input = false;
 	public $front;
+	public $source;
 
 	public function __construct($front, $column = null, $extra = null, $source = null)
 	{
@@ -18,7 +19,7 @@ class Worker
 		$this->front = getFront($front, $this->source);
 	}
 
-	public static function make($title = null, $column = null, $extra = null) 
+	public static function make($title = null, $column = null, $extra = null)
 	{
 		$source = session('source');
 		return new static($title, $column, $extra, $source);
@@ -34,8 +35,8 @@ class Worker
 		try {
 			return $this->handle();
 		} catch (ValidationException $e) {
-        	return collect($e->errors())->flatten(1)->implode('<br />');
-        } catch (\Exception $e) {
+			return collect($e->errors())->flatten(1)->implode('<br />');
+		} catch (\Exception $e) {
 			return $e->getMessage();
 		}
 	}

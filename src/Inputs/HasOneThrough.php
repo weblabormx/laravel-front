@@ -17,11 +17,11 @@ class HasOneThrough extends Input
 	public function __construct($title, $column = null, $extra = null, $source = null)
 	{
 		$this->relation = Str::snake($column);
-		$this->column = 'has_one_trough:'.$title;
+		$this->column = 'has_one_trough:' . $title;
 		$this->extra = $extra;
 		$this->source = $source;
 
-		if(!isset($this->extra)) {
+		if (!isset($this->extra)) {
 			$front = Str::singular($this->relation);
 			$front = ucfirst(Str::camel($front));
 			$this->extra = $title;
@@ -38,17 +38,17 @@ class HasOneThrough extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
-		if(!method_exists($resource, 'getModel')) {
+		if (!method_exists($resource, 'getModel')) {
 			return parent::setResource($resource);
 		}
-		
+
 		$class = $resource->getModel();
 		$model = new $class;
-		if(method_exists($model, $relation)) {
+		if (method_exists($model, $relation)) {
 			$relation_function = $model->$relation();
 			$this->relation_function = $relation_function;
 		} else {
-			abort(506, 'The relation '.$relation.' does not exists in '.$class);
+			abort(506, 'The relation ' . $relation . ' does not exists in ' . $class);
 		}
 		return parent::setResource($resource);
 	}
@@ -56,16 +56,16 @@ class HasOneThrough extends Input
 	public function getValue($object)
 	{
 		$relation = $this->relation;
-		if(!is_object($object->$relation)) {
+		if (!is_object($object->$relation)) {
 			return '--';
 		}
 
 		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
-		if(!isset($this->link)) {
-			$this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();	
+		if (!isset($this->link)) {
+			$this->link = $this->relation_front->getBaseUrl() . '/' . $object->$relation->getKey();
 		}
-		if(!isset($value)) {
+		if (!isset($value)) {
 			return '--';
 		}
 		return $value;
@@ -78,20 +78,20 @@ class HasOneThrough extends Input
 		$model = $this->relation_front->getModel();
 		$model = new $model;
 
-		if(isset($this->force_query)) {
+		if (isset($this->force_query)) {
 			$force_query = $this->force_query;
 			$query = $force_query($model);
 		} else {
-			$query = $this->relation_front->globalIndexQuery();	
+			$query = $this->relation_front->globalIndexQuery();
 		}
 
-		if(isset($this->filter_query)) {
+		if (isset($this->filter_query)) {
 			$filter_query = $this->filter_query;
 			$query = $filter_query($query);
 		}
-		
+
 		$options = $query->get();
-		if(isset($this->filter_collection)) {
+		if (isset($this->filter_collection)) {
 			$filter_collection = $this->filter_collection;
 			$options = $filter_collection($options);
 		}
@@ -99,7 +99,7 @@ class HasOneThrough extends Input
 		// Get default value
 		$relation = $this->relation;
 		$value = $this->resource?->object?->$relation?->getKey();
-		if(isset($value)) {
+		if (isset($value)) {
 			$this->default_value = $value;
 			$this->default_value_force = true;
 		}
@@ -130,7 +130,7 @@ class HasOneThrough extends Input
 
 	public function processData($data)
 	{
-		if(!isset($data[$this->column]) || is_null($data[$this->column])) {
+		if (!isset($data[$this->column]) || is_null($data[$this->column])) {
 			unset($data[$this->column]);
 			return $data;
 		}
@@ -147,7 +147,7 @@ class HasOneThrough extends Input
 			$this->relation_function->getFirstKeyName() => $this->resource->object->$column,
 			$this->relation_function->getSecondLocalKeyName() => $value
 		]));
-	
+
 		unset($data[$this->column]);
 		return $data;
 	}

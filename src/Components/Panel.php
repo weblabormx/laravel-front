@@ -9,10 +9,10 @@ use WeblaborMx\Front\Traits\InputWithLinks;
 class Panel extends Component
 {
 	use InputWithActions, InputWithLinks;
-	
+
 	public $is_panel = true;
 	public $description;
-	
+
 	public function load()
 	{
 		$this->show_before = count($this->fields()) > 0;
@@ -41,32 +41,32 @@ class Panel extends Component
 
 	public function getValue($object)
 	{
-		return $this->fields()->map(function($item) use ($object) {
+		return $this->fields()->map(function ($item) use ($object) {
 			return $item->showHtml($object);
 		})->implode('');
 	}
 
 	public function form()
 	{
-		return $this->fields()->map(function($item) {
+		return $this->fields()->map(function ($item) {
 			return $item->formHtml();
 		})->implode('');
 	}
 
 	private function filterFields($where, $model = null)
 	{
-		$where = $where=='update' ? 'edit' : $where;
-		$where = $where=='store' ? 'create' : $where;
-		return collect($this->column)->filter(function($item) {
+		$where = $where == 'update' ? 'edit' : $where;
+		$where = $where == 'store' ? 'create' : $where;
+		return collect($this->column)->filter(function ($item) {
 			return isset($item);
-		})->flatten()->map(function($item) use ($model) {
+		})->flatten()->map(function ($item) use ($model) {
 			return $item->setDefaultValueFromAttributes($model);
-		})->filter(function($item) use ($where) {
-			if(is_null($where)) {
+		})->filter(function ($item) use ($where) {
+			if (is_null($where)) {
 				return true;
 			}
-			$field = 'show_on_'.$where;
-			if(!isset($item->$field)) {
+			$field = 'show_on_' . $where;
+			if (!isset($item->$field)) {
 				return true;
 			}
 			return $item->$field && $item->shouldBeShown();
@@ -87,11 +87,11 @@ class Panel extends Component
 	public function processData($inputs)
 	{
 		// Get fields processing
-        $fields = $this->filterFields(null);
+		$fields = $this->filterFields(null);
 
-        $fields->each(function($item) use (&$inputs) {
-            $inputs = $item->processData($inputs);
-        });
+		$fields->each(function ($item) use (&$inputs) {
+			$inputs = $item->processData($inputs);
+		});
 		return $inputs;
 	}
 }
