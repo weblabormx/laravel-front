@@ -42,6 +42,7 @@ trait Sourceable
         }
 
         $this->source = (string) $source;
+        $this->_sourceClass = null;
         return $this;
     }
 }
