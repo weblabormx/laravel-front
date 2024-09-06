@@ -31,10 +31,10 @@ class FrontStore
     {
         // Get data to be saved
         $data = $this->front->processData($this->request->all());
-        if($this->isResponse($data)) {
+        if ($this->isResponse($data)) {
             return $data;
         }
-        
+
         // Validate
         $this->front->validate($data);
 
@@ -45,7 +45,7 @@ class FrontStore
         $data = $this->front->processDataBeforeSaving($data);
 
         // Make work with arrays
-        if(!$this->isArrayOfArrays($data)) {
+        if (!$this->isArrayOfArrays($data)) {
             $data = [$data];
         }
 
@@ -54,7 +54,7 @@ class FrontStore
             // Create the object
             $object = $this->front->create($result);
 
-            if($this->isResponse($object)) {
+            if ($this->isResponse($object)) {
                 return $object;
             }
 
@@ -67,9 +67,9 @@ class FrontStore
 
         // Show success message
         flash(__(':name created successfully', ['name' => $this->front->label]))->success();
-        
+
         // Redirect if there was a redirect value on the form
-        if($this->request->filled('redirect_url')) {
+        if ($this->request->filled('redirect_url')) {
             $url = $this->request->redirect_url;
             $url = str_replace('{base_url}', $this->front->getBaseUrl(), $url);
             $url = str_replace('{key}', $object->getKey(), $url);
@@ -82,12 +82,12 @@ class FrontStore
 
     private function isArrayOfArrays($array)
     {
-        if(!is_array($array)) {
+        if (!is_array($array)) {
             return false;
         }
         $result = true;
         foreach ($array as $children) {
-            if(!is_array($children)) {
+            if (!is_array($children)) {
                 $result = false;
             }
         }

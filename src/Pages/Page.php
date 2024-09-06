@@ -21,7 +21,7 @@ class Page
 	public function __construct()
 	{
 		$this->route = $this->getParameters([], true);
-		if(!isset($this->title)) {
+		if (!isset($this->title)) {
 			$title = class_basename(get_class($this));
 			$this->title = preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $title);
 		}
@@ -32,7 +32,7 @@ class Page
 	{
 		//
 	}
-	
+
 	/*
 	* Customizable methods
 	*/
@@ -69,7 +69,7 @@ class Page
 	public function executePost($data)
 	{
 		$return = $this->post();
-		if($this->isResponse($return)) {
+		if ($this->isResponse($return)) {
 			return $return;
 		}
 		flash(__('Saved successfully'))->success();
@@ -79,7 +79,7 @@ class Page
 	public function executePut($data)
 	{
 		$return = $this->post();
-		if($this->isResponse($return)) {
+		if ($this->isResponse($return)) {
 			return $return;
 		}
 		flash(__('Updated successfully'))->success();
@@ -89,7 +89,7 @@ class Page
 	public function executeDelete($data)
 	{
 		$return = $this->delete();
-		if($this->isResponse($return)) {
+		if ($this->isResponse($return)) {
 			return $return;
 		}
 		flash(__('Deleted successfully'))->success();

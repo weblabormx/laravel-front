@@ -18,7 +18,7 @@ trait HasPermissions
 
     public function canShow($object = null)
     {
-        if(is_null($object)) {
+        if (is_null($object)) {
             $object = $this->object;
         }
         return Gate::allows('view', $object) && in_array('show', $this->actions);
@@ -26,7 +26,7 @@ trait HasPermissions
 
     public function canUpdate($object = null)
     {
-        if(is_null($object)) {
+        if (is_null($object)) {
             $object = $this->object;
         }
         return Gate::allows('update', $object) && in_array('edit', $this->actions);
@@ -34,10 +34,9 @@ trait HasPermissions
 
     public function canRemove($object = null)
     {
-        if(is_null($object)) {
+        if (is_null($object)) {
             $object = $this->object;
         }
         return Gate::allows('delete', $object) && in_array('destroy', $this->actions);
     }
-
 }

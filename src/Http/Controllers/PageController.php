@@ -7,12 +7,12 @@ class PageController extends Controller
     public function page($page, $action)
     {
         // Call page class
-        $page_class = 'App\Front\Pages\\'.$page;
+        $page_class = 'App\Front\Pages\\' . $page;
         $page = (new $page_class)->setSource('index');
-        if($action!='get') {
-        	$page = $page->changeFieldsFunction($action);
+        if ($action != 'get') {
+            $page = $page->changeFieldsFunction($action);
         }
-        $method = 'execute'.ucfirst($action);
+        $method = 'execute' . ucfirst($action);
         return $page->$method(compact('page', 'action'));
     }
 }

@@ -18,7 +18,7 @@ trait InputRelationship
 
 	public function setCreateLink($function)
 	{
-		if(!$this->showOnHere()) {
+		if (!$this->showOnHere()) {
 			return $this;
 		}
 		$this->create_link_accessed = true;
@@ -29,7 +29,7 @@ trait InputRelationship
 
 	public function addCreateLink($function)
 	{
-		if(!$this->showOnHere()) {
+		if (!$this->showOnHere()) {
 			return $this;
 		}
 		$this->add_create_link = is_callable($function) ? $function($this->create_link) : $function;
@@ -44,7 +44,7 @@ trait InputRelationship
 
 	public function setEditLink($function)
 	{
-		if(!$this->showOnHere()) {
+		if (!$this->showOnHere()) {
 			return $this;
 		}
 		$this->edit_link_accessed = true;
@@ -54,7 +54,7 @@ trait InputRelationship
 
 	public function setShowLink($function)
 	{
-		if(!$this->showOnHere()) {
+		if (!$this->showOnHere()) {
 			return $this;
 		}
 		$this->show_link_accessed = true;
@@ -76,7 +76,7 @@ trait InputRelationship
 
 	public function setRequest($request)
 	{
-		if(!$this->showOnHere()) {
+		if (!$this->showOnHere()) {
 			return $this;
 		}
 		request()->request->add($request);
@@ -121,7 +121,7 @@ trait InputRelationship
 
 	public function setMassiveClass($class)
 	{
-		if(!is_null($class)) {
+		if (!is_null($class)) {
 			$class = new $class;
 		}
 		$this->massive_class = $class;
@@ -150,4 +150,4 @@ trait InputRelationship
 		$this->hide_link = true;
 		return $this;
 	}
-}	
+}

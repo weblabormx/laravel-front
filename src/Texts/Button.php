@@ -56,7 +56,7 @@ class Button extends Text
 
 	public function setIcon($icon)
 	{
-		if(!Str::contains($icon, '<')) {
+		if (!Str::contains($icon, '<')) {
 			$icon = "<i class='$icon'></i>";
 		}
 		$this->icon = $icon;
@@ -73,6 +73,6 @@ class Button extends Text
 
 	private function generateText()
 	{
-		$this->text = $this->icon.$this->title;
+		$this->text = $this->icon . $this->title;
 	}
 }

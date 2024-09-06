@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Inputs;
 
-use WeblaborMx\Front\Front;
+use Illuminate\Support\Facades\Cache;
 use WeblaborMx\Front\Traits\InputVisibility;
 use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputRules;
@@ -28,6 +28,7 @@ class Input
 	public $input_formatted = true;
 	public $attributes;
 	public $format;
+	public $link_target;
 
 	public function __construct($title = null, $column = null, $extra = null, $source = null)
 	{

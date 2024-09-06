@@ -15,11 +15,11 @@ class FrontStore extends Worker
 	public function handle()
 	{
 		$this->authorize('create', $this->front->getModel());
-        $front = $this->front->setSource('store');
-        if(isset($this->lense)) {
+		$front = $this->front->setSource('store');
+		if (isset($this->lense)) {
 			$front = $front->getLense($this->lense);
 		}
-        return $this->run(new Job(request(), $front));
+		return $this->run(new Job(request(), $front));
 	}
 
 	public function setLense($lense)

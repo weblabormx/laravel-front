@@ -19,7 +19,7 @@ class Text extends Input
 	{
 		return $this->formHtml();
 	}
-	
+
 	public function setText($text)
 	{
 		$this->text = $text;

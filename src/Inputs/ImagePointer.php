@@ -10,10 +10,10 @@ class ImagePointer extends Input
 	public function form()
 	{
 		$rand = rand(1, 100);
-		$id = 'image-to-get-coordiantes-'.$rand;
+		$id = 'image-to-get-coordiantes-' . $rand;
 		$this->attributes['data-type'] = 'image-coordinate';
 		$this->attributes['data-image'] = $id;
-		$html = '<img src="'.$this->image.'" id="'.$id.'" width="'.$this->width.';" />';
+		$html = '<img src="' . $this->image . '" id="' . $id . '" width="' . $this->width . ';" />';
 		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
 		return $html;
 	}

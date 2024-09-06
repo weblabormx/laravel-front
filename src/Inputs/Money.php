@@ -14,9 +14,9 @@ class Money extends Input
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if(!is_numeric($value)) {
+		if (!is_numeric($value)) {
 			return $value;
 		}
-		return '$'.number_format($value, 2);
+		return '$' . number_format($value, 2);
 	}
 }
