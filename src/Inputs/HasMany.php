@@ -23,7 +23,7 @@ class HasMany extends Input
 	{
 		$this->front = getFront($front, $source);
 		$this->column = $column;
-		$this->source = $source;
+		$this->setSource($source);
 		if (!is_null($title)) {
 			$this->title = $title;
 			$this->relationship = Str::snake(Str::plural($this->title));
