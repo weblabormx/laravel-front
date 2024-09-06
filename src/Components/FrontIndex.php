@@ -12,19 +12,19 @@ class FrontIndex extends Component
 
 	public function __construct($front_class, $column = null, $extra = null, $source = null)
 	{
-		$this->source = $source;
-		$this->front_class = getFront($front_class, $this->source);
+		$this->setSource($source);
+		$this->front_class = getFront($front_class, $this->source());
 		$this->show_before = $this->front_class->canIndex();
 	}
 
 	public function form()
 	{
 		$front = $this->front_class;
-		if(isset($this->lense)) {
+		if (isset($this->lense)) {
 			$front = $front->getLense($this->lense);
 		}
 		$query = $front->globalIndexQuery();
-		if(isset($this->query)) {
+		if (isset($this->query)) {
 			$function = $this->query;
 			$query = $function($query);
 		}

@@ -16,7 +16,7 @@ class Textarea extends Input
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if($this->limit_on_index!=false && $this->source=='index') {
+		if ($this->limit_on_index != false && $this->source()->isIndex()) {
 			return Str::limit($value, $this->limit_on_index);
 		}
 		return $value;
