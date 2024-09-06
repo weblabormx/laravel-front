@@ -242,10 +242,11 @@ abstract class Resource
 		return $query;
 	}
 	
-	public function sourceIsForm()
-	{
-		return $this->source!='index' && $this->source!='show';
-	}
+	/** Shortcut for `self::source()->isForm()` */
+    public function sourceIsForm()
+    {
+        return $this->source()->isForm();
+    }
 
     public function redirects($is_first = true)
     {
@@ -301,7 +302,7 @@ abstract class Resource
     public function validate($data)
     {
         // Just execute on edit or create
-    	if($this->source != 'update' && $this->source != 'store') {
+        if (!$this->source()->isUpdate() && !$this->source()->isStore()) {
     		return;
     	}
 
