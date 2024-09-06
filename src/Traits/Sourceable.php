@@ -12,8 +12,11 @@ trait Sourceable
      */
     public $source = null;
 
-    /** @var Source */
-    private $sourceClass;
+    /** 
+     * @var \WeblaborMx\Front\Source
+     * @internal The singleton`Source` instance, obtain it with `source()` 
+     */
+    private $_sourceClass;
 
     /** @return Source|null */
     public function source()
@@ -24,11 +27,11 @@ trait Sourceable
             return null;
         }
 
-        if (!isset($this->sourceClass)) {
-            $this->sourceClass = new Source($source);
+        if (!isset($this->_sourceClass)) {
+            $this->_sourceClass = app()->make(Source::class, compact('source'));
         }
 
-        return $this->sourceClass;
+        return $this->_sourceClass;
     }
 
     public function setSource($source)
