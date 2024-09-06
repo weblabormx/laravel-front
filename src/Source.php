@@ -19,7 +19,7 @@ class Source
     public function __construct($source)
     {
         if (!in_array($source, $cases = static::cases())) {
-            throw new \InvalidArgumentException("Front source must be one of the following: " . implode(',', $cases));
+            throw new \InvalidArgumentException("Front source must be one of the following: " . implode(', ', $cases) . ". '$source' given");
         }
 
         $this->value = $source;
