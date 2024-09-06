@@ -84,6 +84,11 @@ class Source
         return $this == static::ACTION_UPDATE;
     }
 
+    public function isForm()
+    {
+        return $this != static::ACTION_INDEX && $this != static::ACTION_SHOW;
+    }
+
     public function isServerSide()
     {
         return $this->isStore() ||
