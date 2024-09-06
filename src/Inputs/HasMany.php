@@ -96,6 +96,7 @@ class HasMany extends Input
 
 	public function getValue($object)
 	{
+		$resource = $this->resource;
 		// If any link has been set so add to select by default the relationhip
 		if($this->create_link=='{key}/edit') {
 			$this->setCreateLink(function($link) use ($resource) {

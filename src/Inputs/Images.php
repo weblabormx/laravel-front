@@ -2,9 +2,7 @@
 
 namespace WeblaborMx\Front\Inputs;
 
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image as Intervention;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class Images extends Image
 {
@@ -17,7 +15,7 @@ class Images extends Image
 	public function form()
 	{
 		$input = $this;
-		$id = 'file_'.rand();
+		$id = 'file_' . rand();
 		return view('front::inputs.images-form', compact('input', 'id'));
 	}
 
@@ -37,10 +35,10 @@ class Images extends Image
 
 	public function processDataAfterValidation($data)
 	{
-		if(!isset($data[$this->column])) {
+		if (!isset($data[$this->column])) {
 			return $data;
 		}
-		if(!$this->save) {
+		if (!$this->save) {
 			return $data;
 		}
 
@@ -51,8 +49,8 @@ class Images extends Image
 			$data[$this->column] = $file;
 			$all_data[] = $data;
 		}
-		
-		return collect($all_data)->map(function($data) {
+
+		return collect($all_data)->map(function ($data) {
 			// Save original file
 			$file = $data[$this->column];
 			$result = $this->saveOriginalFile($data, $file);
@@ -61,14 +59,14 @@ class Images extends Image
 
 			// New sizes
 			foreach ($this->thumbnails as $thumbnail) {
-				$this->saveNewSize($file, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']); 
+				$this->saveNewSize($file, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']);
 			}
-			
+
 			// Assign data to request
 			$data[$this->column] = $url;
-			
+
 			// Save original name in a column if set
-			if(!is_null($this->original_name_column)) {
+			if (!is_null($this->original_name_column)) {
 				$data[$this->original_name_column] = $file->getClientOriginalName();
 			}
 			return $data;
@@ -80,12 +78,12 @@ class Images extends Image
 		$name = $this->column;
 		$attribute_name = $this->title;
 		$rules = [
-			$name.'.*' => ['image','mimes:jpeg,png,jpg,gif,svg,webp', 'max:'.$this->max_size]
+			$name . '.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:' . $this->max_size]
 		];
 		$attributes = [
-			$name.'.*' => $attribute_name
+			$name . '.*' => $attribute_name
 		];
-		\Validator::make($data, $rules, [], $attributes)->validate();
+		Validator::make($data, $rules, [], $attributes)->validate();
 	}
 
 	public function setOriginalNameColumn($value)

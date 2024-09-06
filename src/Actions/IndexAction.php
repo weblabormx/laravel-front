@@ -16,6 +16,7 @@ class IndexAction
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
+    public $object;
 	
 	public function __construct()
 	{

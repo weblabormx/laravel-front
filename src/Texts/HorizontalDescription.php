@@ -6,6 +6,8 @@ use WeblaborMx\Front\Front;
 
 class HorizontalDescription extends Text
 {
+	public $data;
+
 	public function load()
 	{
 		$this->data = $this->title;

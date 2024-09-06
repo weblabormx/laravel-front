@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Jobs;
 
+use Illuminate\Support\Facades\Cache;
+
 class MassiveIndexEditShow
 {
     public $front;
@@ -26,7 +28,7 @@ class MassiveIndexEditShow
     public function handle()
     {
         // Set session
-        \Cache::store('array')->put('is_massive', true);
+        Cache::store('array')->put('is_massive', true);
 
         // Get objects
         $result = $this->front->globalIndexQuery()->limit($this->front->pagination)->get();
