@@ -24,14 +24,14 @@ class File extends Input
 
 	public function processData($data)
 	{
-		if(!isset($data[$this->column])) {
+		if (!isset($data[$this->column])) {
 			return $data;
 		}
 		$file = Storage::putFile($this->directory, $data[$this->column], $this->visibility);
 		$url = Storage::url($file);
 
 		// Save original name in a column if set
-		if(!is_null($this->original_name_column)) {
+		if (!is_null($this->original_name_column)) {
 			$data[$this->original_name_column] = $data[$this->column]->getClientOriginalName();
 		}
 		$data[$this->column] = $url;

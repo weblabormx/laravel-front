@@ -18,14 +18,14 @@ class BelongsToMany extends Input
 		$this->relation = Str::snake(Str::plural($relation));
 		$this->source = $source;
 
-		if(!isset($this->model_name)) {
+		if (!isset($this->model_name)) {
 			$front = Str::singular($this->relation);
 			$front = ucfirst(Str::camel($front));
 			$this->model_name = $title;
 		}
 
 		$this->relation_front = getFront($this->model_name, $this->source);
-		if(!$this->relation_front->canIndex()) {
+		if (!$this->relation_front->canIndex()) {
 			$this->show = false;
 		}
 		$class = $this->relation_front->getModel();
@@ -36,33 +36,33 @@ class BelongsToMany extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
-		$this->column = $relation.'_mtm';
-		if(is_object($resource->object)) {
+		$this->column = $relation . '_mtm';
+		if (is_object($resource->object)) {
 			$this->default_value = $resource->object->{$this->relation}->pluck('id');
 			$this->default_value_force = true;
 		}
-		
+
 		return parent::setResource($resource);
 	}
 
 	public function getValue($object)
 	{
 		$relation = $this->relation;
-		if(!is_object($object->$relation)) {
+		if (!is_object($object->$relation)) {
 			return '--';
 		}
 
 		$title_field = $this->search_field ?? $this->relation_front->title;
 		$value = $object->$relation->pluck($title_field);
-		
-		if(strlen($value) <= 0) {
+
+		if (strlen($value) <= 0) {
 			return '--';
 		}
 
-		$value = $value->map(function($item) {
-			return "<li>".$item."</li>";
+		$value = $value->map(function ($item) {
+			return "<li>" . $item . "</li>";
 		});
-		return '<ul>'.$value->implode('').'</ul>';
+		return '<ul>' . $value->implode('') . '</ul>';
 	}
 
 	public function form()
@@ -72,20 +72,20 @@ class BelongsToMany extends Input
 		$model = $this->relation_front->getModel();
 		$model = new $model;
 
-		if(isset($this->force_query)) {
+		if (isset($this->force_query)) {
 			$force_query = $this->force_query;
 			$query = $force_query($model);
 		} else {
-			$query = $this->relation_front->globalIndexQuery();	
+			$query = $this->relation_front->globalIndexQuery();
 		}
 
-		if(isset($this->filter_query)) {
+		if (isset($this->filter_query)) {
 			$filter_query = $this->filter_query;
 			$query = $filter_query($query);
 		}
-		
+
 		$options = $query->get();
-		if(isset($this->filter_collection)) {
+		if (isset($this->filter_collection)) {
 			$filter_collection = $this->filter_collection;
 			$options = $filter_collection($options);
 		}
@@ -113,7 +113,6 @@ class BelongsToMany extends Input
 	{
 		$values = $request->{$this->column};
 		$object->{$this->relation}()->sync($values);
-		
 	}
 
 	public function setSearchField($field)

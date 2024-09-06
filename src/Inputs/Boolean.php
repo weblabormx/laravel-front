@@ -15,17 +15,17 @@ class Boolean extends Input
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		$value = $value==='--' ? false : $value;
-		if($this->source=='index') {
-			if($value) {
+		$value = $value === '--' ? false : $value;
+		if ($this->source == 'index') {
+			if ($value) {
 				return '<span style="color: #2cbb7d;">✔</span>';
 			}
 			return '<span style="color: #e74344;">✘</span>';
 		}
-		if($value == $this->true_value) {
-			return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> '.__('Yes');
+		if ($value == $this->true_value) {
+			return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> ' . __('Yes');
 		}
-		return '<span style="color: #e74344; padding-right: 10px;">✘</span> '.__('No');
+		return '<span style="color: #e74344; padding-right: 10px;">✘</span> ' . __('No');
 	}
 
 	public function setTrueValue($value)
@@ -42,7 +42,7 @@ class Boolean extends Input
 
 	public function processData($data)
 	{
-		if(!isset($data[$this->column])) {
+		if (!isset($data[$this->column])) {
 			$data[$this->column] = $this->false_value;
 		}
 		return $data;

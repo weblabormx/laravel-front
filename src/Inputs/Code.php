@@ -18,11 +18,11 @@ class Code extends Input
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if($this->lang=='json') {
+		if ($this->lang == 'json') {
 			$value = json_decode($value);
 			$value = json_encode($value, JSON_PRETTY_PRINT);
 		}
-		return '<code data-type="codeeditor" data-lang="'.$this->lang.'">'.$value.'</code>';
+		return '<code data-type="codeeditor" data-lang="' . $this->lang . '">' . $value . '</code>';
 	}
 
 	public function setLang($lang)

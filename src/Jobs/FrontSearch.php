@@ -32,7 +32,7 @@ class FrontSearch
         $result = $this->front->globalIndexQuery();
 
         // Get query if sent
-        if($this->request->filled('filter_query')) {
+        if ($this->request->filled('filter_query')) {
             $query = json_decode($this->request->filter_query);
             $query = unserialize($query);
             $query = $query->getClosure();
@@ -45,24 +45,24 @@ class FrontSearch
 
         // Search results and map with format
         $result = $search_filter->apply($result, $this->request->term);
-        $result = $result->limit($this->front->search_limit)->get()->map(function($item) use ($title) {
+        $result = $result->limit($this->front->search_limit)->get()->map(function ($item) use ($title) {
             return [
-                'label' => $item->$title, 
-                'id' => $item->getKey(), 
-                'value' => $item->$title 
+                'label' => $item->$title,
+                'id' => $item->getKey(),
+                'value' => $item->$title
             ];
         })->sortBy('label');
 
         // If there are results so print
-        if($result->count() > 0) {
+        if ($result->count() > 0) {
             print json_encode($result);
             return;
         }
 
         // If there aren't results show that nothing was found
         $result = [[
-            'label' => __('Nothing found'), 
-            'id' => 0, 
+            'label' => __('Nothing found'),
+            'id' => 0,
             'value' => __('Nothing found')
         ]];
         print json_encode($result);

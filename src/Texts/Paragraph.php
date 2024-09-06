@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Texts;
 
-use WeblaborMx\Front\Front;
-
 class Paragraph extends Text
 {
 	public function form()

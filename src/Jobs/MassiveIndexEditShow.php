@@ -32,7 +32,7 @@ class MassiveIndexEditShow
 
         // Get objects
         $result = $this->front->globalIndexQuery()->limit($this->front->pagination)->get();
-        
+
         // Return generated data
         return compact('result');
     }

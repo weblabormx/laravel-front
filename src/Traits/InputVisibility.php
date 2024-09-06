@@ -12,7 +12,7 @@ trait InputVisibility
 	public $show_on_show = true;
 	public $show_on_edit = true;
 	public $show_on_create = true;
-	
+
 	public function hideFromIndex()
 	{
 		$this->show_on_index = false;
@@ -93,9 +93,9 @@ trait InputVisibility
 
 	public function show($result)
 	{
-		if(!is_string($result) && is_callable($result)) {
+		if (!is_string($result) && is_callable($result)) {
 			$result = $result();
-		} 
+		}
 		$this->show = $result;
 		return $this;
 	}
@@ -108,9 +108,9 @@ trait InputVisibility
 	public function showOnHere()
 	{
 		$var = $this->source ?? 'index';
-		$var = $var=='update' ? 'edit' : $var;
-		$var = $var=='store' ? 'create' : $var;
-		$var = 'show_on_'.$var;
+		$var = $var == 'update' ? 'edit' : $var;
+		$var = $var == 'store' ? 'create' : $var;
+		$var = 'show_on_' . $var;
 		return $this->$var && $this->shouldBeShown();
 	}
 }
