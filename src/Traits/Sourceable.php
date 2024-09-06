@@ -34,9 +34,14 @@ trait Sourceable
         return $this->_sourceClass;
     }
 
+    /** @param string|Source $source */
     public function setSource($source)
     {
-        $this->source = $source;
+        if (is_object($source) && !($source instanceof Source)) {
+            throw new \InvalidArgumentException("Invalid object type for source");
+        }
+
+        $this->source = (string) $source;
         return $this;
     }
 }
