@@ -154,13 +154,7 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
-        $response = $this->run(new FrontDestroy($front, $object));
-        if($this->isResponse($response)) {
-            return $response;
-        }
-
-        // Redirect
-        return redirect($this->front->getBaseUrl());
+        return $this->run(new FrontDestroy($front, $object));
     }
 
     /*

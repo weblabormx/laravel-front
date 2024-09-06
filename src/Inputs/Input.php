@@ -83,14 +83,14 @@ class Input
 			$return = $column($object);
 		} else if (Str::contains($column, '.')) {
 			$return = collect(explode('.', $column))->reduce(function ($carry, $item) use ($object) {
-				if (is_null($carry)) {
-					$carry = $object;
+				if (isset($carry[$item])) {
+					return $carry[$item];
 				}
 				if (is_object($carry)) {
 					return $carry?->$item;
 				}
-				return $carry[$item] ?? null;
-			});
+				return null;
+			}, $object);
 		} else {
 			$return = $object?->$column;
 		}

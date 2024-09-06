@@ -4,6 +4,8 @@ namespace WeblaborMx\Front\Inputs;
 
 class MorphMany extends HasMany
 {
+	public $morph_column;
+	
 	public function getBaseUrl($resource, $relation_function)
 	{
 		$this->morph_column = $relation_function->getMorphType();

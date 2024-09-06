@@ -10,15 +10,10 @@ trait InputSetters
 	use Sourceable;
 
 	public $default_value = null;
-	public $conditional;
-	public $resource;
-	public $display_using;
-	public $link;
+	public $conditional, $help, $resource, $display_using, $link, $rename_after, $get_value_from;
 	public $class = '';
 	public $default_value_force = false;
 	public $hide = false;
-	public $rename_after;
-	public $get_value_from;
 	public $extra_data = [];
 
 	public function setData($column, $value)

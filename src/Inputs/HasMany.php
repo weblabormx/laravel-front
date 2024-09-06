@@ -17,6 +17,7 @@ class HasMany extends Input
 	public $show_on_index = false;
 	public $index_view = 'front::crud.partial-index';
 	public $show_filters = false;
+	public $front, $relationship, $massive_edit_link;
 
 	public function __construct($front, $title = null, $column = null, $source = null)
 	{
@@ -67,6 +68,9 @@ class HasMany extends Input
 			$this->setCreateLink(function ($link) use ($resource, $base_url, $relation_front) {
 				return $link . '?' . $base_url . '&relation_front=' . $relation_front . '&relation_id=' . $resource->object->getKey() . '&redirect_url=' . $resource->getBaseUrl() . '/' . $resource->object->getKey();
 			});
+		}
+		if(isset($this->add_create_link)) {
+			$this->create_link .= $this->add_create_link;	
 		}
 
 		// The same for edit

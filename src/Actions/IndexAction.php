@@ -12,15 +12,11 @@ class IndexAction
 {
     use HasInputs, IsValidated;
     
-	public $title;
+	public $title, $button_text, $dat, $save_button, $slug, $front, $data, $url;
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
-	public $data;
-    public $save_button;
-    public $slug;
-    public $front;
-
+	
 	public function __construct()
 	{
 		if(!isset($this->title)) {
@@ -35,7 +31,7 @@ class IndexAction
             $this->save_button = __('Save changes');
         }
         $this->title = __($this->title);
-		$this->button_text = "<i class='{$this->icon}'></i> $this->title";
+		$this->button_text = "<i class='{$this->icon} pr-2'></i> $this->title";
 	}
 
     public function load()

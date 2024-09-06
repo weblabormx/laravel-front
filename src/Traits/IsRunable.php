@@ -3,7 +3,6 @@
 namespace WeblaborMx\Front\Traits;
 
 use Illuminate\Support\Str;
-use WeblaborMx\Front\Pages\Page;
 
 trait IsRunable
 {
@@ -29,8 +28,13 @@ trait IsRunable
 
     public function makeFrontable($result, $setters, $front)
     {
+        $page_class = 'WeblaborMx\Front\Pages\Page';
+        if(class_exists('App\Front\Pages\Page')) {
+            $page_class = 'App\Front\Pages\Page';
+        }
+
         // Get page
-        $page = (new Page)->setSource('index')->setFields($result);
+        $page = (new $page_class)->setSource('index')->setFields($result);
         foreach ($setters as $key => $value) {
             $page->$key = $value.' - '.__('Result');
         }

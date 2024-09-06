@@ -21,17 +21,13 @@ abstract class Resource
 {
 	use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions, HasMassiveEditions;
 
-	public $data;
+	public $data, $model, $search_title, $label, $base_url, $layout, $view_title, $plural_label, $object, $hide_columns;
 	public $title = 'name';
-    public $search_title;
-	public $label;
-	public $base_url;
 	public $ignore_if_null = [];
 	public $show_title = true;
     public $show_create_button_on_index = true;
     public $pagination = 50;
     public $search_limit = 10;
-    public $layout;
     public $functions_values = [];
     public $actions = [
         Source::ACTION_INDEX,
@@ -165,8 +161,13 @@ abstract class Resource
         //
     }
 
-    // To execute before destroying an object
-
+    /** 
+     * To execute before destroying an object. 
+     * 
+     * Return `false` to prevent the destroy process.
+     * 
+     * @return false|null
+     */
     public function destroy($object)
     {
         //
@@ -205,7 +206,7 @@ abstract class Resource
 
     public function removeRedirectionUrl()
     {
-        return $this->getBaseUrl();
+        return $this->getRelatedLink() ?? $this->getBaseUrl();
     }
 
 	/* 
@@ -218,29 +219,47 @@ abstract class Resource
         if(is_null($query)) {
             $query = new $class;
         }
-            
+        
+        // Get filters
+        try {
+            $filters = $this->getFilters();
+        } catch (\Exception $e) {
+            return $query;
+        }
+
+        // Execute before
+        foreach ($filters as $filter) {
+            $field = $filter->slug;
+            $field = str_replace('[', '', $field);
+            $field = str_replace(']', '', $field);
+            if(!request()->filled($field) || !$filter->execute_before) {
+                continue;
+            }
+            $filter->setResource($this);
+            $value = request()->$field;
+            $query = $filter->apply($query, $value);
+        }
+
 		$query = $this->indexQuery($query);
+
+        // Execute after
+        foreach ($filters as $filter) {
+            $field = $filter->slug;
+            $field = str_replace('[', '', $field);
+            $field = str_replace(']', '', $field);
+            if(!request()->filled($field) || $filter->execute_before) {
+                continue;
+            }
+            $filter->setResource($this);
+            $value = request()->$field;
+            $query = $filter->apply($query, $value);
+        }
 
         // Detect if the indexQuery value is not the model empty
         if($class == get_class($query) && is_null($query->getKey()) ) {
             $query = $query->oldest();
         }
 
-        // Execute filters
-        try {
-            $filters = $this->getFilters();
-        } catch (\Exception $e) {
-            return $query;
-        }
-		foreach ($filters as $filter) {
-			$field = $filter->slug;
-			if(!request()->filled($field)) {
-				continue;
-			}
-			$filter->setResource($this);
-			$value = request()->$field;
-			$query = $filter->apply($query, $value);
-		}
 		return $query;
 	}
 	
@@ -279,7 +298,13 @@ abstract class Resource
             return isset($item) && strlen($item);
         });
 
-        $filters_with_default_values_are_set = $filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
+        $clean_filters = $filters->mapWithKeys(function($item, $key) {
+            $key = str_replace('[', '', $key);
+            $key = str_replace(']', '', $key);
+            return [$key => $item];
+        });
+
+        $filters_with_default_values_are_set = $clean_filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
 
     	// Only will acess if the url doesnt have the required variables
     	if($filters_with_default_values_are_set && !request()->filled('is_redirect')) {
@@ -446,6 +471,22 @@ abstract class Resource
     {
         $this->related_object = $related_object;
         return $this;
+    }
+
+    /*
+     * Private functions
+     */    
+    private function getRelatedLink()
+    {
+        $relatedInput = $this->related_object;
+        $relatedResource = $relatedInput?->resource;
+
+        if (is_null($relatedInput) || is_null($relatedResource)) {
+            return null;
+        }
+
+        $helper = $this->getActionsHelper($relatedResource->object, $relatedResource->getBaseUrl(), null, null);
+        return $helper->showUrl();
     }
 
     /* 

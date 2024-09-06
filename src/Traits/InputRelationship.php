@@ -6,17 +6,11 @@ trait InputRelationship
 {
 	use HasMassiveEditions;
 
-	public $create_link;
+	public $create_link, $create_link_accessed, $add_create_link, $show_link, $filter_query, $filter_collection, $force_query, $lense, $hide_columns, $headings;
+	public $edit_link_accessed, $show_link_accessed, $hide_link = false;
 	public $edit_link = '{key}/edit';
-	public $show_link;
 	public $with = [];
-	public $filter_query;
-	public $filter_collection;
-	public $force_query;
-	public $lense;
-	public $hide_columns;
 	public $block_edition = false;
-	public $headings;
 
 	/*
 	 * Functions 
@@ -30,6 +24,15 @@ trait InputRelationship
 		$this->create_link_accessed = true;
 		$this->create_link = is_callable($function) ? $function($this->create_link) : $function;
 		$this->massive_edit_link = is_callable($function) ? $function($this->massive_edit_link) : $function;
+		return $this;
+	}
+
+	public function addCreateLink($function)
+	{
+		if(!$this->showOnHere()) {
+			return $this;
+		}
+		$this->add_create_link = is_callable($function) ? $function($this->create_link) : $function;
 		return $this;
 	}
 
@@ -140,5 +143,11 @@ trait InputRelationship
 	public function getFront()
 	{
 		return $this->front;
+	}
+
+	public function hideLink()
+	{
+		$this->hide_link = true;
+		return $this;
 	}
 }	

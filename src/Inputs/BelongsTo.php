@@ -10,11 +10,8 @@ class BelongsTo extends Input
 {
 	use InputRelationship;
 
-	public $relation;
-	public $relation_front;
+	public $relation, $model_name, $relation_front, $search_field, $empty_title;
 	public $searchable = false;
-	public $search_field;
-	public $empty_title;
 	public $show_placeholder = true;
 
 	public function __construct($title, $column = null, $extra = null, $source = null)
@@ -41,6 +38,7 @@ class BelongsTo extends Input
 	public function setResource($resource)
 	{
 		$relation = $this->relation;
+		$relation_camel = Str::camel($relation);
 		if (!method_exists($resource, 'getModel')) {
 			return parent::setResource($resource);
 		}
@@ -48,6 +46,16 @@ class BelongsTo extends Input
 		$class = $resource->getModel();
 		$model = new $class;
 		if (method_exists($model, $relation)) {
+			$relation_function = $model->$relation();
+			$this->column = $relation_function->getForeignKeyName();
+		} else if (method_exists($model, $relation_camel)) {
+			$this->relation = $relation_camel;
+			$relation = $relation_camel;
+			$relation_function = $model->$relation();
+			$this->column = $relation_function->getForeignKeyName();
+		} else if (method_exists($model, $relation_camel)) {
+			$this->relation = $relation_camel;
+			$relation = $relation_camel;
 			$relation_function = $model->$relation();
 			$this->column = $relation_function->getForeignKeyName();
 		} else {

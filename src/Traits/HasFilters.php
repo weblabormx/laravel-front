@@ -11,6 +11,11 @@ trait HasFilters
         return [];
     }
 
+    public function visibleFilters()
+    {
+        return collect($this->filters())->where('visible', true);
+    }
+
     public function getFilters()
     {
         $search_filter = $this->getDefaultSearchFilter();
