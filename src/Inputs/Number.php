@@ -9,7 +9,10 @@ class Number extends Input
 	public function form()
 	{
 		$this->attributes['step'] = $this->getStep();
-		return \Form::number($this->column, $this->default_value, $this->attributes);
+
+		return html()
+			->number($this->column, $this->default_value)
+			->attributes($this->attributes);
 	}
 
 	public function decimals($decimals)
@@ -20,19 +23,19 @@ class Number extends Input
 
 	private function getStep()
 	{
-		if(is_null($this->decimals)) {
+		if (is_null($this->decimals)) {
 			return 'any';
 		}
-		if($this->decimals==0) {
+		if ($this->decimals == 0) {
 			return 1;
 		}
-		return 1/pow(10, $this->decimals);
+		return 1 / pow(10, $this->decimals);
 	}
 
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if(is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
+		if (is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
 			return $value;
 		}
 		return round($value, $this->decimals);

@@ -14,27 +14,37 @@ class ImageCropper extends Input
 	public function form()
 	{
 		$rand = rand(1, 100);
-		$id = 'image-to-crop-'.$rand;
+		$id = 'image-to-crop-' . $rand;
 		$function = "handler{$rand}";
+
 		$this->attributes['data-type'] = 'cropper';
 		$this->attributes['data-image'] = $id;
 		$this->attributes['data-width'] = $this->width;
 		$this->attributes['data-ratio'] = $this->ratio;
-		if(isset($this->handler)) {
+
+		if (isset($this->handler)) {
 			$this->attributes['data-handler'] = $function;
 		}
-		if(isset($this->max_sizes)) {
-			$this->attributes['data-max-sizes'] = $this->max_sizes[0].','.$this->max_sizes[1];
+
+		if (isset($this->max_sizes)) {
+			$this->attributes['data-max-sizes'] = $this->max_sizes[0] . ',' . $this->max_sizes[1];
 		}
-		if(isset($this->min_sizes)) {
-			$this->attributes['data-min-sizes'] = $this->min_sizes[0].','.$this->min_sizes[1];
+
+		if (isset($this->min_sizes)) {
+			$this->attributes['data-min-sizes'] = $this->min_sizes[0] . ',' . $this->min_sizes[1];
 		}
-		$html = '<img src="'.$this->image.'" id="'.$id.'" style="max-width: none !important;" />';
-		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
-		if(isset($this->handler)) {
+
+		$html = '<img src="' . $this->image . '" id="' . $id . '" style="max-width: none !important;" />';
+
+		$html .= html()
+			->hidden($this->column, $this->default_value)
+			->attributes($this->attributes);
+
+		if (isset($this->handler)) {
 			$handler = $this->handler;
-			$html .= '<script>function '.$function.'(c) { '.$handler().' }</script>';
+			$html .= '<script>function ' . $function . '(c) { ' . $handler() . ' }</script>';
 		}
+
 		return $html;
 	}
 

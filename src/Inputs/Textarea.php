@@ -10,13 +10,15 @@ class Textarea extends Input
 
 	public function form()
 	{
-		return \Form::textarea($this->column, $this->default_value, $this->attributes);
+		return html()
+			->textarea($this->column, $this->default_value)
+			->attributes($this->attributes);
 	}
 
 	public function getValue($object)
 	{
 		$value = parent::getValue($object);
-		if($this->limit_on_index!=false && $this->source=='index') {
+		if ($this->limit_on_index != false && $this->source == 'index') {
 			return Str::limit($value, $this->limit_on_index);
 		}
 		return nl2br($value);
