@@ -17,13 +17,16 @@ class Select extends Input
 
 	public function form()
 	{
-		if ($this->show_placeholder) {
-			$this->attributes['placeholder'] = __($this->empty_title);
-		}
-		return html()
+		$select = html()
 			->select($this->column, $this->options)
 			->value($this->default_value)
 			->attributes($this->attributes);
+
+		if ($this->show_placeholder) {
+			$select = $select->placeholder(__($this->empty_title));
+		}
+
+		return $select;
 	}
 
 	public function options($array)
