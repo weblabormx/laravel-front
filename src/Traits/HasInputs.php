@@ -230,13 +230,17 @@ trait HasInputs
 		$fields = $this->filterFields($this->source == 'update' ? 'edit' : 'create', true);
 
 		// Remove autocomplete helper input
-		$autocomplete_fields = $fields->filter(function ($item) {
+		$fields->filter(function ($item) {
 			return isset($item->searchable) && $item->searchable;
 		})->map(function ($item) {
 			return $item->column . 'ce';
 		})->values()->each(function ($item) use (&$inputs) {
 			unset($inputs[$item]);
 		});
+
+		$inputs = collect($inputs)->filter(function ($item) {
+			return !Str::endsWith($item, 'ce');
+		})->all();
 
 		$fields->filter(function ($item) use ($inputs) {
 			return $item->is_input;
