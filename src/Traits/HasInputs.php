@@ -238,8 +238,8 @@ trait HasInputs
 			unset($inputs[$item]);
 		});
 
-		$inputs = collect($inputs)->filter(function ($item) {
-			return !Str::endsWith($item, 'ce');
+		$inputs = collect($inputs)->filter(function ($item, $key) {
+			return !Str::endsWith($key, 'ce');
 		})->all();
 
 		$fields->filter(function ($item) use ($inputs) {
