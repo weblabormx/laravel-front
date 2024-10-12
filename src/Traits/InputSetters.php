@@ -3,9 +3,12 @@
 namespace WeblaborMx\Front\Traits;
 
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Traits\Sourceable;
 
 trait InputSetters
 {
+	use Sourceable;
+
 	public $default_value = null;
 	public $conditional, $help, $resource, $display_using, $link, $rename_after, $get_value_from;
 	public $class = '';
@@ -39,12 +42,6 @@ trait InputSetters
 	public function setAfter($value)
 	{
 		$this->form_after = $value;
-		return $this;
-	}
-
-	public function setSource($value)
-	{
-		$this->source = $value;
 		return $this;
 	}
 
@@ -176,7 +173,7 @@ trait InputSetters
 	public function default($value, $force = false)
 	{
 		$this->default_value_force = $force;
-		if ($this->source != 'create' && !$force) {
+		if (!$this->source()->isCreate() && !$force) {
 			return $this;
 		}
 		if (!is_string($value) && is_callable($value)) {
