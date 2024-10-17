@@ -159,11 +159,11 @@ class Input
 		if ($this->hide && (request()->filled($this->column))) {
 			return $this->hideForm();
 		}
-		if ($this->hide_not_set && !(request()->filled($this->column))) {
-			return $this->hideForm();
-		}
 		if (!$this->input_formatted) {
 			return $this->form();
+		}
+		if ($this->hide_not_set && !(request()->filled($this->column))) {
+			return $this->hideForm();
 		}
 		$input = $this;
 		$html = view('front::input-form', compact('input'))->render();
