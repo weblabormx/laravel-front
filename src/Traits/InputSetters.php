@@ -86,7 +86,7 @@ trait InputSetters
 		// This work on form
 		$this->form_before = '<div data-type="conditional" data-cond-option="' . $column . '" data-cond-value="' . $value . '" style="' . $this->style_width() . '">';
 		$this->form_after = '</div>';
-		$this->conditional = $column . '=' . $value;
+		$this->conditional = $column . '== \'' . $value.'\'';
 		return $this;
 	}
 
