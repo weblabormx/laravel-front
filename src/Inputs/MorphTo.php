@@ -90,6 +90,16 @@ class MorphTo extends Input
 			})->implode('');
 		}
 
+		// if is hidden
+		if ($this->hide_not_set && (!request()->filled($this->column . '_type') && !request()->filled($this->column . '_id'))) {
+			return collect([
+				Hidden::make($this->title, $this->column . '_type'),
+				Hidden::make($this->title, $this->column . '_id')
+			])->map(function ($item) {
+				return (string) $item->formHtml();
+			})->implode('');
+		}
+
 		// Get options for the type select
 		$options = $this->types_models->flip();
 

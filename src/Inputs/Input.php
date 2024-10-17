@@ -159,6 +159,9 @@ class Input
 		if ($this->hide && (request()->filled($this->column))) {
 			return $this->hideForm();
 		}
+		if ($this->hide_not_set && !(request()->filled($this->column))) {
+			return $this->hideForm();
+		}
 		if (!$this->input_formatted) {
 			return $this->form();
 		}

@@ -10,7 +10,7 @@ trait InputSetters
 	public $conditional, $help, $resource, $display_using, $link, $rename_after, $get_value_from;
 	public $class = '';
 	public $default_value_force = false;
-	public $hide = false;
+	public $hide = false, $hide_not_set = false;
 	public $extra_data = [];
 
 	public function setData($column, $value)
@@ -200,6 +200,12 @@ trait InputSetters
 	public function hideWhenValuesSet()
 	{
 		$this->hide = true;
+		return $this;
+	}
+
+	public function hideWhenValuesNotSet()
+	{
+		$this->hide_not_set = true;
 		return $this;
 	}
 
