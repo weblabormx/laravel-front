@@ -228,6 +228,7 @@ trait HasInputs
 
 		// Get fields processing
 		$fields = $this->filterFields($this->source == 'update' ? 'edit' : 'create', true);
+		$columns = $fields->pluck('column')->all();
 
 		// Remove autocomplete helper input
 		$fields->filter(function ($item) {
@@ -238,8 +239,9 @@ trait HasInputs
 			unset($inputs[$item]);
 		});
 
-		$inputs = collect($inputs)->filter(function ($item, $key) {
-			return !Str::endsWith($key, 'ce');
+		// If field is not on the columns and ends with ce remove it
+		$inputs = collect($inputs)->filter(function ($item, $key) use ($columns) {
+			return in_array($key, $columns) || !Str::endsWith($key, 'ce');
 		})->all();
 
 		$fields->filter(function ($item) use ($inputs) {
