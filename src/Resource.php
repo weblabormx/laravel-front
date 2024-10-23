@@ -29,7 +29,15 @@ abstract class Resource
     public $pagination = 50;
     public $search_limit = 10;
     public $functions_values = [];
-    public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+    public $actions = [
+        Source::ACTION_INDEX,
+        Source::ACTION_CREATE,
+        Source::ACTION_STORE,
+        Source::ACTION_SHOW,
+        Source::ACTION_EDIT,
+        Source::ACTION_UPDATE,
+        Source::ACTION_DESTROY,
+    ];
     public $index_views = [];
     public $cache = ['indexQuery', 'indexResult'];
     public $related_object;
@@ -49,7 +57,9 @@ abstract class Resource
         }
         $this->label = __($this->label);
 
-        $this->setSource($source);
+        $this->setSource($source); // Just assign source from the Sourceable trait
+        session()->put('source', $source, now()->addMinute()); // Actually save it to session
+
         if (!isset($this->view_title)) {
             $this->view_title = $this->title;
         }
@@ -257,9 +267,10 @@ abstract class Resource
         return $query;
     }
 
+    /** Shortcut for `self::source()->isForm()` */
     public function sourceIsForm()
     {
-        return $this->source != 'index' && $this->source != 'show';
+        return $this->source()->isForm();
     }
 
     public function redirects($is_first = true)
@@ -322,7 +333,7 @@ abstract class Resource
     public function validate($data)
     {
         // Just execute on edit or create
-        if ($this->source != 'update' && $this->source != 'store') {
+        if (!$this->source()->isUpdate() && !$this->source()->isStore()) {
             return;
         }
 
