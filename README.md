@@ -96,17 +96,74 @@ The front resources needs to have a Policy name, so please create a Policy for t
 
 #### Working with resources
 
-There are some basic variables that can be added on the resource
+There are some basic variables that can be added on the resource:
 
 ```php
 public $title;      // Field name of the title (Name is the default value)
 public $model;      // Direction of the model
 public $base_url;   // Url created on routes (Required)
-public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']; // If you want to modify which actions to be available
 ```
 
+#### Sources
+
+The action that the user is executing on a `Resource` we call the `Source`. 
+
+We can change the available actions on our resource using:
+
+```php
+public $actions = [
+    Source::ACTION_INDEX,
+    Source::ACTION_CREATE,
+    Source::ACTION_STORE,
+    Source::ACTION_SHOW,
+    Source::ACTION_EDIT,
+    Source::ACTION_UPDATE,
+    Source::ACTION_DESTROY,
+];
+```
+
+The `WeblaborMx\Front\Source` is an object you can access at any point on your `Resource`, to conditionally execute code. Specially useful for more complex UI workflows.
+
+```php
+public function fields()
+{
+    if($this->source()->isForm()){
+        return [
+            Inputs\Text::make('Name'),
+        ];
+    }
+
+    return [
+        Inputs\ID::make(),
+        Inputs\Text::make('Name'),
+        Inputs\Text::make('Slug'),
+        Inputs\Text::make('Created At')->setWidth('1/2'),
+        Inputs\Text::make('Updated At')->setWidth('1/2'),
+    ];
+}
+```
+
+The class `WeblaborMx\Front\Source` acts virtually as an Enum with helper methods.
+
+You can check the class to see its implementation. Here are the available helpers:
+
+```php
+$this->source()->isCreate();
+$this->source()->isDestroy();
+$this->source()->isEdit();
+$this->source()->isShow();
+$this->source()->isStore();
+$this->source()->isUpdate();
+$this->source()->isForm();
+$this->source()->isServerSide();
+$this->source()->isClientSide();
+```
+
+> [!IMPORTANT]  
+> The property `$source` from the `Resource` class is deprecated and shouldn't be accessed. Always use the method `source()` instead.
+
 ### Funtions 
-#### index
+#### indexSource
 If you need to run some algorithm just when you visit the resource you can use `Index()`.
 ```php
     public function index()
