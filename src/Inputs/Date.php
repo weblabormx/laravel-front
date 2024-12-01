@@ -4,21 +4,21 @@ namespace WeblaborMx\Front\Inputs;
 
 class Date extends Input
 {
-	public function form()
-	{
-		return html()
-			->date($this->column, $this->default_value)
-			->attributes($this->attributes);
-	}
+    public function form()
+    {
+        return html()
+            ->date($this->column, $this->default_value)
+            ->attributes($this->attributes);
+    }
 
-	public function getValue($object)
-	{
-		$value = parent::getValue($object);
+    public function getValue($object)
+    {
+        $value = parent::getValue($object);
 
-		if (is_object($value)) {
-			return $value->format('Y-m-d');
-		}
+        if (is_object($value)) {
+            return $value->format('Y-m-d');
+        }
 
-		return $value;
-	}
+        return $value;
+    }
 }

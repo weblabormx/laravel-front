@@ -40,21 +40,21 @@ class CreateFilter extends Command
 
         // Create filter base
         $file_name = app_path('Front/Filters/Filter.php');
-        if(!FileModifier::file($file_name)->exists()) {
+        if (!FileModifier::file($file_name)->exists()) {
             copy($directory.'/base-filter.php', $file_name);
             $this->line('Base Filter class created: <info>✔</info>');
         }
 
         // Create search filter base
         $file_name = app_path('Front/Filters/SearchFilter.php');
-        if(!FileModifier::file($file_name)->exists()) {
+        if (!FileModifier::file($file_name)->exists()) {
             copy($directory.'/search-filter.php', $file_name);
             $this->line('Search Filter added on filters folder: <info>✔</info>');
         }
 
         // Create resource
         $file_name = app_path('Front/Filters/'.$name.'.php');
-        if(FileModifier::file($file_name)->exists()) {
+        if (FileModifier::file($file_name)->exists()) {
             $this->line('Filter already exists.');
             return;
         }

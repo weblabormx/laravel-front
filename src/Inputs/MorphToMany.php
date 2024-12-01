@@ -6,5 +6,5 @@ use Illuminate\Support\Str;
 
 class MorphToMany extends BelongsToMany
 {
-	// 
+    //
 }

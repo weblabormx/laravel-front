@@ -30,7 +30,7 @@ class FrontIndex
     {
         // Redirect if filters asks to do it
         $redirect_url = $this->front->redirects();
-        if(isset($redirect_url)) {
+        if (isset($redirect_url)) {
             return redirect($redirect_url);
         }
 
@@ -38,7 +38,7 @@ class FrontIndex
         $objects = $this->front->globalIndexQuery();
 
         // Detect if crud is just for 1 item and redirects
-        if(!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
+        if (!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
             $url = $this->base.'/'.$objects->getKey().'/edit';
             return redirect($url);
         }
@@ -61,26 +61,25 @@ class FrontIndex
     private function multipleRedirects($result)
     {
         // If doesnt have results and is redirect
-        if(request()->filled('is_redirect') && $result->count() == 0) 
-        {
+        if (request()->filled('is_redirect') && $result->count() == 0) {
             // Get url to send
             $redirect_url = $this->front->redirects(false);
 
             // If there isn't any redirect url don't do anything
-            if(!isset($redirect_url) || url()->full()==$redirect_url) {
+            if (!isset($redirect_url) || url()->full() == $redirect_url) {
                 return $result;
             }
 
             // Generate new url
             $current_query = request()->query();
             $new_query = explode('?', $redirect_url)[1];
-            $new_query = collect(explode('&', $new_query))->mapWithKeys(function($item) {
+            $new_query = collect(explode('&', $new_query))->mapWithKeys(function ($item) {
                 $item = explode('=', $item);
                 return [$item[0] => $item[1]];
             })->toArray();
 
             // Send to new url
-            if(isset($redirect_url) && $current_query!=$new_query) {
+            if (isset($redirect_url) && $current_query != $new_query) {
                 return redirect($redirect_url);
             }
         }
@@ -93,7 +92,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if($cache==false || !in_array('indexQuery', $this->front->cache)) {
+        if ($cache == false || !in_array('indexQuery', $this->front->cache)) {
             return $objects->paginate($this->front->pagination);
         }
 
@@ -108,7 +107,7 @@ class FrontIndex
 
     private function getPaginateCacheKey($objects)
     {
-        $request = collect(request()->all())->whereNotNull()->map(function($item, $key) {
+        $request = collect(request()->all())->whereNotNull()->map(function ($item, $key) {
             return $key.'-'.$item;
         })->implode(',');
         $key = 'front:'.$request.':';
@@ -123,7 +122,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if($cache==false || !in_array('indexResult', $this->front->cache)) {
+        if ($cache == false || !in_array('indexResult', $this->front->cache)) {
             return $this->front->indexResult($result);
         }
 

@@ -37,7 +37,7 @@ class FrontServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
         $this->registerRoutes();
         $this->registerBladeDirectives();
-        SerializableClosure::addSecurityProvider(new SecurityProvider);
+        SerializableClosure::addSecurityProvider(new SecurityProvider());
     }
 
     /**
@@ -73,16 +73,16 @@ class FrontServiceProvider extends ServiceProvider
             $singular = strtolower(Str::snake($model));
             $route = $route ?? $singular;
             Route::get($route, function () use ($model) {
-                return (new PageController)->page($model, 'get');
+                return (new PageController())->page($model, 'get');
             });
             Route::post($route, function () use ($model) {
-                return (new PageController)->page($model, 'post');
+                return (new PageController())->page($model, 'post');
             });
             Route::put($route, function () use ($model) {
-                return (new PageController)->page($model, 'put');
+                return (new PageController())->page($model, 'put');
             });
             Route::delete($route, function () use ($model) {
-                return (new PageController)->page($model, 'delete');
+                return (new PageController())->page($model, 'delete');
             });
         });
 

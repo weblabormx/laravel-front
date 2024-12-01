@@ -12,7 +12,7 @@ class Actions
     private $edit_link;
     private $show_link;
 
-	public function __construct($front, $object, $base_url, $edit_link = '{key}/edit', $show_link = '')
+    public function __construct($front, $object, $base_url, $edit_link = '{key}/edit', $show_link = '')
     {
         $this->front     = $front;
         $this->object    = $object;
@@ -20,12 +20,12 @@ class Actions
         $this->show_link = $show_link;
         $this->base_url  = $base_url;
         return $this;
-    
+
     }
 
     public function canShow()
     {
-        if(!$this->isEloquent()) {
+        if (!$this->isEloquent()) {
             return false;
         }
         return $this->front->canShow($this->object);
@@ -33,7 +33,7 @@ class Actions
 
     public function canUpdate()
     {
-        if(!$this->isEloquent()) {
+        if (!$this->isEloquent()) {
             return false;
         }
         return $this->front->canUpdate($this->object);
@@ -41,7 +41,7 @@ class Actions
 
     public function canRemove()
     {
-        if(!$this->isEloquent()) {
+        if (!$this->isEloquent()) {
             return false;
         }
         return $this->front->canRemove($this->object);
@@ -90,9 +90,9 @@ class Actions
 
     public function getActions($object)
     {
-        return $this->front->getActions()->where('show_on_index', 1)->filter(function($item) use ($object) {
+        return $this->front->getActions()->where('show_on_index', 1)->filter(function ($item) use ($object) {
             return $item->hasPermissions($object);
-        })->map(function($item) use ($object) {
+        })->map(function ($item) use ($object) {
             $item->url = $this->front->getBaseUrl()."/{$object->getKey()}/action/{$item->slug}";
             return $item;
         });

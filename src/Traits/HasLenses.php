@@ -8,7 +8,7 @@ trait HasLenses
 {
     private $normal_front;
 
-	public function lenses()
+    public function lenses()
     {
         return [];
     }
@@ -16,16 +16,16 @@ trait HasLenses
     public function getLense($slug)
     {
         // Can pass the class directly
-        if(Str::contains($slug, '\\')) {
-            $object = new $slug;
+        if (Str::contains($slug, '\\')) {
+            $object = new $slug();
             return $object->addData($this->data)->setModel($this->getModel())->setSource($this->source);
         }
         // Or the slug name
-    	return collect($this->lenses())->filter(function($item) use ($slug) {
-    		return $item->getLenseSlug() == $slug;
-    	})->map(function($item) {
-    		return $item->addData($this->data)->setModel($this->getModel())->setSource($this->source)->setNormalFront($this);
-    	})->first();
+        return collect($this->lenses())->filter(function ($item) use ($slug) {
+            return $item->getLenseSlug() == $slug;
+        })->map(function ($item) {
+            return $item->addData($this->data)->setModel($this->getModel())->setSource($this->source)->setNormalFront($this);
+        })->first();
     }
 
     public function setNormalFront($front)

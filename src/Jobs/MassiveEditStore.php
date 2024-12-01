@@ -33,7 +33,7 @@ class MassiveEditStore
     public function handle()
     {
         // Check if relationship exists
-        if(!isset($this->front->showRelations()[$this->key])) {
+        if (!isset($this->front->showRelations()[$this->key])) {
             abort(406, 'Key isnt correct');
         }
 
@@ -43,7 +43,7 @@ class MassiveEditStore
         $this->input_front = $input_front;
 
         // Get data that should be added to all data
-        $basic_data = collect($this->request->except(['_token', 'submitName', 'relation_front', 'relation_id', 'redirect_url', 'relation_url']))->filter(function($item) {
+        $basic_data = collect($this->request->except(['_token', 'submitName', 'relation_front', 'relation_id', 'redirect_url', 'relation_url']))->filter(function ($item) {
             return !is_array($item) && !is_null($item);
         });
 
@@ -51,7 +51,7 @@ class MassiveEditStore
         $data = $this->request->all();
 
         // Modify data if exists a massive class
-        if(is_object($input->massive_class)) {
+        if (is_object($input->massive_class)) {
             $data = $input->massive_class->processData($data);
         }
 
@@ -62,53 +62,53 @@ class MassiveEditStore
         $return = null;
 
         // If another button is pressed is because the presence of massive class
-        if(isset($this->request->submitName) && is_object($input->massive_class)) {
+        if (isset($this->request->submitName) && is_object($input->massive_class)) {
             $function = $this->request->submitName;
             $return = $input->massive_class->$function($this->object, $data);
         }
 
         // Show successfull message
-        if(is_null($return)) {
+        if (is_null($return)) {
             flash(__(':name updated successfully', ['name' => $this->front->plural_label]))->success();
         }
     }
 
-    private function saveData($data, $input, $object, $basic_data) 
+    private function saveData($data, $input, $object, $basic_data)
     {
-        $objects = collect($data)->filter(function($item) {
+        $objects = collect($data)->filter(function ($item) {
             // Just show arrays
             return is_array($item);
-        })->filter(function($item, $key) {
+        })->filter(function ($item, $key) {
             // Avoid adding data with only nulls
             $values = collect($item)->values()->whereNotNull();
 
             // Get required fields
-            $required_fields = collect($this->input_front->getRules('index'))->filter(function($item) {
+            $required_fields = collect($this->input_front->getRules('index'))->filter(function ($item) {
                 return in_array('required', $item);
             })->keys();
 
             // Check if required fields have a value
-            $required_fields_exist = $required_fields->mapWithKeys(function($column) use ($item) {
+            $required_fields_exist = $required_fields->mapWithKeys(function ($column) use ($item) {
                 return [$column => isset($item[$column])];
             });
 
             // Validation
             $required_values_result = $required_fields_exist->values()->unique();
-            $has_required_values = $required_fields->count()==0 || ($required_values_result->count() == 1 && $required_values_result->first()==true);
+            $has_required_values = $required_fields->count() == 0 || ($required_values_result->count() == 1 && $required_values_result->first() == true);
 
             // Show message error if is not a new field
-            if(!$has_required_values && !Str::contains($key, 'new')) {
-                $missing_columns = $required_fields_exist->filter(function($item) {
+            if (!$has_required_values && !Str::contains($key, 'new')) {
+                $missing_columns = $required_fields_exist->filter(function ($item) {
                     return !$item;
                 })->keys()->implode(', ');
                 flash()->warning('Row '.$key.' need the next required fields: '.$missing_columns.'. Update ignored.');
             }
-            return $values->count() > 1 && $has_required_values; 
-        })->map(function($data, $key) use ($input, $object, $basic_data) {
+            return $values->count() > 1 && $has_required_values;
+        })->map(function ($data, $key) use ($input, $object, $basic_data) {
             $data = $this->input_front->processData($data);
 
             // If there is a new column save it instead of updating
-            if(Str::contains($key, 'new')) {
+            if (Str::contains($key, 'new')) {
                 $data = $basic_data->merge($data)->toArray();
                 $model = $input->front->model;
                 $object = $model::create($data);
@@ -123,7 +123,7 @@ class MassiveEditStore
 
             // If results is not a query get it individually
             try {
-                $item = $results->find($key);    
+                $item = $results->find($key);
             } catch (\Exception $e) {
                 $model = $this->input_front->model;
                 $item = $model::find($key);

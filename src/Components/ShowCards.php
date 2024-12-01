@@ -6,16 +6,16 @@ use WeblaborMx\Front\Front;
 
 class ShowCards extends Component
 {
-	public $cards;
+    public $cards;
 
-	public function __construct($cards, $column = null, $extra = null, $source = null)
-	{
-		$this->cards = $cards;
-	}
+    public function __construct($cards, $column = null, $extra = null, $source = null)
+    {
+        $this->cards = $cards;
+    }
 
-	public function form()
-	{
-		$cards = $this->cards;
-		return view('front::components.cards', compact('cards'))->render();
-	}
+    public function form()
+    {
+        $cards = $this->cards;
+        return view('front::components.cards', compact('cards'))->render();
+    }
 }

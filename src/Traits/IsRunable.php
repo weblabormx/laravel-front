@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 trait IsRunable
 {
     use ValidateResponse;
-    
+
     public function run($object)
     {
         return $object->handle();
@@ -15,13 +15,13 @@ trait IsRunable
 
     public function isFrontable($result)
     {
-        if(!is_array($result)) {
+        if (!is_array($result)) {
             return false;
         }
-        $result = collect($result)->map(function($item) {
+        $result = collect($result)->map(function ($item) {
             return get_class($item);
         });
-        return $result->contains(function($item) {
+        return $result->contains(function ($item) {
             return Str::contains($item, 'WeblaborMx\Front');
         });
     }
@@ -29,12 +29,12 @@ trait IsRunable
     public function makeFrontable($result, $setters, $front)
     {
         $page_class = 'WeblaborMx\Front\Pages\Page';
-        if(class_exists('App\Front\Pages\Page')) {
+        if (class_exists('App\Front\Pages\Page')) {
             $page_class = 'App\Front\Pages\Page';
         }
 
         // Get page
-        $page = (new $page_class)->setSource('index')->setFields($result);
+        $page = (new $page_class())->setSource('index')->setFields($result);
         foreach ($setters as $key => $value) {
             $page->$key = $value.' - '.__('Result');
         }
@@ -53,7 +53,7 @@ trait IsRunable
     {
         $model = $this->front->getModel();
         $object = $model::find($object);
-        if(!is_object($object)) {
+        if (!is_object($object)) {
             abort(404);
         }
         return $object;
@@ -63,7 +63,7 @@ trait IsRunable
     {
         $parameters = request()->route()->parameters();
         $return = collect($parameters)->merge($array)->all();
-        if($object) {
+        if ($object) {
             return (object) $return;
         }
         return $return;

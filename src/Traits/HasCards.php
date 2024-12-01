@@ -4,7 +4,7 @@ namespace WeblaborMx\Front\Traits;
 
 trait HasCards
 {
-	public function cards()
+    public function cards()
     {
         return [];
     }

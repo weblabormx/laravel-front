@@ -7,17 +7,17 @@ use WeblaborMx\Front\Traits\WithWidth;
 
 class Component extends Input
 {
-	use WithWidth;
+    use WithWidth;
 
-	public $is_input = false;
+    public $is_input = false;
 
-	public function formHtml()
-	{
-		return $this->form();
-	}
+    public function formHtml()
+    {
+        return $this->form();
+    }
 
-	public function showHtml($object)
-	{
-		return $this->form();
-	}
+    public function showHtml($object)
+    {
+        return $this->form();
+    }
 }
