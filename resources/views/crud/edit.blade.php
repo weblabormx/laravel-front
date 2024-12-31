@@ -8,7 +8,8 @@
     <h4 class="font-weight-bold py-3 mb-4">{{ __('Edit') }} {{$front->getTitle($object)}}</h4>
 
     {!! Form::model($object, array('method' => 'put', 'url' => $front->getBaseUrl().'/'.$object->getKey(), 'files' => true)) !!}
-    
+
+        {!! Form::hidden('redirect_url') !!}
         @foreach($front->editPanels() as $panel)
             {!! $panel->formHtml() !!}
         @endforeach
