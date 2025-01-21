@@ -2,6 +2,7 @@
 
 namespace WeblaborMx\Front\Actions;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\Panel;
 use WeblaborMx\Front\Traits\HasInputs;
@@ -32,7 +33,21 @@ class IndexAction
             $this->save_button = __('Save changes');
         }
         $this->title = __($this->title);
-        $this->button_text = "<i class='{$this->icon} pr-2'></i> $this->title";
+        $this->button_text = $this->getIconHtml()." $this->title";
+    }
+
+    private function getIconHtml()
+    {
+        if(Str::contains($this->icon, '<')) {
+            return $this->icon;
+        } else if (Str::contains($this->icon, 'fa')) {
+            return "<i class='{$this->icon}'></i>";
+        }
+        $data = [
+            'name' => $this->icon, // Reemplaza con el nombre del icono
+            'class' => 'w-6 h-6 pr-2',
+        ];
+        return Blade::render('<x-icon :name="$name" :class="$class" />', $data);
     }
 
     public function load()
@@ -107,7 +122,7 @@ class IndexAction
         }
         $this->title = $title;
         $this->title = __($this->title);
-        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
+        $this->button_text = $this->getIconHtml()." $this->title";
         return $this;
     }
 
@@ -126,7 +141,7 @@ class IndexAction
             return $this;
         }
         $this->icon = $icon;
-        $this->button_text = "<i class='{$this->icon}'></i> $this->title";
+        $this->button_text = $this->getIconHtml()." $this->title";
         return $this;
     }
 

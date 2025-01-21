@@ -2,6 +2,7 @@
 
 namespace WeblaborMx\Front\Texts;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 
 class Button extends Text
@@ -56,8 +57,14 @@ class Button extends Text
 
 	public function setIcon($icon)
 	{
-		if (!Str::contains($icon, '<')) {
+		if (!Str::contains($icon, '<') && Str::contains($icon, 'fa')) {
 			$icon = "<i class='$icon'></i>";
+		} else if (!Str::contains($icon, '<')) {
+			$data = [
+				'name' => $icon, // Reemplaza con el nombre del icono
+				'class' => 'w-6 h-6',
+			];
+			$icon = Blade::render('<x-icon :name="$name" :class="$class" />', $data);
 		}
 		$this->icon = $icon;
 		$this->generateText();
