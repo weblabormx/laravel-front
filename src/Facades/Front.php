@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static class-string<\WeblaborMx\Front\Resource> registerResource(string $resource)
  * @method static class-string<\WeblaborMx\Front\Resource> resolveResource(string $resource)
  * @method static class-string<\WeblaborMx\Front\Pages\Page> resolvePage(string $page)
+ * @method static \WeblaborMx\Front\ButtonManager buttons()
+ * @method static \WeblaborMx\Front\ThumbManager thumbs()
+ * @method static string baseNamespace()
  *
  * @see \WeblaborMx\Front\Front
  */

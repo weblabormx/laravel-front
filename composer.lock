@@ -5181,7 +5181,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "WeblaborMX\\FileModifier\\": "src/"
+                    "WeblaborMx\\FileModifier\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",

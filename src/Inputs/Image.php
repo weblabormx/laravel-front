@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image as Intervention;
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 
 class Image extends Input
 {
@@ -52,7 +53,7 @@ class Image extends Input
             return;
         }
         $original = $value;
-        $thumb = getThumb($value, $this->view_size);
+        $thumb = Front::thumbs()->get($value, $this->view_size);
         return view('front::inputs.image', compact('original', 'thumb'));
     }
 
@@ -223,7 +224,7 @@ class Image extends Input
         $file_names = array();
         $file_names[] = $original_file_name;
         foreach ($this->thumbnails as $thumbnail) {
-            $file_names[] = getThumb($original_file_name, $thumbnail['prefix']);
+            $file_names[] = Front::thumbs()->get($original_file_name, $thumbnail['prefix']);
         }
 
         // Remove the files
@@ -249,7 +250,7 @@ class Image extends Input
         }
 
         // Save the image
-        $new_name = getThumb($file_name, $prefix, true);
+        $new_name = Front::thumbs()->get($file_name, $prefix, true);
         $file_name = $this->directory . '/' . $new_name;
         $storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
         if ($storage_file == false) {

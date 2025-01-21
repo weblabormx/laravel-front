@@ -3,12 +3,37 @@
 namespace WeblaborMx\Front;
 
 use Illuminate\Database\Eloquent\Model;
+use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Pages\Page;
+use WeblaborMx\Front\ThumbManager;
 
 final class Front
 {
     /** @var array<class-string<Resource>,class-string<Resource>> */
     private array $cachedResourceClasses = [];
+
+    /* --------------------
+     * Helpers
+     ---------------------- */
+
+    public function baseNamespace(): string
+    {
+        return trim(config('front.resources_folder'), '\\') . '\\';
+    }
+
+    public function thumbs(): ThumbManager
+    {
+        return app(ThumbManager::class);
+    }
+
+    public function buttons(): ButtonManager
+    {
+        return app(ButtonManager::class);
+    }
+
+    /* --------------------
+     * Route registrar
+     ---------------------- */
 
     /** @var array<class-string<Resource>,class-string<Resource>> */
     public function getRegisteredResources(): array
@@ -48,7 +73,10 @@ final class Front
             }
         }
 
-        $basename = '\\' . \class_basename($resource);
+        $namespace = $this->baseNamespace();
+        $basename = str($resource)
+            ->after($namespace)
+            ->toString();
 
         $found = \array_values(\array_filter(
             $this->cachedResourceClasses,
@@ -56,7 +84,7 @@ final class Front
         ));
 
         if (empty($found)) {
-            return config('front.resources_folder') . $basename;
+            return $namespace . $basename;
         }
 
         if (\count($found) > 1) {

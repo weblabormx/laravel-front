@@ -15,7 +15,7 @@
 
     <div class="text-right mt-3">
         @if ($front->canRemove($object))
-            {!! getButtonByName('delete', $front, $object)->form() !!}
+            {!! \Front::buttons()->getByName('delete', $front, $object)->form() !!}
         @endif
         <button type="submit" class="btn btn-primary"><i class="fa fa-save pr-2"></i> {{ __('Save Changes') }}</button>
     </div>

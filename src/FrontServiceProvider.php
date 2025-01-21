@@ -14,7 +14,9 @@ use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Console\Commands\CreateFilter;
 use WeblaborMx\Front\Http\Controllers\FrontController;
 use Illuminate\Http\Request;
+use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\ThumbManager;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -68,6 +70,8 @@ class FrontServiceProvider extends ServiceProvider
      */
     protected function registerFront()
     {
+        $this->app->singleton(ButtonManager::class);
+        $this->app->singleton(ThumbManager::class);
         $this->app->singleton('Front', Front::class);
         $loader = AliasLoader::getInstance();
 

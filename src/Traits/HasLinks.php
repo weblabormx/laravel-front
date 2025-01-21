@@ -2,6 +2,7 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Texts\Button;
 
 trait HasLinks
@@ -31,7 +32,7 @@ trait HasLinks
             return $item->hasPermissions($object);
         });
         foreach ($actions as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/{$object->getKey()}/action/{$action->slug}");
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
@@ -41,14 +42,14 @@ trait HasLinks
 
         // Add delete button
         if ($this->canRemove($object)) {
-            $links[] = getButtonByName('delete', $this, $object);
+            $links[] = Front::buttons()->getByName('delete', $this, $object);
         }
 
         // Add update button
         if ($this->canUpdate($object)) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
             $url = "{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}";
-            $links[] = getButtonByName('edit')->addLink($url);
+            $links[] = Front::buttons()->getByName('edit')->addLink($url);
         }
 
         return $links;
@@ -62,8 +63,8 @@ trait HasLinks
         foreach ($this->getIndexActions() as $action) {
             $query = request()->fullUrl();
             $query = explode('?', $query)[1] ?? '';
-            $query = strlen($query) > 0 ? '?'.$query : '';
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl()."/action/{$action->slug}{$query}");
+            $query = strlen($query) > 0 ? '?' . $query : '';
+            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
         }
 
         // Show links added manually
@@ -74,15 +75,15 @@ trait HasLinks
         // Show massive edition
         if ($this->enable_massive_edition) {
             $query = str_replace(url()->current(), '', url()->full());
-            $url = $this->getBaseUrl()."/massive_edit".$query;
-            $links[] = getButtonByName('edit')->addLink($url);
+            $url = $this->getBaseUrl() . "/massive_edit" . $query;
+            $links[] = Front::buttons()->getByName('edit')->addLink($url);
         }
 
         // Show create button
         if ($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;
             $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
-            $links[] = getButtonByName('create')->setTitle(__('Create') .' '.$this->label)->addLink($url);
+            $links[] = Front::buttons()->getByName('create')->setTitle(__('Create') . ' ' . $this->label)->addLink($url);
         }
         return $links;
     }
@@ -93,14 +94,14 @@ trait HasLinks
 
         // Show links to lenses
         if ($this->is_a_lense && isset($this->normal_front)) {
-            $icon = isset($this->normal_front->icon) ? '<i class="'.$this->normal_front->icon.'"></i> ' : '';
+            $icon = isset($this->normal_front->icon) ? '<i class="' . $this->normal_front->icon . '"></i> ' : '';
             $title = $this->normal_front->lense_title ?? __('Normal View');
-            $text = $icon.$title;
+            $text = $icon . $title;
             $links[] = Button::make($text)->addLink($this->getBaseUrl());
         } else {
-            $icon = isset($this->icon) ? '<i class="'.$this->icon.'"></i> ' : '';
+            $icon = isset($this->icon) ? '<i class="' . $this->icon . '"></i> ' : '';
             $title = $this->lense_title ?? __('Normal View');
-            $text = $icon.$title;
+            $text = $icon . $title;
             $links[] = Button::make($text)->addLink($this->getBaseUrl())->setClass('active');
         }
         foreach ($this->lenses() as $lense) {
@@ -108,10 +109,10 @@ trait HasLinks
             if ($this->is_a_lense && $lense->getLenseSlug() == $this->getLenseSlug()) {
                 $class = 'active';
             }
-            $icon = isset($lense->icon) ? '<i class="'.$lense->icon.'"></i> ' : '';
+            $icon = isset($lense->icon) ? '<i class="' . $lense->icon . '"></i> ' : '';
             $title = $lense->lense_title;
-            $text = $icon.$title;
-            $links[] = Button::make($text)->addLink($this->getBaseUrl()."/lenses/{$lense->getLenseSlug()}")->setClass($class);
+            $text = $icon . $title;
+            $links[] = Button::make($text)->addLink($this->getBaseUrl() . "/lenses/{$lense->getLenseSlug()}")->setClass($class);
         }
 
         return $links;
