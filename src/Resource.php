@@ -95,9 +95,19 @@ abstract class Resource
         $this->load();
     }
 
-    /*
-     * Functions that can be modified
+    /* ==============
+     * Hooks
+     ================*/
+
+    /**
+     * Ran after authorization, but before
+     * running any action for the resource.
+     * @return mixed Return Response to hijack the request.
      */
+    public function beforeRequest()
+    {
+        //
+    }
 
     // Functions to modify the attribute on traits
 
