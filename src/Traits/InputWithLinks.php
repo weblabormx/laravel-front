@@ -2,7 +2,6 @@
 
 namespace WeblaborMx\Front\Traits;
 
-use WeblaborMx\Front\Front;
 use WeblaborMx\Front\Texts\Button;
 use Illuminate\Support\Str;
 
@@ -51,16 +50,16 @@ trait InputWithLinks
         if (isset($this->massive_edit_link) && $this->show_massive && $can_edit) {
             $extra_query = http_build_query(request()->all());
             if (strlen($extra_query) > 0) {
-                $extra_query = '&'.$extra_query;
+                $extra_query = '&' . $extra_query;
             }
             $url = "{$front->getBaseUrl()}/{$object->getKey()}/massive_edit/{$key}{$this->massive_edit_link}{$extra_query}";
-            $links[] = getButtonByName('edit')->addLink($url)->setTitle(__('Edit')." {$this->front->plural_label}");
+            $links[] = getButtonByName('edit')->addLink($url)->setTitle(__('Edit') . " {$this->front->plural_label}");
         }
 
         // Add create link
         if (isset($this->create_link) && strlen($this->create_link) > 0 && $this->front->canCreate() && $can_edit) {
             $title = Str::singular($this->title) ?? $this->front->label;
-            $title = $this->create_button_title ?? __('Add')." {$title}";
+            $title = $this->create_button_title ?? __('Add') . " {$title}";
             $links[] = getButtonByName('create')->addLink($this->create_link)->setTitle($title);
         }
 

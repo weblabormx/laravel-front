@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\InputRelationship;
 
 class BelongsToMany extends Input
@@ -28,7 +29,7 @@ class BelongsToMany extends Input
             $this->model_name = $title;
         }
 
-        $this->relation_front = getFront($this->model_name, $this->source);
+        $this->relation_front = Front::makeResource($this->model_name, $this->source);
         if (!$this->relation_front->canIndex()) {
             $this->show = false;
         }
@@ -40,7 +41,7 @@ class BelongsToMany extends Input
     public function setResource($resource)
     {
         $relation = $this->relation;
-        $this->column = $relation.'_mtm';
+        $this->column = $relation . '_mtm';
         if (is_object($resource->object)) {
             $this->default_value = $resource->object->{$this->relation}->pluck('id');
             $this->default_value_force = true;
@@ -64,9 +65,9 @@ class BelongsToMany extends Input
         }
 
         $value = $value->map(function ($item) {
-            return "<li>".$item."</li>";
+            return "<li>" . $item . "</li>";
         });
-        return '<ul>'.$value->implode('').'</ul>';
+        return '<ul>' . $value->implode('') . '</ul>';
     }
 
     public function form()
@@ -117,7 +118,6 @@ class BelongsToMany extends Input
     {
         $values = $request->{$this->column};
         $object->{$this->relation}()->sync($values);
-
     }
 
     public function setSearchField($field)

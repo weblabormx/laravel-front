@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Components;
 
-use WeblaborMx\Front\Front;
+use WeblaborMx\Front\Facades\Front;
 
 class FrontCreate extends Component
 {
@@ -14,7 +14,7 @@ class FrontCreate extends Component
     public function __construct($front_class, $column = null, $extra = null, $source = null)
     {
         $this->source = $source;
-        $this->front_class = getFront($front_class, $this->source);
+        $this->front_class = Front::makeResource($front_class, $this->source);
         $this->show_before = $this->front_class->canCreate();
     }
 

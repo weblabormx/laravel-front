@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use WeblaborMx\Front\Facades\Front;
+
 trait HasBreadcrumbs
 {
     public function breadcrumbs()
@@ -23,7 +25,7 @@ trait HasBreadcrumbs
         $breadcrumbs = collect($breadcrumbs)->map(function ($item) {
             $item['html'] = '';
             if (isset($item['url'])) {
-                $item['html'] .= '<a href="'.$item['url'].'">';
+                $item['html'] .= '<a href="' . $item['url'] . '">';
             }
             $item['html'] .= $item['title'];
             if (isset($item['url'])) {
@@ -74,7 +76,7 @@ trait HasBreadcrumbs
                 $title = $front->title;
                 $breadcrumbs[] = ['title' => $object->$title, 'url' => $front->getShowUrl($object)];
             }
-            $breadcrumbs[] = ['title' => __('Edit').' '.$data['massive']->title, 'active' => true];
+            $breadcrumbs[] = ['title' => __('Edit') . ' ' . $data['massive']->title, 'active' => true];
             return $breadcrumbs;
         }
 
@@ -111,7 +113,7 @@ trait HasBreadcrumbs
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
             $title = $front->title;
             $breadcrumbs[] = ['title' => $relation['object']->$title, 'url' => $front->getShowUrl()];
-            $breadcrumbs[] = ['title' => __('Add new').' '.$this->label, 'active' => true];
+            $breadcrumbs[] = ['title' => __('Add new') . ' ' . $this->label, 'active' => true];
         }
 
         // Edit normal
@@ -133,7 +135,7 @@ trait HasBreadcrumbs
             $title = $this->title;
             $breadcrumbs[] = ['title' => strip_tags($object->$title), 'url' => $this->getShowUrl()];
             $title = $front->title;
-            $breadcrumbs[] = ['title' => __('Edit').' '.$this->$title, 'active' => true];
+            $breadcrumbs[] = ['title' => __('Edit') . ' ' . $this->$title, 'active' => true];
         }
         return $breadcrumbs;
     }
@@ -146,7 +148,7 @@ trait HasBreadcrumbs
         if (request()->filled('relation_front')) {
             $front = request()->relation_front;
             $front = str_replace('.', '\\', $front);
-            $front = getFront($front, $this->source);
+            $front = Front::makeResource($front, $this->source);
             $object = $front->getModel();
             $object = $object::find(request()->relation_id);
         }
@@ -163,6 +165,6 @@ trait HasBreadcrumbs
         if (is_null($object)) {
             $object = $this->object;
         }
-        return $this->canShow() ? $this->getBaseUrl().'/'.$object->getKey() : '#';
+        return $this->canShow() ? $this->getBaseUrl() . '/' . $object->getKey() : '#';
     }
 }

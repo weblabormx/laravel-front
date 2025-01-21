@@ -3,7 +3,6 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Contracts\Support\Htmlable;
-use WeblaborMx\Front\Front;
 use WeblaborMx\Front\Traits\InputVisibility;
 use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputRules;

@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Components;
 
-use WeblaborMx\Front\Front;
-
 class View extends Component
 {
     private $with = [];

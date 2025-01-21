@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\IsRunable;
 use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontShow;
@@ -33,8 +33,8 @@ class FrontController extends Controller
     public function __call($method, $arguments)
     {
         if (method_exists($this, $method)) {
-            $this->front = getFront($this->model);
-            return call_user_func_array(array($this,$method), $arguments);
+            $this->front = Front::makeResource($this->model);
+            return call_user_func_array(array($this, $method), $arguments);
         }
     }
 

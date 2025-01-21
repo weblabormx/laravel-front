@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Workers;
 
-use WeblaborMx\Front\Front;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Jobs\FrontStore as Job;
 use WeblaborMx\Front\Traits\IsRunable;
 

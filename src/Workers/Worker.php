@@ -2,8 +2,9 @@
 
 namespace WeblaborMx\Front\Workers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use WeblaborMx\Front\Facades\Front;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Worker
 {
@@ -15,7 +16,7 @@ class Worker
     public function __construct($front, $column = null, $extra = null, $source = null)
     {
         $this->source = $source;
-        $this->front = getFront($front, $this->source);
+        $this->front = Front::makeResource($front, $this->source);
     }
 
     public static function make($title = null, $column = null, $extra = null)

@@ -3,8 +3,9 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Str;
-use WeblaborMx\Front\Traits\InputWithActions;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\InputWithLinks;
+use WeblaborMx\Front\Traits\InputWithActions;
 use WeblaborMx\Front\Traits\InputRelationship;
 
 class HasMany extends Input
@@ -25,7 +26,7 @@ class HasMany extends Input
 
     public function __construct($front, $title = null, $column = null, $source = null)
     {
-        $this->front = getFront($front, $source);
+        $this->front = Front::makeResource($front, $source);
         $this->column = $column;
         $this->source = $source;
         if (!is_null($title)) {
@@ -80,8 +81,7 @@ class HasMany extends Input
         // The same for edit
         if (!isset($this->edit_link_accessed)) {
             $this->setEditLink(function ($link) use ($resource, $relation_front) {
-                return $link . '?relation_front=' . $relation_front . '&relation_id=' . $resource->object->getKey();
-                ;
+                return $link . '?relation_front=' . $relation_front . '&relation_id=' . $resource->object->getKey();;
             });
         }
 

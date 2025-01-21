@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Components;
 
-use WeblaborMx\Front\Front;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\InputWithActions;
 use WeblaborMx\Front\Traits\InputWithLinks;
 
@@ -66,7 +66,7 @@ class Panel extends Component
             if (is_null($where)) {
                 return true;
             }
-            $field = 'show_on_'.$where;
+            $field = 'show_on_' . $where;
             if (!isset($item->$field)) {
                 return true;
             }

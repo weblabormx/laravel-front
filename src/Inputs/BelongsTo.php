@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 use Opis\Closure\SerializableClosure;
 use WeblaborMx\Front\Traits\InputRelationship;
 
@@ -32,7 +33,7 @@ class BelongsTo extends Input
         }
 
         $this->model_name = $this->extra;
-        $this->relation_front = getFront($this->model_name, $this->source);
+        $this->relation_front = Front::makeResource($this->model_name, $this->source);
         $this->title = $this->relation_front->label;
 
         $this->load();

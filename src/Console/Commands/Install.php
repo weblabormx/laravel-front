@@ -31,11 +31,11 @@ class Install extends Command
     {
         // Publish configuration
         \Artisan::call('vendor:publish', [
-            '--provider' => "WeblaborMx\Front\FrontServiceProvider",
+            '--provider' => "WeblaborMx\Front\Facades\FrontServiceProvider",
         ]);
         $this->line('Configuration files published: <info>✔</info>');
 
-        $directory = WLFRONT_PATH.'/install-stubs';
+        $directory = WLFRONT_PATH . '/install-stubs';
 
         // Create Front Folder on views if doesnt exist
         if (! is_dir(resource_path('views/front'))) {
@@ -57,14 +57,14 @@ class Install extends Command
         // Create filter base
         $file_name = app_path('Front/Filters/Filter.php');
         if (!FileModifier::file($file_name)->exists()) {
-            copy($directory.'/base-filter.php', $file_name);
+            copy($directory . '/base-filter.php', $file_name);
             $this->line('Base Filter class created: <info>✔</info>');
         }
 
         // Create search filter base
         $file_name = app_path('Front/Filters/SearchFilter.php');
         if (!FileModifier::file($file_name)->exists()) {
-            copy($directory.'/search-filter.php', $file_name);
+            copy($directory . '/search-filter.php', $file_name);
             $this->line('Search Filter added on filters folder: <info>✔</info>');
         }
 
@@ -73,7 +73,7 @@ class Install extends Command
         if (FileModifier::file($file_name)->exists()) {
             $this->line('Sidebar already exists.');
         } else {
-            copy($directory.'/sidebar.blade.php', $file_name);
+            copy($directory . '/sidebar.blade.php', $file_name);
             $this->line('Sidebar added: <info>✔</info>');
         }
 

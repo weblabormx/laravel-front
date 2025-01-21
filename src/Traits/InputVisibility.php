@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Traits;
 
-use WeblaborMx\Front\Front;
-
 trait InputVisibility
 {
     public $show = true;
@@ -110,7 +108,7 @@ trait InputVisibility
         $var = $this->source ?? 'index';
         $var = $var == 'update' ? 'edit' : $var;
         $var = $var == 'store' ? 'create' : $var;
-        $var = 'show_on_'.$var;
+        $var = 'show_on_' . $var;
         return $this->$var && $this->shouldBeShown();
     }
 }

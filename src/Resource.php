@@ -2,6 +2,7 @@
 
 namespace WeblaborMx\Front;
 
+use Exception;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\HasInputs;
 use WeblaborMx\Front\Traits\HasActions;
@@ -333,7 +334,7 @@ abstract class Resource
         // Generate the url to be redirected
         $filters['is_redirect'] = true;
         $url = request()->url();
-        $url .= '?'.http_build_query($filters->toArray());
+        $url .= '?' . http_build_query($filters->toArray());
         return $url;
     }
 
@@ -380,17 +381,17 @@ abstract class Resource
     public function getModel()
     {
         $model = $this->model ?? null;
+
         if (isset($model)) {
             return $model;
         }
+
         if (isset($this->object) && is_object($this->object)) {
             return get_class($this->object);
         }
-        $return = 'App\\'.class_basename(get_class($this));
-        if (class_exists($return)) {
-            return $return;
-        }
-        return class_basename(get_class($this));
+
+        $class = $this::class;
+        throw new Exception("Front '{$class}' resource model couldn't be found");
     }
 
     public function addData($data)
@@ -430,9 +431,9 @@ abstract class Resource
             // If there isnt any field selected
             $column = $result_explode[1] ?? null;
             if (!isset($result_explode[1]) || !isset($value->$column)) {
-                $base_url = str_replace('{'.$result.'}', $value, $base_url);
+                $base_url = str_replace('{' . $result . '}', $value, $base_url);
             } else {
-                $base_url = str_replace('{'.$result.'}', $value->$column, $base_url);
+                $base_url = str_replace('{' . $result . '}', $value->$column, $base_url);
             }
         }
         return $base_url;
@@ -517,5 +518,4 @@ abstract class Resource
             return $this->object->$name;
         }
     }
-
 }

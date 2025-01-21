@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Traits;
 
-use WeblaborMx\Front\Front;
-
 trait InputWithActions
 {
     public $actions = [];

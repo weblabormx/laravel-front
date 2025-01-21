@@ -36,7 +36,7 @@ trait IsRunable
         // Get page
         $page = (new $page_class())->setSource('index')->setFields($result);
         foreach ($setters as $key => $value) {
-            $page->$key = $value.' - '.__('Result');
+            $page->$key = $value . ' - ' . __('Result');
         }
 
         // Get variables to pass
@@ -71,6 +71,6 @@ trait IsRunable
 
     public function getParameter($name = 'object')
     {
-        return request()->route()->parameters()['front_'.$name];
+        return request()->route()->parameters()['front_' . $name];
     }
 }

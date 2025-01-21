@@ -2,7 +2,6 @@
 
 namespace WeblaborMx\Front\Filters;
 
-use App\Front\Resource;
 use Illuminate\Support\Str;
 
 class Filter

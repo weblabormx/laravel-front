@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Str;
-use Opis\Closure\SerializableClosure;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\InputRelationship;
 
 class HasOneThrough extends Input
@@ -22,7 +22,7 @@ class HasOneThrough extends Input
     public function __construct($title, $column = null, $extra = null, $source = null)
     {
         $this->relation = Str::snake($column);
-        $this->column = 'has_one_trough:'.$title;
+        $this->column = 'has_one_trough:' . $title;
         $this->extra = $extra;
         $this->source = $source;
 
@@ -33,7 +33,7 @@ class HasOneThrough extends Input
         }
 
         $this->model_name = $this->extra;
-        $this->relation_front = getFront($this->model_name, $this->source);
+        $this->relation_front = Front::makeResource($this->model_name, $this->source);
         $class = $this->relation_front->getModel();
         $this->title = $this->relation_front->label;
 
@@ -53,7 +53,7 @@ class HasOneThrough extends Input
             $relation_function = $model->$relation();
             $this->relation_function = $relation_function;
         } else {
-            abort(506, 'The relation '.$relation.' does not exists in '.$class);
+            abort(506, 'The relation ' . $relation . ' does not exists in ' . $class);
         }
         return parent::setResource($resource);
     }
@@ -68,7 +68,7 @@ class HasOneThrough extends Input
         $title_field = $this->search_field ?? $this->relation_front->search_title;
         $value = $object->$relation->$title_field;
         if (!isset($this->link)) {
-            $this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();
+            $this->link = $this->relation_front->getBaseUrl() . '/' . $object->$relation->getKey();
         }
         if (!isset($value)) {
             return '--';

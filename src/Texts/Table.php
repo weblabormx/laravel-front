@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Texts;
 
-use WeblaborMx\Front\Front;
-
 class Table extends Text
 {
     public function load()
