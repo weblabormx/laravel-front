@@ -41,7 +41,7 @@ class IndexAction
         if(Str::contains($this->icon, '<')) {
             return $this->icon;
         } else if (Str::contains($this->icon, 'fa')) {
-            return "<i class='{$this->icon}'></i>";
+            return "<i class='{$this->icon} pr-2'></i>";
         }
         $data = [
             'name' => $this->icon, // Reemplaza con el nombre del icono
