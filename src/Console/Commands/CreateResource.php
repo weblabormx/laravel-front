@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Console\Commands;
 
 use Illuminate\Console\Command;
-use WeblaborMx\FileModifier\FileModifier;
+use WeblaborMX\FileModifier\FileModifier;
 
 class CreateResource extends Command
 {

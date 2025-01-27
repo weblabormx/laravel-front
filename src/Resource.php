@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front;
 
 use Exception;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\HasInputs;
 use WeblaborMx\Front\Traits\HasActions;
@@ -17,6 +18,7 @@ use WeblaborMx\Front\Traits\IsValidated;
 use WeblaborMx\Front\Traits\HasPermissions;
 use WeblaborMx\Front\Traits\HasMassiveEditions;
 use Illuminate\Support\Arr;
+use WeblaborMx\Front\Facades\Front;
 
 abstract class Resource
 {
@@ -93,6 +95,11 @@ abstract class Resource
             $this->pagination = $this->pagination();
         }
         $this->load();
+    }
+
+    public function route(string $source = null): ?Route
+    {
+        return Front::routeOf($this, $source);
     }
 
     /* ==============

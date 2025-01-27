@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\Route;
 use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Pages\Page;
 use WeblaborMx\Front\ThumbManager;
@@ -11,6 +12,9 @@ final class Front
 {
     /** @var array<class-string<Resource>,class-string<Resource>> */
     private array $cachedResourceClasses = [];
+
+    /** @var array<class-string<Resource|Page>,Route> */
+    private array $cachedRoutes = [];
 
     /* --------------------
      * Helpers
@@ -46,6 +50,42 @@ final class Front
         $class = $this->resolveResource($resource);
 
         return new $class($source);
+    }
+
+    public function registerRoute(string|Resource|Page $frontItem, Route $route, string $action): Route
+    {
+        $key = is_object($frontItem) ? $frontItem::class : $frontItem;
+
+        if (!isset($this->cachedRoutes[$key])) {
+            $this->cachedRoutes[$key] = [];
+        }
+
+        $this->cachedRoutes[$key][$action] = $route;
+
+        return $route;
+    }
+
+    public function routeOf(string|Resource|Page $frontItem, ?string $action = null): ?Route
+    {
+        if (is_object($frontItem)) {
+            $key = $frontItem::class;
+            $action = $action ?? $frontItem->source;
+        } else {
+            $key = $frontItem;
+            $action = $action ?? 'index';
+        }
+
+        if (!isset($this->cachedRoutes[$key])) {
+            return null;
+        }
+
+        return $this->cachedRoutes[$key][$action] ?? null;
+    }
+
+    /** @return array<class-string<\WeblaborMx\Front\Resource|\WeblaborMx\Front\Pages\Page>, \Illuminate\Routing\Route> */
+    public function getRegisteredRoutes(): array
+    {
+        return $this->cachedRoutes;
     }
 
     /** @return class-string<Resource> */
