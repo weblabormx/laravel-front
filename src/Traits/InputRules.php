@@ -28,20 +28,42 @@ trait InputRules
 
     public function getRules($source = 'store')
     {
-        $rules = $this->rules ?? [];
-        $rules = is_string($rules) ? [$rules] : $rules;
+        $rules = $this->rulesAsArray();
+
         if ($source == 'update' && isset($this->update_rules)) {
             $extra_rules = $this->update_rules;
         } elseif ($source == 'store' && isset($this->creation_rules)) {
             $extra_rules = $this->creation_rules;
         }
+
         if (isset($extra_rules)) {
             $extra_rules = is_string($extra_rules) ? [$extra_rules] : $extra_rules;
-            $rules = collect($rules)->merge($extra_rules)->toArray();
+            $rules = array_merge($rules, $extra_rules);
         }
+
         if (!$this->validateConditional(request())) {
             return [];
         }
+
+        return $rules;
+    }
+
+    /* ----------
+     * Helpers
+     ------------ */
+
+    public function required()
+    {
+        $this->rules = $this->rulesAsArray();
+        $this->rules[] = 'required';
+        return $this;
+    }
+
+    /** @internal */
+    private function rulesAsArray(): array
+    {
+        $rules = $this->rules ?? [];
+        $rules = is_string($rules) ? [$rules] : $rules;
         return $rules;
     }
 }
