@@ -39,6 +39,13 @@ function getFront($model, $source = null)
     return new $model($source);
 }
 
+function getFrontByModel($object)
+{
+    $class = $object->getMorphClass();
+    $class = str_replace('App\\Models\\', '', $class);
+    return getFront($class)->setObject($object);
+}
+
 function getButtonByName($name, $front = null, $object = null)
 {
     $config = config('front.buttons.' . $name);

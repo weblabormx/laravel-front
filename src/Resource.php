@@ -466,6 +466,12 @@ abstract class Resource
         return $this;
     }
 
+    public function getTitle()
+    {
+        $field = $this->title;
+        return $this->object?->$field;
+    }
+
     /*
      * Private functions
      */
