@@ -7,7 +7,7 @@ use WeblaborMx\Front\Texts\Button;
 
 class ButtonManager
 {
-    public function getByName(string $name, Resource $front = null, mixed $object = null): Button
+    public function getByName(string $name, ?Resource $front = null, mixed $object = null): Button
     {
         $config = config('front.buttons.' . $name);
         $extra = '';
