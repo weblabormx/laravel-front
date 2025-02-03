@@ -48,6 +48,10 @@ class HasMany extends Input
 
 	public function setResource($resource)
 	{
+		if(!method_exists($resource, $this->relationship)) {
+			$this->relationship = Str::snake($this->relationship);
+		}
+
 		// Get column name
 		if (is_null($this->column)) {
 			$relation = $this->relationship;
