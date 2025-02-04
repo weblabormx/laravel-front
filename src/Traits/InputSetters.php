@@ -152,7 +152,7 @@ trait InputSetters
     {
         if (is_array($resource)) {
             $resource = isset($resource['object']) ? $resource : ['object' => $resource];
-            $this->resource = json_decode(json_encode($resource), true);
+            $this->resource = json_decode(json_encode($resource), false);
         } else {
             $this->resource = $resource;
         }
