@@ -90,16 +90,16 @@ trait InputSetters
     public function conditionalOld($column, $value)
     {
         // This work on form
-        $this->form_before = '<div data-type="conditional" data-cond-option="'.$column.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
+        $this->form_before = '<div data-type="conditional" data-cond-option="' . $column . '" data-cond-value="' . $value . '" style="' . $this->style_width() . '">';
         $this->form_after = '</div>';
-        $this->conditional = $column.'='.$value;
+        $this->conditional = $column . '=' . $value;
         return $this;
     }
 
     public function conditional($conditional)
     {
         // This work on form
-        $this->form_before = '<div data-type="conditional2" data-condition="'.$conditional.'" style="'.$this->style_width().'">';
+        $this->form_before = '<div data-type="conditional2" data-condition="' . $conditional . '" style="' . $this->style_width() . '">';
         $this->form_after = '</div>';
         $this->conditional = $conditional;
         return $this;
@@ -114,9 +114,9 @@ trait InputSetters
             })->all();
             $conditional = $this->conditional;
             foreach ($object as $key => $value) {
-                $conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
+                $conditional = str_replace($key . '=', '$object["' . $key . '"]=', $conditional);
                 if (!Str::contains($conditional, '=')) {
-                    $conditional = str_replace($key, '$object["'.$key.'"] ?? false', $conditional);
+                    $conditional = str_replace($key, '$object["' . $key . '"] ?? false', $conditional);
                 }
             }
             try {
@@ -150,7 +150,13 @@ trait InputSetters
 
     public function setResource($resource)
     {
-        $this->resource = $resource;
+        if (is_array($resource)) {
+            $this->resource = new \ArrayObject(
+                isset($resource['object']) ? $resource : ['object' => $resource]
+            );
+        } else {
+            $this->resource = $resource;
+        }
         return $this;
     }
 
