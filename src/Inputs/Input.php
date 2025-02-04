@@ -9,7 +9,7 @@ use WeblaborMx\Front\Traits\InputRules;
 use WeblaborMx\Front\Traits\WithWidth;
 use Illuminate\Support\Str;
 
-class Input implements Htmlable
+class Input implements Htmlable, \Stringable
 {
     use InputVisibility;
     use InputSetters;
@@ -169,11 +169,6 @@ class Input implements Htmlable
         return $this->form_before . $html . $this->form_after;
     }
 
-    public function toHtml()
-    {
-        return $this->formHtml();
-    }
-
     public function showHtml($object)
     {
         $input = $this;
@@ -269,6 +264,20 @@ class Input implements Htmlable
         return;
     }
 
+    /* -----------
+     * Internal
+     ----------- */
+
+    public function toHtml()
+    {
+        return $this->formHtml();
+    }
+
+    public function __toString(): string
+    {
+        return $this->toHtml();
+    }
+
     /**
      * Ensures that the returned value is a string
      */
@@ -284,8 +293,14 @@ class Input implements Htmlable
             } elseif (gettype($return) === 'object') {
                 if (method_exists($return, '__toString')) {
                     $return = $return->__toString();
-                } elseif ($return instanceof \BackedEnum) {
-                    $return = $return->value;
+                } elseif ($return instanceof \UnitEnum) {
+                    if (method_exists($return, 'label')) {
+                        $return = $return->label();
+                    } elseif ($return instanceof \BackedEnum) {
+                        $return = $return->value;
+                    } else {
+                        $return = $return->name;
+                    }
                 } elseif ($return instanceof \JsonSerializable) {
                     $return = json_encode($return);
                 }
