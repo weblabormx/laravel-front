@@ -151,9 +151,8 @@ trait InputSetters
     public function setResource($resource)
     {
         if (is_array($resource)) {
-            $this->resource = new \ArrayObject(
-                isset($resource['object']) ? $resource : ['object' => $resource]
-            );
+            $resource = isset($resource['object']) ? $resource : ['object' => $resource];
+            $this->resource = json_decode(json_encode($resource), true);
         } else {
             $this->resource = $resource;
         }
