@@ -272,9 +272,11 @@ class Input
 	{
 		// Prevents model `$casts` exceptions
 		// PHP 7.1 compatible
-		if (isset($return) && !is_string($return)) {
+		if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
 			if (is_scalar($return)) {
 				$return = strval($return);
+			} else if (enum_exists($return::class)) {
+				$return = $return->value ?? $return->name;
 			} else if (is_array($return)) {
 				$return = json_encode($return);
 			} else if (gettype($return) === 'object') {
