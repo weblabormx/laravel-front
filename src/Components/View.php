@@ -7,6 +7,7 @@ use WeblaborMx\Front\Front;
 class View extends Component
 {
 	private $with = [];
+	public $needs_to_be_on_panel = false;
 
 	public function form()
 	{
