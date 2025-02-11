@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Inputs;
 
+use Illuminate\Support\Carbon;
+
 class Date extends Input
 {
 	public function form()
@@ -11,10 +13,13 @@ class Date extends Input
 
 	public function getValue($object)
 	{
-		$value = parent::getValue($object);
-		if (is_object($value)) {
-			return $value->format('Y-m-d');
+		$column = $this->column;
+		$value = $object->$column;
+		if ($value instanceof Carbon) {
+			return $value->format(config('front.date_format'));
 		}
+
+		$value = parent::getValue($object);
 		return $value;
 	}
 }
