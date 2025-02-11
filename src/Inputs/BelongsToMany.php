@@ -67,8 +67,6 @@ class BelongsToMany extends Input
 
 	public function form()
 	{
-		$relation_front = $this->relation_front;
-
 		$model = $this->relation_front->getModel();
 		$model = new $model;
 
@@ -105,7 +103,7 @@ class BelongsToMany extends Input
 		return $select->form();
 	}
 
-	public function processData($data)
+	public function processDataAfterValidation($data)
 	{
 		unset($data[$this->column]);
 		return $data;
