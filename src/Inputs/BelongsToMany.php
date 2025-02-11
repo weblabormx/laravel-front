@@ -10,7 +10,7 @@ class BelongsToMany extends Input
 	use InputRelationship;
 
 	public $relation, $model_name, $relation_front, $search_field, $empty_title;
-	public $show_placeholder = true;
+	public $show_placeholder = true, $is_multiple = true;
 
 	public function __construct($title, $relation = null, $model_name = null, $source = null)
 	{
@@ -98,8 +98,10 @@ class BelongsToMany extends Input
 			->size($this->size)
 			->setEmptyTitle($this->empty_title)
 			->withMeta($this->attributes)
-			->setPlaceholder($this->show_placeholder)
-			->multiple();
+			->setPlaceholder($this->show_placeholder);
+		if($this->is_multiple) {
+			$select = $select->multiple();
+		}
 		return $select->form();
 	}
 
@@ -130,6 +132,12 @@ class BelongsToMany extends Input
 	public function hidePlaceholder()
 	{
 		$this->show_placeholder = false;
+		return $this;
+	}
+
+	public function noMultiple()
+	{
+		$this->is_multiple = false;
 		return $this;
 	}
 }
