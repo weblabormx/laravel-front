@@ -69,7 +69,7 @@ class Page
 	public function executePost($data)
 	{
 		$return = $this->post();
-		if ($this->isResponse($return)) {
+		if (isResponse($return)) {
 			return $return;
 		}
 		flash(__('Saved successfully'))->success();
@@ -79,7 +79,7 @@ class Page
 	public function executePut($data)
 	{
 		$return = $this->post();
-		if ($this->isResponse($return)) {
+		if (isResponse($return)) {
 			return $return;
 		}
 		flash(__('Updated successfully'))->success();
@@ -89,7 +89,7 @@ class Page
 	public function executeDelete($data)
 	{
 		$return = $this->delete();
-		if ($this->isResponse($return)) {
+		if (isResponse($return)) {
 			return $return;
 		}
 		flash(__('Deleted successfully'))->success();

@@ -52,7 +52,7 @@ class FrontController extends Controller
         $base_url = $front->getBaseUrl();
 
         $response = $this->run(new FrontIndex($front, $base_url));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -78,7 +78,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('store');
         $response = $this->run(new FrontStore($request, $front));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -98,7 +98,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
         $response = $this->run(new FrontShow($object, $front));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -135,7 +135,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('update')->setObject($object);
         $response = $this->run(new FrontUpdate($request, $front, $object));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -171,7 +171,7 @@ class FrontController extends Controller
         $response = $this->run(new ActionShow($front, $object, $action, function () use ($object, $action) {
             return $this->actionStore($object->getKey(), $action, request());
         }));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -188,7 +188,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
         $response = $this->run(new ActionStore($front, $object, $action, $request));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -203,7 +203,7 @@ class FrontController extends Controller
         $response = $this->run(new ActionShow($front, null, $action, function () use ($action) {
             return $this->indexActionStore($action, request());
         }));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -217,7 +217,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create');
         $response = $this->run(new ActionStore($front, null, $action, $request));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -236,7 +236,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create');
         $response = $this->run(new MassiveIndexEditShow($front));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -252,7 +252,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create');
         $response = $this->run(new MassiveIndexEditStore($front, $request));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -271,7 +271,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
         $response = $this->run(new MassiveEditShow($front, $object, $key));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -291,7 +291,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('create')->setObject($object);
         $response = $this->run(new MassiveEditStore($front, $object, $key, $request));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -338,7 +338,7 @@ class FrontController extends Controller
         $base_url = $front->getBaseUrl();
 
         $response = $this->run(new FrontIndex($front, $base_url));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -354,7 +354,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('index');
         $response = $this->run(new FrontSearch($front, $request));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
     }

@@ -4,12 +4,9 @@ namespace WeblaborMx\Front\Traits;
 
 use WeblaborMx\Front\Components\Panel;
 use Illuminate\Support\Str;
-use WeblaborMx\Front\Traits\ValidateResponse;
 
 trait HasInputs
 {
-	use ValidateResponse;
-
 	private $relations = ['HasMany', 'MorphMany'];
 	public $fields_function = 'fields';
 
@@ -248,7 +245,7 @@ trait HasInputs
 			return $item->is_input;
 		})->each(function ($item) use (&$inputs) {
 			$inputs = $item->processData($inputs);
-			if ($this->isResponse($inputs)) {
+			if (isResponse($inputs)) {
 				return false;
 			}
 		});
