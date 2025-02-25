@@ -16,7 +16,7 @@ class BelongsToMany extends Input
 	{
 		$this->model_name = $model_name;
 		$this->relation = Str::snake(Str::plural($relation));
-		$this->source = $source;
+		$this->setSource($source);
 
 		if (!isset($this->model_name)) {
 			$front = Str::singular($this->relation);
@@ -24,7 +24,7 @@ class BelongsToMany extends Input
 			$this->model_name = $title;
 		}
 
-		$this->relation_front = getFront($this->model_name, $this->source);
+		$this->relation_front = getFront($this->model_name, $this->source());
 		if (!$this->relation_front->canIndex()) {
 			$this->show = false;
 		}
