@@ -8,7 +8,7 @@ class Date extends Input
 {
 	public function form()
 	{
-		if($this?->resource?->object) {
+		if($this?->resource?->object ?? false) {
 			$this->default_value = $this->getValue($this->resource->object);
 		}
 		return \Form::date($this->column, $this->default_value, $this->attributes);
