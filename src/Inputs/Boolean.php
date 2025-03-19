@@ -16,7 +16,7 @@ class Boolean extends Input
 	{
 		$value = parent::getValue($object);
 		$value = $value === '--' ? false : $value;
-		if ($this->source == 'index') {
+		if ($this->source()->isIndex()) {
 			if ($value) {
 				return '<span style="color: #2cbb7d;">✔</span>';
 			}

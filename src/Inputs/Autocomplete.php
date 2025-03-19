@@ -22,7 +22,7 @@ class Autocomplete extends Input
 				$this->attributes['data-selected-text'] = $value;
 			}
 		}
-		if ($this->source == 'create' || $this->source == 'edit') {
+		if ($this->source()->isCreate() || $this->source()->isEdit()) {
 			$this->attributes['data-text-input'] = 'false';
 		}
 
