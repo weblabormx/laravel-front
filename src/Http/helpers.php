@@ -52,7 +52,12 @@ function getButtonByName($name, $front = null, $object = null)
     $config = config('front.buttons.' . $name);
     $extra = '';
     if ($name == 'delete') {
-        $extra = "data-type='confirm' title='" . __('Delete') . "' data-info='" . __('Do you really want to remove this item?') . "' data-button-yes='" . __('Yes') . "' data-button-no='" . __('No') . "' data-action='" . url($front->getBaseUrl() . '/' . $object->getKey()) . "' data-redirection='" . url()->full() . "' data-variables='{ \"_method\": \"delete\", \"_token\": \"" . csrf_token() . "\" }'";
+        $object_url = url($front->getBaseUrl() . '/' . $object->getKey());
+        $redirection = url()->full();
+        if(Str::contains($redirection, $object_url)) {
+            $redirection = url($front->getBaseUrl());
+        }
+        $extra = "data-type='confirm' title='" . __('Delete') . "' data-info='" . __('Do you really want to remove this item?') . "' data-button-yes='" . __('Yes') . "' data-button-no='" . __('No') . "' data-action='" . $object_url . "' data-redirection='" . $redirection . "' data-variables='{ \"_method\": \"delete\", \"_token\": \"" . csrf_token() . "\" }'";
     }
     return Button::make($config['name'])
         ->setIcon($config['icon'])
