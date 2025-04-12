@@ -75,7 +75,7 @@ class Panel extends Component
 
 	public function fields($model = null)
 	{
-		return $this->filterFields($this->source, $model);
+		return $this->filterFields($this->source(), $model);
 	}
 
 	public function setDescription($description)

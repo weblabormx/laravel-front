@@ -18,7 +18,7 @@ class BelongsTo extends Input
 	{
 		$this->column = $column;
 		$this->extra = $extra;
-		$this->source = $source;
+		$this->setSource($source);
 		$this->relation = Str::snake($this->column);
 
 		if (!isset($this->extra)) {
@@ -28,7 +28,7 @@ class BelongsTo extends Input
 		}
 
 		$this->model_name = $this->extra;
-		$this->relation_front = getFront($this->model_name, $this->source);
+		$this->relation_front = getFront($this->model_name, $this->source());
 		$class = $this->relation_front->getModel();
 		$this->title = $this->relation_front->label;
 
@@ -53,6 +53,11 @@ class BelongsTo extends Input
 			$relation = $relation_camel;
 			$relation_function = $model->$relation();
 			$this->column = $relation_function->getForeignKeyName();
+		} else if (method_exists($model, $relation_camel)) {
+			$this->relation = $relation_camel;
+			$relation = $relation_camel;
+			$relation_function = $model->$relation();
+			$this->column = $relation_function->getForeignKeyName();
 		} else {
 			$this->column = str_replace(' ', '_', strtolower($this->column));
 		}
@@ -68,7 +73,7 @@ class BelongsTo extends Input
 
 		$title_field = $this->search_field ?? $this->relation_front->search_title;
 		$value = $object->$relation->$title_field;
-		if (!$this->hide_link && !isset($this->link)) {
+		if (!isset($this->link)) {
 			$this->link = $this->relation_front->getBaseUrl() . '/' . $object->$relation->getKey();
 		}
 		if (!isset($value)) {

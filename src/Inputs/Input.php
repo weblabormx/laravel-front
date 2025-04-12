@@ -23,7 +23,6 @@ class Input
 	public $needs_to_be_on_panel = true;
 	public $column;
 	public $extra;
-	public $source;
 	public $value;
 	public $size;
 	public $input_formatted = true;
@@ -40,8 +39,8 @@ class Input
 		}
 		$this->column = $column;
 		$this->extra = $extra;
-		$this->source = $source;
 		$this->attributes = config('front.default_input_attributes');
+		$this->setSource($source);
 		$this->load();
 	}
 
@@ -88,7 +87,7 @@ class Input
 				if (isset($carry[$item])) {
 					return $carry[$item];
 				}
-				if (is_object($carry) && isset($carry->$item)) {
+				if (is_object($carry)) {
 					return $carry?->$item;
 				}
 				return null;
@@ -202,7 +201,7 @@ class Input
 
 	public function massiveSize($size = null)
 	{
-		if (Cache::store('array')->get('is_massive') !== true) {
+		if (\Cache::store('array')->get('is_massive') !== true) {
 			return $this;
 		}
 		return $this->size($size);
@@ -211,9 +210,10 @@ class Input
 	// In case there default attributes for the model
 	public function setDefaultValueFromAttributes($model)
 	{
-		if ($this->source != 'create' || !is_null($this->default_value) || is_null($model)) {
+		if (!$this->source()->isCreate() || !is_null($this->default_value) || is_null($model)) {
 			return $this;
 		}
+
 		$model = new $model;
 		$attributes = $model->getAttributes();
 		if (isset($attributes[$this->column])) {
