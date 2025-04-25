@@ -1,6 +1,6 @@
-{!! Form::open(array('url' => $front->getBaseUrl(), 'files' => true)) !!}
+{!! \WeblaborMx\Front\Facades\Form::open(array('url' => $front->getBaseUrl(), 'files' => true)) !!}
 
-    {!! Form::hidden('redirect_url') !!}
+    {!! \WeblaborMx\Front\Facades\Form::hidden('redirect_url') !!}
     @foreach($front->createPanels() as $panel)
         {!! $panel->formHtml() !!}
     @endforeach
@@ -8,4 +8,4 @@
         <button type="submit" class="btn btn-primary">{{ __('Add') }} {{$front->label}}</button>
     </div>
 
-{!! Form::close() !!}
+{!! \WeblaborMx\Front\Facades\Form::close() !!}

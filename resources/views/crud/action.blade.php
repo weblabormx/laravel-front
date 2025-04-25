@@ -14,7 +14,7 @@
         </div>
     </h4>
 
-    {!! Form::open(array('url' => request()->url(), 'files' => true)) !!}
+    {!! \WeblaborMx\Front\Facades\Form::open(array('url' => request()->url(), 'files' => true)) !!}
 
         @foreach($action->createPanels() as $panel)
             {!! $panel->formHtml() !!}
@@ -26,6 +26,6 @@
             </div>
         @endif
 
-    {!! Form::close() !!}
+    {!! \WeblaborMx\Front\Facades\Form::close() !!}
     
 @stop

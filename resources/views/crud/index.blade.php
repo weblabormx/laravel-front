@@ -4,15 +4,15 @@
 
     @if($front->visibleFilters()->count() > 0)
         <div class="sidenav-header small font-weight-semibold mb-2">{{ __('FILTER :name', ['name' => strtoupper($front->plural_label)]) }}</div>
-        {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
+        {!! \WeblaborMx\Front\Facades\Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
             <div class="card pt-3 sidenav-forms">
-                {!! Form::hidden($front->getCurrentViewRequestName()) !!}
+                {!! \WeblaborMx\Front\Facades\Form::hidden($front->getCurrentViewRequestName()) !!}
                 @foreach($front->getFilters() as $filter)
                     {!! $filter->formHtml() !!}
                 @endforeach
             </div>
-            {!! Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
-        {!! Form::close() !!}
+            {!! \WeblaborMx\Front\Facades\Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
+        {!! \WeblaborMx\Front\Facades\Form::close() !!}
     @endif
     
 @endsection

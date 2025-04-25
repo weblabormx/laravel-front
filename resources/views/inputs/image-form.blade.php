@@ -8,8 +8,8 @@
 		@endif
 		<p class="file-name"></p>
 		<button type="button" class="btn btn-secondary" onclick="executeFile('{{$id}}')">{{ __('Upload Image') }}</button>
-		{!! Form::hidden($input->column, $input->value) !!}
-        {!! Form::file($input->column.'_new', ['style' => 'display:none;']) !!}
+		{!! \WeblaborMx\Front\Facades\Form::hidden($input->column, $input->value) !!}
+        {!! \WeblaborMx\Front\Facades\Form::file($input->column.'_new', ['style' => 'display:none;']) !!}
 	</div>
 </div>
 

@@ -11,7 +11,7 @@ class Hidden extends Input
 	public function form()
 	{
 		$column_to_use = config('front.hidden_value');
-		return \Form::hidden($this->$column_to_use, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::hidden($this->$column_to_use, $this->default_value, $this->attributes);
 	}
 
 	public function formHtml()

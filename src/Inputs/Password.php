@@ -9,6 +9,6 @@ class Password extends Input
 
 	public function form()
 	{
-		return \Form::password($this->column, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::password($this->column, $this->attributes);
 	}
 }

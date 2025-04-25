@@ -16,7 +16,7 @@ class Trix extends Input
 		$this->attributes['data-type'] = 'wysiwyg';
 		$this->attributes['data-lang'] = app()->getLocale();
 		$this->attributes['data-upload-url'] = url('api/laravel-front/upload-image') . '?variables=' . json_encode($this->variables);
-		return \Form::textarea($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::textarea($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function originalSize($width, $height)

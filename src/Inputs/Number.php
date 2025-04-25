@@ -9,7 +9,7 @@ class Number extends Input
 	public function form()
 	{
 		$this->attributes['step'] = $this->getStep();
-		return \Form::number($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::number($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function decimals($decimals)

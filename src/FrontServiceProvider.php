@@ -16,6 +16,7 @@ use WeblaborMx\Front\Http\Controllers\FrontController;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DateTime;
+use WeblaborMx\Front\Support\FormHelper;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -216,17 +217,23 @@ class FrontServiceProvider extends ServiceProvider
                 CreateFilter::class
             ]);
         }
+        
+        // Register our custom Form helper
+        $this->app->singleton('form', function ($app) {
+            return new FormHelper();
+        });
     }
 
     /**
-     * Register the laravel collective created inputs
+     * Register custom form inputs
      *
      * @return void
      */
     public function loadInputs()
     {
-        \Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
-            $value = \Form::getValueAttribute($name, $value);
+        // Use our custom Form facade
+        \WeblaborMx\Front\Facades\Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
+            $value = \WeblaborMx\Front\Facades\Form::getValueAttribute($name, $value);
             if (!is_null($value) && !$value instanceof DateTime) {
                 try {
                     $value = Carbon::parse($value);
@@ -234,7 +241,7 @@ class FrontServiceProvider extends ServiceProvider
                     
                 }
             }
-            return \Form::datetimeLocal($name, $value, $options);;
+            return \WeblaborMx\Front\Facades\Form::datetimeLocal($name, $value, $options);
         });
     }
 }

@@ -4,14 +4,14 @@
 
     @if(count($front->filters())>0)
         <div class="sidenav-header small font-weight-semibold mb-2 text-uppercase">{{ __('Options') }}</div>
-        {!! Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
+        {!! \WeblaborMx\Front\Facades\Form::open(['url' => request()->url(), 'method' => 'get']) !!} 
             <div class="card pt-3 sidenav-forms">
                 @foreach($front->getMassiveForms() as $form)
                     {!! $form->formHtml() !!}
                 @endforeach
             </div>
-            {!! Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
-        {!! Form::close() !!}
+            {!! \WeblaborMx\Front\Facades\Form::submit(__('Search'), ['class' => 'btn btn-secondary btn-sm btn-block']) !!}
+        {!! \WeblaborMx\Front\Facades\Form::close() !!}
     @endif
     
 @endsection
@@ -24,7 +24,7 @@
 
     <h4 class="font-weight-bold py-3">{{__('Edit')}} {{$front->plural_label}}</h4>
 
-    {!! Form::open(array('url' => request()->url(), 'files' => true)) !!}
+    {!! \WeblaborMx\Front\Facades\Form::open(array('url' => request()->url(), 'files' => true)) !!}
 
         <div class="table-responsive">
             <table class="table table-striped bg-white">
@@ -54,7 +54,7 @@
             </table>
         </div>
         @foreach(request()->except('rows') as $key => $value)
-            {!! Form::hidden($key) !!}
+            {!! \WeblaborMx\Front\Facades\Form::hidden($key) !!}
         @endforeach
 
         <div class="text-right mt-3">
@@ -63,6 +63,6 @@
             @endforeach
         </div>
 
-    {!! Form::close() !!}
+    {!! \WeblaborMx\Front\Facades\Form::close() !!}
 
 @endsection

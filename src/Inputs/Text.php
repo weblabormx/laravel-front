@@ -6,6 +6,6 @@ class Text extends Input
 {
 	public function form()
 	{
-		return \Form::text($this->getColumn(), $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::text($this->getColumn(), $this->default_value, $this->attributes);
 	}
 }

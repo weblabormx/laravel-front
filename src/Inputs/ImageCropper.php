@@ -30,7 +30,7 @@ class ImageCropper extends Input
 			$this->attributes['data-min-sizes'] = $this->min_sizes[0] . ',' . $this->min_sizes[1];
 		}
 		$html = '<img src="' . $this->image . '" id="' . $id . '" style="max-width: none !important;" />';
-		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
+		$html .= \WeblaborMx\Front\Facades\Form::hidden($this->column, $this->default_value, $this->attributes);
 		if (isset($this->handler)) {
 			$handler = $this->handler;
 			$html .= '<script>function ' . $function . '(c) { ' . $handler() . ' }</script>';

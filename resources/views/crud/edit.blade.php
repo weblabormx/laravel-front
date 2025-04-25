@@ -7,9 +7,9 @@
     
     <h4 class="font-weight-bold py-3 mb-4">{{ __('Edit') }} {{$front->getTitle($object)}}</h4>
 
-    {!! Form::model($object, array('method' => 'put', 'url' => $front->getBaseUrl().'/'.$object->getKey(), 'files' => true)) !!}
+    {!! \WeblaborMx\Front\Facades\Form::model($object, array('method' => 'put', 'url' => $front->getBaseUrl().'/'.$object->getKey(), 'files' => true)) !!}
 
-        {!! Form::hidden('redirect_url') !!}
+        {!! \WeblaborMx\Front\Facades\Form::hidden('redirect_url') !!}
         @foreach($front->editPanels() as $panel)
             {!! $panel->formHtml() !!}
         @endforeach
@@ -21,6 +21,6 @@
             <button type="submit" class="btn btn-primary"><i class="fa fa-save pr-2"></i> {{ __('Save Changes') }}</button>
         </div>
         
-    {!! Form::close() !!}
+    {!! \WeblaborMx\Front\Facades\Form::close() !!}
 
 @stop

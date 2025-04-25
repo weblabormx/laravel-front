@@ -7,7 +7,7 @@ class Money extends Input
 	public function form()
 	{
 		$this->attributes['step'] = '.01';
-		$input = \Form::number($this->column, $this->default_value, $this->attributes);
+		$input = \WeblaborMx\Front\Facades\Form::number($this->column, $this->default_value, $this->attributes);
 		return InputGroup::make('$', $input)->form();
 	}
 

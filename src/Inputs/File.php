@@ -13,7 +13,7 @@ class File extends Input
 
 	public function form()
 	{
-		return \Form::file($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::file($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function setDirectory($directory)

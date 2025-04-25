@@ -84,7 +84,7 @@ class BelongsTo extends Input
 		// If searchable make a way to search
 		if ($this->searchable) {
 			$title_field = $this->search_field ?? $this->relation_front->search_title;
-			$value = isset($this->default_value) ? $this->default_value : \Form::getValueAttribute($this->column);
+			$value = isset($this->default_value) ? $this->default_value : \WeblaborMx\Front\Facades\Form::getValueAttribute($this->column);
 			$title = null;
 			if (isset($value)) {
 				$object = $relation_front->globalIndexQuery()->find($value);

@@ -10,7 +10,7 @@ class Textarea extends Input
 
 	public function form()
 	{
-		return \Form::textarea($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::textarea($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function getValue($object)

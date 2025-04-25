@@ -11,14 +11,14 @@ class Autocomplete extends Input
 	{
 		$this->attributes['data-type'] = 'autocomplete';
 		$this->attributes['src'] = $this->url;
-		$value = isset($this->default_value) ? $this->default_value : \Form::getValueAttribute($this->column);
+		$value = isset($this->default_value) ? $this->default_value : \WeblaborMx\Front\Facades\Form::getValueAttribute($this->column);
 		if (!is_null($value)) {
 			$this->attributes['data-selected-value'] = $value;
 			// Fill text
 			if (isset($this->text)) {
 				$this->attributes['data-selected-text'] = $this->text;
 			} else {
-				$value = \Form::getValueAttribute($this->column . '_text');
+				$value = \WeblaborMx\Front\Facades\Form::getValueAttribute($this->column . '_text');
 				$this->attributes['data-selected-text'] = $value;
 			}
 		}
@@ -27,10 +27,10 @@ class Autocomplete extends Input
 		}
 
 		if (isset($this->attributes['disabled'])) {
-			return \Form::text($this->column . '_hidden', $this->attributes['data-selected-text'] ?? false, ['disabled' => 'disabled']);
+			return \WeblaborMx\Front\Facades\Form::text($this->column . '_hidden', $this->attributes['data-selected-text'] ?? false, ['disabled' => 'disabled']);
 		}
 
-		return \Form::text($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::text($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function setUrl($url)

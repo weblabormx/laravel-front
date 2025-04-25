@@ -10,7 +10,7 @@ class Disabled extends Input
 	{
 		$attributes = $this->attributes;
 		$attributes['disabled'] = 'disabled';
-		return \Form::text($this->column, $this->default_value, $attributes) . \Form::hidden($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::text($this->column, $this->default_value, $attributes) . \WeblaborMx\Front\Facades\Form::hidden($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function processData($data)

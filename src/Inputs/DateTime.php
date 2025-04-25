@@ -16,7 +16,7 @@ class DateTime extends Input
 		}
 		$this->attributes['pattern'] = $this->pattern;
 		$type = $this->input_type;
-		return \Form::$type($this->column, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::$type($this->column, $this->default_value, $this->attributes);
 	}
 
 	public function getValue($object)

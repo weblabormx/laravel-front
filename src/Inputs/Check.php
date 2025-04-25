@@ -6,7 +6,7 @@ class Check extends Input
 {
 	public function form()
 	{
-		return \Form::checkbox($this->column, $this->default_value);
+		return \WeblaborMx\Front\Facades\Form::checkbox($this->column, $this->default_value);
 	}
 
 	public function getValue($object)

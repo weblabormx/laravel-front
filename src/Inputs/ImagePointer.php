@@ -14,7 +14,7 @@ class ImagePointer extends Input
 		$this->attributes['data-type'] = 'image-coordinate';
 		$this->attributes['data-image'] = $id;
 		$html = '<img src="' . $this->image . '" id="' . $id . '" width="' . $this->width . ';" />';
-		$html .= \Form::hidden($this->column, $this->default_value, $this->attributes);
+		$html .= \WeblaborMx\Front\Facades\Form::hidden($this->column, $this->default_value, $this->attributes);
 		return $html;
 	}
 

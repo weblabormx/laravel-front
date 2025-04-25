@@ -1,7 +1,7 @@
 <div class="card text-white bg-dark mb-3 text-center">
   	<div class="card-body">
 		<button type="button" class="btn btn-secondary" onclick="executeFileMultiple('{{$id}}')">{{ __('Upload Images') }}</button>
-        {!! Form::file($input->column.'[]', ['id' => $id, 'style' => 'display:none;', 'multiple' => 'multiple']) !!}
+        {!! \WeblaborMx\Front\Facades\Form::file($input->column.'[]', ['id' => $id, 'style' => 'display:none;', 'multiple' => 'multiple']) !!}
 	</div>
 </div>
 

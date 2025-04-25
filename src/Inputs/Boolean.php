@@ -9,7 +9,7 @@ class Boolean extends Input
 
 	public function form()
 	{
-		return \Form::checkbox($this->column, $this->true_value,  !is_null($this->default_value) ? $this->default_value == $this->true_value : null);
+		return \WeblaborMx\Front\Facades\Form::checkbox($this->column, $this->true_value,  !is_null($this->default_value) ? $this->default_value == $this->true_value : null);
 	}
 
 	public function getValue($object)

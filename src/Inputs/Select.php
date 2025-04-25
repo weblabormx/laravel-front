@@ -20,7 +20,7 @@ class Select extends Input
 		if ($this->show_placeholder) {
 			$this->attributes['placeholder'] = __($this->empty_title);
 		}
-		return \Form::select($this->column, $this->options, $this->default_value, $this->attributes);
+		return \WeblaborMx\Front\Facades\Form::select($this->column, $this->options, $this->default_value, $this->attributes);
 	}
 
 	public function options($array)
