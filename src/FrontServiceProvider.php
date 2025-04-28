@@ -38,7 +38,6 @@ class FrontServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider);
-        $this->loadInputs();
     }
 
     /**
@@ -88,8 +87,6 @@ class FrontServiceProvider extends ServiceProvider
         });
 
         Route::post('api/laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
-
-        $this->app->make('form')->considerRequest(true);
     }
 
     /**
@@ -221,27 +218,6 @@ class FrontServiceProvider extends ServiceProvider
         // Register our custom Form helper
         $this->app->singleton('form', function ($app) {
             return new FormHelper();
-        });
-    }
-
-    /**
-     * Register custom form inputs
-     *
-     * @return void
-     */
-    public function loadInputs()
-    {
-        // Use our custom Form facade
-        \WeblaborMx\Front\Facades\Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
-            $value = \WeblaborMx\Front\Facades\Form::getValueAttribute($name, $value);
-            if (!is_null($value) && !$value instanceof DateTime) {
-                try {
-                    $value = Carbon::parse($value);
-                } catch (\Exception $e) {
-                    
-                }
-            }
-            return \WeblaborMx\Front\Facades\Form::datetimeLocal($name, $value, $options);
         });
     }
 }

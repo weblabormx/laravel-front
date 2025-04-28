@@ -57,21 +57,21 @@ class Install extends Command
 
         // Create filter base
         $file_name = app_path('Front/Filters/Filter.php');
-        if (!FileModifier::file($file_name)->exists()) {
+        if (!FileModifier::file($file_name)->exists()) { 
             copy($directory . '/base-filter.php', $file_name);
             $this->line('Base Filter class created: <info>✔</info>');
         }
 
         // Create search filter base
         $file_name = app_path('Front/Filters/SearchFilter.php');
-        if (!FileModifier::file($file_name)->exists()) {
+        if (!FileModifier::file($file_name)->exists()) { 
             copy($directory . '/search-filter.php', $file_name);
             $this->line('Search Filter added on filters folder: <info>✔</info>');
         }
 
         // Copy sidebar
         $file_name = resource_path('views/front/sidebar.blade.php');
-        if (FileModifier::file($file_name)->exists()) {
+        if (FileModifier::file($file_name)->exists()) { 
             $this->line('Sidebar already exists.');
         } else {
             copy($directory . '/sidebar.blade.php', $file_name);

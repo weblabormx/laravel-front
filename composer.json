@@ -16,7 +16,7 @@
         "php": ">=7.1.0",
         "laracasts/flash": ">=3",
         "opis/closure": "^3.1",
-        "laravel/framework": ">5.5 <13.0",
+        "laravel/framework": ">5.5",
         "weblabormx/file-modifier": "*",
         "intervention/image": ">=2.5"
     },

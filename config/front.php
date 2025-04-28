@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'resources_folder' => 'App\Front',
+    'resources_folder' => 'App\Front\Resources',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'models_folder' => 'App',
+    'models_folder' => 'App\Models',
 
     /*
     |--------------------------------------------------------------------------

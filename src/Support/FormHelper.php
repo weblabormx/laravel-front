@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Support;
 
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -182,27 +184,37 @@ class FormHelper
      * Create a select field
      *
      * @param string $name
-     * @param array $options
+     * @param array|\Illuminate\Support\Collection $options
      * @param mixed $selected
      * @param array $attributes
      * @return string
      */
-    public static function select($name, array $options = [], $selected = null, array $attributes = [])
+    public static function select($name, array|Collection $options = [], $selected = null, array $attributes = [])
     {
+        $selected = static::getValueAttribute($name, $selected);
         $attributes['name'] = $name;
-        $attributes['id'] = $attributes['id'] ?? $name;
-        
-        $attributesStr = self::buildAttributesString($attributes);
-        
+        $attributes['id'] = $attributes['id'] ?? static::getIdAttributeFromName($name);
+
+        $attributesStr = static::buildAttributesString($attributes);
+
         $html = '<select ' . $attributesStr . '>';
-        
-        foreach ($options as $value => $label) {
-            $selectedAttr = self::isSelected($value, $selected) ? ' selected' : '';
-            $html .= '<option value="' . htmlspecialchars($value) . '"' . $selectedAttr . '>' . htmlspecialchars($label) . '</option>';
+
+        // Convert collection to array for iteration if needed
+        if ($options instanceof Collection) {
+            $options = $options->all();
         }
-        
+
+        foreach ($options as $value => $label) {
+            // Handle optgroups
+            if (is_array($label)) {
+                $html .= static::selectOptionGroup($value, $label, $selected);
+            } else {
+                $html .= static::selectOption($value, $label, $selected);
+            }
+        }
+
         $html .= '</select>';
-        
+
         return $html;
     }
     
@@ -336,5 +348,51 @@ class FormHelper
         }
         
         return count($html) > 0 ? implode(' ', $html) : '';
+    }
+    
+    /**
+     * Create an option for a select box.
+     *
+     * @param  string  $display
+     * @param  string  $value
+     * @param  string  $selected
+     * @return string
+     */
+    protected static function selectOption($value, $label, $selected)
+    {
+        $selectedAttr = static::isSelected($value, $selected) ? ' selected' : '';
+        $optionAttributes = ['value' => $value]; // Add other attributes if needed later
+        $attributesString = static::buildAttributesString($optionAttributes);
+        return '<option' . $attributesString . $selectedAttr . '>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8', false) . '</option>';
+    }
+
+    /**
+     * Create an option group for a select box.
+     *
+     * @param  string  $label
+     * @param  array   $options
+     * @param  string  $selected
+     * @return string
+     */
+    protected static function selectOptionGroup($label, $options, $selected)
+    {
+        $html = '<optgroup label="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8', false) . '">';
+        foreach ($options as $value => $display) {
+            $html .= static::selectOption($value, $display, $selected);
+        }
+        $html .= '</optgroup>';
+        return $html;
+    }
+    
+    /**
+     * Get the ID attribute for a form field.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected static function getIdAttributeFromName($name)
+    {
+        // Simple conversion: replace array notation with underscores
+        return str_replace(['[', ']'], ['_', ''], $name);
     }
 }
