@@ -20,6 +20,7 @@ class Actions
         $this->show_link = $show_link;
         $this->base_url  = $base_url;
         return $this;
+
     }
 
     public function canShow()
@@ -48,32 +49,32 @@ class Actions
 
     public function showUrl()
     {
-        $link = $this->base_url . '/' . $this->object->getKey();
-        return $link . $this->show_link;
+        $link = $this->base_url.'/'.$this->object->getKey();
+        return $link.$this->show_link;
     }
 
     public function updateUrl()
     {
         $edit = str_replace('{key}', $this->object->getKey(), $this->edit_link);
-        $link = $this->base_url . '/' . $edit;
-        return $link . $this->show_link;
+        $link = $this->base_url.'/'.$edit;
+        return $link.$this->show_link;
     }
 
     public function removeUrl()
     {
-        $link = $this->base_url . '/' . $this->object->getKey();
+        $link = $this->base_url.'/'.$this->object->getKey();
         return $link;
     }
 
     public function upUrl()
     {
-        $link = $this->base_url . '/' . $this->object->getKey() . '/sortable/up';
+        $link = $this->base_url.'/'.$this->object->getKey().'/sortable/up';
         return $link;
     }
 
     public function downUrl()
     {
-        $link = $this->base_url . '/' . $this->object->getKey() . '/sortable/down';
+        $link = $this->base_url.'/'.$this->object->getKey().'/sortable/down';
         return $link;
     }
 
@@ -92,7 +93,7 @@ class Actions
         return $this->front->getActions()->where('show_on_index', 1)->filter(function ($item) use ($object) {
             return $item->hasPermissions($object);
         })->map(function ($item) use ($object) {
-            $item->url = $this->front->getBaseUrl() . "/{$object->getKey()}/action/{$item->slug}";
+            $item->url = $this->front->getBaseUrl()."/{$object->getKey()}/action/{$item->slug}";
             return $item;
         });
     }

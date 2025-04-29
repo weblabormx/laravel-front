@@ -2,12 +2,12 @@
 
 namespace WeblaborMx\Front\Filters;
 
-use App\Front\Resource;
 use Illuminate\Support\Str;
 
 class Filter
 {
-    public $resource, $slug;
+    public $resource;
+    public $slug;
     public $default = '';
     public $show = true;
     public $visible = true;
@@ -34,7 +34,6 @@ class Filter
         return $query;
     }
 
-    /** @return mixed */
     public function field()
     {
         return;

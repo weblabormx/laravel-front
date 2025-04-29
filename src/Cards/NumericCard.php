@@ -8,9 +8,6 @@ class NumericCard extends Card
 {
     public $view = 'front::cards.numeric';
     public $fields = ['icon', 'number', 'text', 'subtitle', 'porcentage', 'background', 'style'];
-    public $background;
-    public $number;
-    public $porcentage; // This is badly written
 
     /*
      * Editable functions
@@ -44,14 +41,14 @@ class NumericCard extends Card
     public function cacheName()
     {
         $name = get_class($this);
-        return 'Card:' . $name;
+        return 'Card:'.$name;
     }
 
     public function getStyle()
     {
         $style = $this->style ?? '';
         if (isset($this->background)) {
-            $style .= ' background: ' . $this->background;
+            $style .= ' background: '.$this->background;
         }
         return $style;
     }

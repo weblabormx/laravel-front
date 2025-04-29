@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front;
 
+use Exception;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Traits\HasInputs;
 use WeblaborMx\Front\Traits\HasActions;
@@ -16,12 +18,33 @@ use WeblaborMx\Front\Traits\IsValidated;
 use WeblaborMx\Front\Traits\HasPermissions;
 use WeblaborMx\Front\Traits\HasMassiveEditions;
 use Illuminate\Support\Arr;
+use WeblaborMx\Front\Facades\Front;
 
 abstract class Resource
 {
-    use HasInputs, HasActions, HasLinks, HasBreadcrumbs, HasFilters, Sourceable, HasCards, HasLenses, ResourceHelpers, IsValidated, HasPermissions, HasMassiveEditions;
+    use HasInputs;
+    use HasActions;
+    use HasLinks;
+    use HasBreadcrumbs;
+    use HasFilters;
+    use Sourceable;
+    use HasCards;
+    use HasLenses;
+    use ResourceHelpers;
+    use IsValidated;
+    use HasPermissions;
+    use HasMassiveEditions;
 
-    public $data, $model, $search_title, $label, $base_url, $layout, $view_title, $plural_label, $object, $hide_columns;
+    public $data;
+    public $model;
+    public $search_title;
+    public $label;
+    public $base_url;
+    public $layout;
+    public $view_title;
+    public $plural_label;
+    public $object;
+    public $hide_columns;
     public $title = 'name';
     public $ignore_if_null = [];
     public $show_title = true;
@@ -74,19 +97,32 @@ abstract class Resource
         $this->load();
     }
 
-    /* 
-     * Functions that can be modified
+    public function route(string $source = null): ?Route
+    {
+        return Front::routeOf($this, $source);
+    }
+
+    /* ==============
+     * Hooks
+     ================*/
+
+    /**
+     * Ran after authorization, but before
+     * running any action for the resource.
+     * @return mixed Return Response to hijack the request.
      */
+    public function beforeRequest()
+    {
+        //
+    }
 
-    // Functions to modify the attribute on traits 
+    // Functions to modify the attribute on traits
 
-    /** @return mixed */
     public function indexViews()
     {
         //
     }
 
-    /** @return mixed */
     public function pagination()
     {
         //
@@ -106,7 +142,7 @@ abstract class Resource
         return $query->latest();
     }
 
-    // Modify the results gotten on the query 
+    // Modify the results gotten on the query
 
     public function indexResult($result)
     {
@@ -155,11 +191,11 @@ abstract class Resource
         //
     }
 
-    /** 
-     * To execute before destroying an object. 
-     * 
+    /**
+     * To execute before destroying an object.
+     *
      * Return `false` to prevent the destroy process.
-     * 
+     *
      * @return false|null
      */
     public function destroy($object)
@@ -203,15 +239,15 @@ abstract class Resource
         return $this->getRelatedLink() ?? $this->getBaseUrl();
     }
 
-    /* 
-	 * Hidden functions
-	 */
+    /*
+     * Hidden functions
+     */
 
     public function globalIndexQuery($query = null)
     {
         $class = $this->getModel();
         if (is_null($query)) {
-            $query = new $class;
+            $query = new $class();
         }
 
         // Get filters
@@ -283,7 +319,7 @@ abstract class Resource
             if (is_array($default) && isset($default[$try])) {
                 $default = $default[$try];
                 $exist_filter_value = true;
-            } else if (is_array($default) && !isset($default[$try])) {
+            } elseif (is_array($default) && !isset($default[$try])) {
                 $default = $default[0];
             }
             return [$filter->slug => $default ?? null];
@@ -343,9 +379,9 @@ abstract class Resource
         });
     }
 
-    /* 
-	 * Setters and getters
-	 */
+    /*
+     * Setters and getters
+     */
 
     public function setObject($object)
     {
@@ -362,17 +398,17 @@ abstract class Resource
     public function getModel()
     {
         $model = $this->model ?? null;
+
         if (isset($model)) {
             return $model;
         }
+
         if (isset($this->object) && is_object($this->object)) {
             return get_class($this->object);
         }
-        $return = 'App\\' . class_basename(get_class($this));
-        if (class_exists($return)) {
-            return $return;
-        }
-        return class_basename(get_class($this));
+
+        $class = $this::class;
+        throw new Exception("Front '{$class}' resource model couldn't be found");
     }
 
     public function addData($data)
@@ -488,9 +524,9 @@ abstract class Resource
         return $helper->showUrl();
     }
 
-    /* 
-	 * Special functions
-	 */
+    /*
+     * Special functions
+     */
 
     public function __get($name)
     {

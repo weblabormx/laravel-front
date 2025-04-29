@@ -20,7 +20,7 @@ trait HasFilters
     {
         $search_filter = $this->getDefaultSearchFilter();
         $filters = $this->filters();
-        $filters[] = new $search_filter;
+        $filters[] = new $search_filter();
         return collect($filters)->filter(function ($item) {
             return $item->show;
         })->map(function ($item) {

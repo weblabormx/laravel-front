@@ -4,27 +4,34 @@ namespace WeblaborMx\Front\Inputs;
 
 class Disabled extends Input
 {
-	public $process_input = true;
+    public $process_input = true;
 
-	public function form()
-	{
-		$attributes = $this->attributes;
-		$attributes['disabled'] = 'disabled';
-		return \Form::text($this->column, $this->default_value, $attributes) . \Form::hidden($this->column, $this->default_value, $this->attributes);
-	}
+    public function form()
+    {
+        $attributes = $this->attributes;
+        $attributes['disabled'] = 'disabled';
 
-	public function processData($data)
-	{
-		if (!$this->process_input) {
-			unset($data[$this->column]);
-		}
-		return $data;
-	}
+        return html()
+            ->text($this->column, $this->default_value)
+            ->attributes($attributes)
+            .
+            html()
+            ->hidden($this->column, $this->default_value)
+            ->attributes($this->attributes);
+    }
 
-	// To avoid saving the input data
-	public function processInput($value)
-	{
-		$this->process_input = $value;
-		return $this;
-	}
+    public function processData($data)
+    {
+        if (!$this->process_input) {
+            unset($data[$this->column]);
+        }
+        return $data;
+    }
+
+    // To avoid saving the input data
+    public function processInput($value)
+    {
+        $this->process_input = $value;
+        return $this;
+    }
 }

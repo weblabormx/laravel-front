@@ -17,7 +17,7 @@ trait HasLenses
     {
         // Can pass the class directly
         if (Str::contains($slug, '\\')) {
-            $object = new $slug;
+            $object = new $slug();
             return $object->addData($this->data)->setModel($this->getModel())->setSource($this->source);
         }
         // Or the slug name

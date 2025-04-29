@@ -32,7 +32,7 @@ trait IsRunable
         }
 
         // Get page
-        $page = (new $page_class)->setSource('index')->setFields($result);
+        $page = (new $page_class())->setSource('index')->setFields($result);
         foreach ($setters as $key => $value) {
             $page->$key = $value . ' - ' . __('Result');
         }

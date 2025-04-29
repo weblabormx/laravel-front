@@ -41,7 +41,7 @@ class FrontSearch
 
         // Get search filter
         $filter = config('front.default_search_filter');
-        $search_filter = new $filter;
+        $search_filter = new $filter();
 
         // Search results and map with format
         $result = $search_filter->apply($result, $this->request->term);

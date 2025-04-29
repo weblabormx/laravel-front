@@ -17,7 +17,6 @@ class IndexAction
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
-    public $object;
 
     public function __construct()
     {
@@ -154,7 +153,7 @@ class IndexAction
     public function getStyle()
     {
         if (isset($this->color)) {
-            return 'background: ' . $this->color;
+            return 'background: '.$this->color;
         }
         return '';
     }
@@ -190,4 +189,5 @@ class IndexAction
     {
         return method_exists($this, 'handle');
     }
+
 }

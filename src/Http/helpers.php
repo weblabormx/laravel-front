@@ -1,6 +1,6 @@
 <?php
 
-use WeblaborMx\Front\Texts\Button;
+use WeblaborMx\Front\Front;
 use Illuminate\Support\Str;
 
 function getThumb($full_name, $prefix, $force = false)
@@ -49,21 +49,7 @@ function getFrontByModel($object)
 
 function getButtonByName($name, $front = null, $object = null)
 {
-    $config = config('front.buttons.' . $name);
-    $extra = '';
-    if ($name == 'delete') {
-        $object_url = url($front->getBaseUrl() . '/' . $object->getKey());
-        $redirection = url()->full();
-        if(Str::contains($redirection, $object_url)) {
-            $redirection = url($front->getBaseUrl());
-        }
-        $extra = "data-type='confirm' title='" . __('Delete') . "' data-info='" . __('Do you really want to remove this item?') . "' data-button-yes='" . __('Yes') . "' data-button-no='" . __('No') . "' data-action='" . $object_url . "' data-redirection='" . $redirection . "' data-variables='{ \"_method\": \"delete\", \"_token\": \"" . csrf_token() . "\" }'";
-    }
-    return Button::make($config['name'])
-        ->setIcon($config['icon'])
-        ->setExtra($extra)
-        ->setType($config['type'])
-        ->setClass($config['class']);
+    return (new Front)->buttons()->getByName($name, $front, $object);
 }
 
 function isResponse($response)

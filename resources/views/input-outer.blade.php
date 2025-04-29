@@ -1,3 +1,3 @@
-<div class="col-sm-{{$input->bootstrap_width()}}">
+<div class="col-span-{{$input->bootstrap_width()}}">
 	{!! $value !!}
 </div>

@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\IsRunable;
 use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontShow;
@@ -33,7 +33,7 @@ class FrontController extends Controller
     public function __call($method, $arguments)
     {
         if (method_exists($this, $method)) {
-            $this->front = getFront($this->model);
+            $this->front = Front::makeResource($this->model);
             return call_user_func_array(array($this, $method), $arguments);
         }
     }
@@ -51,8 +51,8 @@ class FrontController extends Controller
         $front = $this->front->setSource('index');
         $base_url = $front->getBaseUrl();
 
-        $response = $this->run(new FrontIndex($front, $base_url));
-        if (isResponse($response)) {
+        $response = $this->processRequest(new FrontIndex($front, $base_url));
+        if ($this->isResponse($response)) {
             return $response;
         }
 
@@ -67,6 +67,11 @@ class FrontController extends Controller
         $this->frontAuthorize('create');
 
         $front = $this->front->setSource('create');
+        $response = $this->processRequest();
+        if ($this->isResponse($response)) {
+            return $response;
+        }
+
         return view('front::crud.create', $this->getParameters(compact('front')));
     }
 
@@ -77,8 +82,8 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('store');
-        $response = $this->run(new FrontStore($request, $front));
-        if (isResponse($response)) {
+        $response = $this->processRequest(new FrontStore($request, $front));
+        if ($this->isResponse($response)) {
             return $response;
         }
 
@@ -97,8 +102,8 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
-        $response = $this->run(new FrontShow($object, $front));
-        if (isResponse($response)) {
+        $response = $this->processRequest(new FrontShow($object, $front));
+        if ($this->isResponse($response)) {
             return $response;
         }
 
@@ -118,6 +123,10 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('edit')->setObject($object);
+        $response = $this->processRequest();
+        if ($this->isResponse($response)) {
+            return $response;
+        }
 
         // Show view
         return view('front::crud.edit', $this->getParameters(compact('object', 'front')));
@@ -134,11 +143,10 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('update')->setObject($object);
-        $response = $this->run(new FrontUpdate($request, $front, $object));
-        if (isResponse($response)) {
+        $response = $this->processRequest(new FrontUpdate($request, $front, $object));
+        if ($this->isResponse($response)) {
             return $response;
         }
-
         // Redirect
         return back();
     }
@@ -154,6 +162,11 @@ class FrontController extends Controller
 
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
+        $response = $this->processRequest();
+        if ($this->isResponse($response)) {
+            return $response;
+        }
+
         return $this->run(new FrontDestroy($front, $object));
     }
 
@@ -356,6 +369,21 @@ class FrontController extends Controller
         $response = $this->run(new FrontSearch($front, $request));
         if (isResponse($response)) {
             return $response;
+        }
+    }
+
+    private function processRequest(...$actions)
+    {
+        $pipe = [
+            fn() => $this->front->beforeRequest(),
+            ...array_map(fn($action) => fn() => $this->run($action), $actions)
+        ];
+
+        foreach ($pipe as $callable) {
+            $response = $callable();
+            if ($response) {
+                return $response;
+            }
         }
     }
 

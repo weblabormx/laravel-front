@@ -4,7 +4,6 @@ namespace WeblaborMx\Front\Jobs;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\URL;
 
 class FrontIndex
 {
@@ -40,7 +39,7 @@ class FrontIndex
 
         // Detect if crud is just for 1 item and redirects
         if (!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
-            $url = $this->base . '/' . $objects->getKey() . '/edit';
+            $url = $this->base.'/'.$objects->getKey().'/edit';
             return redirect($url);
         }
 
@@ -67,7 +66,7 @@ class FrontIndex
             $redirect_url = $this->front->redirects(false);
 
             // If there isn't any redirect url don't do anything
-            if (!isset($redirect_url) || URL::full() == $redirect_url) {
+            if (!isset($redirect_url) || url()->full() == $redirect_url) {
                 return $result;
             }
 
@@ -109,9 +108,9 @@ class FrontIndex
     private function getPaginateCacheKey($objects)
     {
         $request = collect(request()->all())->whereNotNull()->map(function ($item, $key) {
-            return $key . '-' . $item;
+            return $key.'-'.$item;
         })->implode(',');
-        $key = 'front:' . $request . ':';
+        $key = 'front:'.$request.':';
         $key .= $objects->toSql();
         $key = hash('sha256', $key);
         return $key;
@@ -139,7 +138,7 @@ class FrontIndex
     private function getResultCacheKey($result)
     {
         $key_name = $result->first()->getKeyName();
-        $key = get_class($this) . ':result:' . $result->pluck($key_name)->implode('|');
+        $key = get_class($this).':result:'.$result->pluck($key_name)->implode('|');
         $key = hash('sha256', $key);
         return $key;
     }

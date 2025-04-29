@@ -11,7 +11,7 @@ trait IsValidated
             $source = $this->source == 'store' ? 'create' : 'edit';
         }
 
-        // Get fields 
+        // Get fields
         $fields = collect($this->filterFields($source, true))->filter(function ($item) {
             return $item->shouldBeShown();
         });
@@ -30,7 +30,7 @@ trait IsValidated
 
     public function makeValidation($data)
     {
-        // Get fields 
+        // Get fields
         $fields = collect($this->filterFields($this->source == 'store' ? 'create' : 'edit', true))->filter(function ($item) {
             return $item->shouldBeShown();
         });

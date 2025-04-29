@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Traits;
 
+use WeblaborMx\Front\Facades\Front;
+
 trait HasBreadcrumbs
 {
     public function breadcrumbs()
@@ -146,7 +148,7 @@ trait HasBreadcrumbs
         if (request()->filled('relation_front')) {
             $front = request()->relation_front;
             $front = str_replace('.', '\\', $front);
-            $front = getFront($front, $this->source);
+            $front = Front::makeResource($front, $this->source);
             $object = $front->getModel();
             $object = $object::find(request()->relation_id);
         }

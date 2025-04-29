@@ -39,4 +39,5 @@ trait HasPermissions
         }
         return Gate::allows('delete', $object) && in_array('destroy', $this->actions);
     }
+
 }

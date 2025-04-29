@@ -3,9 +3,8 @@
 namespace WeblaborMx\Front\Console\Commands;
 
 use Illuminate\Console\Command;
-use WeblaborMX\FileModifier\FileModifier;
+use WeblaborMx\FileModifier\FileModifier;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Artisan;
 
 class Install extends Command
 {
@@ -31,8 +30,8 @@ class Install extends Command
     public function handle()
     {
         // Publish configuration
-        Artisan::call('vendor:publish', [
-            '--provider' => "WeblaborMx\Front\FrontServiceProvider",
+        \Artisan::call('vendor:publish', [
+            '--provider' => "WeblaborMx\Front\Facades\FrontServiceProvider",
         ]);
         $this->line('Configuration files published: <info>✔</info>');
 

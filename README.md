@@ -1,23 +1,33 @@
-# Front
+# Laravel Front
 
-_This package was inspired on Laravel Nova._
+Laravel Front, or just Front, is a Laravel package to programatically build UI admin panels.
 
-Front is a administration panel for Laravel. It allows you to create CRUD easily in minutes. It allows to fully customize any part of the code.
+It allows you to create CRUD easily in minutes, with a set of default inputs and components and an extendable API to create your own.
 
-*Differences with Laravel Nova:* 
+Fast & quick admin panels, with full-customization without constraints.
 
-- Front is created just with PHP, so there isn't any dependency with any javascript framework.
-- It tries to be simpler to modify and adapt to any use.
-- Menu is not generated automatically
+## Package inspired by Laravel Nova
+
+This package was started in 2019, as an open-source alternative to Laravel Nova.
+
+*Differences with Nova:* 
+
+- Front is created just with PHP. No JavaScript dependencies are required. 
+- Front is flexible, with an API meant to be used in different cases.  
+- Front is customizable, Front gives you a framework to make programatic UIs. All the rest is your doing.
 
 ## Documentation
+
 ### Installation
+
 The easiest way to install Laravel Front is using the [base-laravel-front project](https://github.com/weblabormx/base-laravel-front) as a base. But in case you want to install manually you can follow the next instructions.
 
 - Install via composer executing `composer require weblabormx/laravel-front`
+
 - Execute `php artisan front:install` to install all necessary files (Will install configuration file and views)
 
-_Adapt the layout_
+**Adapt the layout**
+
 - Add on your layout the code `@yield('after-nav')` as there is where Laravel Front shows the menu
 - Add on your layout the code `@yield('content')` as there is where Laravel Front shows the content of the cruds
 - Add on your layout the code `@yield('sidebar')` as there is where Laravel Front shows the filters on the menu
@@ -29,6 +39,24 @@ _Adapt the layout_
 
 #### Layout example
 ```php
+
+// <x-front::alerts />
+
+// <x-front::scripts />
+
+// <x-front::sidebar />
+
+// <x-front::content />
+
+// <x-front::fields>
+//     <x-front::field :field="$field" :front="$front">
+//         <div>
+//             <label>@lang($field->title)</label>
+//             {{ $field }}
+//         </div>
+//     </x-front::field>
+// </x-front::fields>
+
 @yield('after-nav')
 <main class="container-fluid container">
     @if(View::hasSection('sidebar') && strlen(trim(View::getSections()['sidebar']))>0)

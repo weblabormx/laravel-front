@@ -24,7 +24,7 @@ trait HasActions
         }
         return $actions->map(function ($item) {
             if (is_string($item)) {
-                return new $item;
+                return new $item();
             }
             return $item;
         })->filter(function ($item) use ($all) {
@@ -47,7 +47,7 @@ trait HasActions
         }
         return $actions->map(function ($item) {
             if (is_string($item)) {
-                return new $item;
+                return new $item();
             }
             return $item;
         })->filter(function ($item) use ($all) {

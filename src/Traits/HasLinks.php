@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Traits;
 
-use Illuminate\Support\Facades\URL;
+use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Texts\Button;
 
 trait HasLinks
@@ -42,14 +42,14 @@ trait HasLinks
 
         // Add delete button
         if ($this->canRemove($object)) {
-            $links[] = getButtonByName('delete', $this, $object);
+            $links[] = Front::buttons()->getByName('delete', $this, $object);
         }
 
         // Add update button
         if ($this->canUpdate($object)) {
             $extraUrl = str_replace(request()->url(), '', request()->fullUrl());
             $url = "{$this->getBaseUrl()}/{$object->getKey()}/edit{$extraUrl}";
-            $links[] = getButtonByName('edit')->addLink($url);
+            $links[] = Front::buttons()->getByName('edit')->addLink($url);
         }
 
         return $links;
@@ -74,16 +74,16 @@ trait HasLinks
 
         // Show massive edition
         if ($this->enable_massive_edition) {
-            $query = str_replace(url()->current(), '', URL::full());
+            $query = str_replace(url()->current(), '', url()->full());
             $url = $this->getBaseUrl() . "/massive_edit" . $query;
-            $links[] = getButtonByName('edit')->addLink($url);
+            $links[] = Front::buttons()->getByName('edit')->addLink($url);
         }
 
         // Show create button
         if ($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;
             $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
-            $links[] = getButtonByName('create')->setTitle(__('Create') . ' ' . $this->label)->addLink($url);
+            $links[] = Front::buttons()->getByName('create')->setTitle(__('Create') . ' ' . $this->label)->addLink($url);
         }
         return $links;
     }

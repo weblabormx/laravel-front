@@ -22,11 +22,11 @@ class ToolsController extends Controller
         }
 
         $new_name = $this->getFileName($file);
-        $file_name = $variables->directory . '/' . $new_name;
+        $file_name = $variables->directory.'/'.$new_name;
         $storage_file = Storage::put($file_name, (string) $new_file->encode(), 'public');
         $url = Storage::url($file_name);
 
-        $response = new \StdClass;
+        $response = new \StdClass();
         $response->link = $url;
         return response(stripslashes(json_encode($response)));
     }
@@ -40,7 +40,8 @@ class ToolsController extends Controller
         } else {
             $extension = $file->guessExtension();
         }
-        $file_name .= '.' . $extension;
+        $file_name .= '.'.$extension;
         return $file_name;
     }
+
 }

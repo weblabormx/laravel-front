@@ -101,7 +101,7 @@ class MassiveEditStore
                 $missing_columns = $required_fields_exist->filter(function ($item) {
                     return !$item;
                 })->keys()->implode(', ');
-                flash()->warning('Row ' . $key . ' need the next required fields: ' . $missing_columns . '. Update ignored.');
+                flash()->warning('Row '.$key.' need the next required fields: '.$missing_columns.'. Update ignored.');
             }
             return $values->count() > 1 && $has_required_values;
         })->map(function ($data, $key) use ($input, $object, $basic_data) {

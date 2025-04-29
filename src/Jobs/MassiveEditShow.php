@@ -2,8 +2,6 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-use Illuminate\Support\Facades\Cache;
-
 class MassiveEditShow
 {
     public $front;
@@ -30,7 +28,7 @@ class MassiveEditShow
     public function handle()
     {
         // Set session
-        Cache::store('array')->put('is_massive', true);
+        \Cache::store('array')->put('is_massive', true);
 
         // Check if relationship exists
         if (!isset($this->front->showRelations()[$this->key])) {

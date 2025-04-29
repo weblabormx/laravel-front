@@ -27,7 +27,7 @@ class PartialIndex
             $this->show_actions = $this->front->show_actions;
 
             // If not check if there are enough actions to show
-        } else if (!isset($this->show_actions)) {
+        } elseif (!isset($this->show_actions)) {
             $this->show_actions = in_array('show', $front->actions) || in_array('edit', $front->actions) || in_array('destroy', $front->actions);
         }
 
@@ -176,14 +176,14 @@ class PartialIndex
         $name .= '_view';
 
         $url = request()->fullUrl();
-        $url = preg_replace('~(\?|&)' . $name . '=[^&]*~', '$1', $url);
+        $url = preg_replace('~(\?|&)'.$name.'=[^&]*~', '$1', $url);
 
         $query = parse_url($url, PHP_URL_QUERY);
         // Returns a string if the URL has parameters or NULL if not
         if ($query) {
-            $url .= '&' . $name . '=' . $view;
+            $url .= '&'.$name.'='.$view;
         } else {
-            $url .= '?' . $name . '=' . $view;
+            $url .= '?'.$name.'='.$view;
         }
 
         $url = str_replace('?&', '?', $url);

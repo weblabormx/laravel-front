@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Console\Commands;
 
 use Illuminate\Console\Command;
-use WeblaborMX\FileModifier\FileModifier;
+use WeblaborMx\FileModifier\FileModifier;
 use Illuminate\Support\Str;
 
 class CreateFilter extends Command
