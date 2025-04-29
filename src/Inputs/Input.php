@@ -288,6 +288,8 @@ class Input implements Htmlable, \Stringable
 				}
 			}
 		}
+    }
+    
     /* -----------
      * Internal
      ----------- */

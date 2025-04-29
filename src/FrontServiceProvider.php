@@ -90,7 +90,7 @@ class FrontServiceProvider extends ServiceProvider
             $class = Front::registerResource($model);
             $front = Front::makeResource($class);
 
-            $prefix = $front->base_url;
+            $prefix = class_basename($front->base_url);
 
             return Route::prefix($prefix)->name('front.' . str($prefix)->classBasename()->snake()->lower())->group(function () use ($front, $model, $provider) {
                 $controller = new FrontController($model);
@@ -104,7 +104,7 @@ class FrontServiceProvider extends ServiceProvider
             $front = Front::makeResource($class);
             $prefix = $front->base_url;
 
-            return Route::prefix($prefix)->group(function () use ($model, $provider) {
+            return Route::prefix($prefix)->group(function () use ($model, $provider, $front) {
                 $controller = new FrontController($model);
                 $provider->generateFrontRoutes($front, $controller);
             });

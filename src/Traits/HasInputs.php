@@ -8,12 +8,8 @@ use WeblaborMx\Front\Components\Panel;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Components\HtmlableComponent;
 use WeblaborMx\Front\Inputs\Input;
-use WeblaborMx\Front\Traits\ValidateResponse;
-
 trait HasInputs
 {
-    use ValidateResponse;
-
     private $relations = ['HasMany', 'MorphMany'];
     public $fields_function = 'fields';
 
