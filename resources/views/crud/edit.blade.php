@@ -5,7 +5,7 @@
     @include('front::elements.breadcrumbs')
     @include ('front::elements.errors')
     
-    {{ html()->modelForm($object, 'PUT', $front->getBaseUrl() . '/' . $object->getKey())->acceptsFiles() }}
+    {{ html()->modelForm($object, 'PUT', $front->getBaseUrl() . '/' . $object->getKey())->acceptsFiles()->open() }}
 
         <div class="mt-2 md:flex md:items-center md:justify-between">
             <div class="min-w-0 flex-1">

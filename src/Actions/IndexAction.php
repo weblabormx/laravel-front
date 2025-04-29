@@ -11,24 +11,9 @@ use WeblaborMx\Front\Jobs\FrontIndex;
 
 class IndexAction
 {
-    use HasInputs;
-    use IsValidated;
+    use HasInputs, IsValidated;
 
-    public $title;
-
-    public $button_text;
-
-    public $dat;
-
-    public $save_button;
-
-    public $slug;
-
-    public $front;
-
-    public $data;
-
-    public $url;
+    public $title, $button_text, $dat, $save_button, $slug, $front, $data, $url;
     public $icon = 'fa fa-book';
     public $show = true;
     public $show_button = true;
