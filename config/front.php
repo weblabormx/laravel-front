@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'resources_folder' => 'App\Front',
+    'resources_folder' => 'App\Front\Resources',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'models_folder' => 'App',
+    'models_folder' => 'App\Models',
 
     /*
     |--------------------------------------------------------------------------
@@ -96,37 +96,37 @@ return [
 
     'buttons' => [
         'show' => [
-            'icon' => 'fa fa-eye',
+            'icon' => 'eye',
             'name' => 'See',
             'type' => 'btn-primary',
             'class' => ''
         ],
         'edit' => [
-            'icon' => 'fa fa-edit',
+            'icon' => 'pencil',
             'name' => 'Edit',
             'type' => 'btn-primary',
             'class' => ''
         ],
         'create' => [
-            'icon' => 'fa fa-plus',
+            'icon' => 'plus-small',
             'name' => 'Create',
             'type' => 'btn-primary',
             'class' => ''
         ],
         'delete' => [
-            'icon' => 'fa fa-times pr-2',
+            'icon' => 'trash',
             'name' => 'Delete',
-            'type' => 'btn-danger',
+            'type' => 'btn-outline-danger',
             'class' => ''
         ],
         'up' => [
-            'icon' => 'fa fa-arrow-up',
+            'icon' => 'arrow-up',
             'name' => 'Up',
             'type' => 'btn-primary',
             'class' => ''
         ],
         'down' => [
-            'icon' => 'fa fa-arrow-down',
+            'icon' => 'arrow-down',
             'name' => 'Down',
             'type' => 'btn-primary',
             'class' => ''
@@ -143,7 +143,7 @@ return [
     */
 
     'default_input_attributes' => [
-        'class' => 'form-control'
+        'class' => 'mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
     ]
 
 ];
