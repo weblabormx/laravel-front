@@ -3,7 +3,7 @@
 namespace WeblaborMx\Front\Console\Commands;
 
 use Illuminate\Console\Command;
-use WeblaborMX\FileModifier\FileModifier;
+use WeblaborMx\FileModifier\FileModifier;
 use Illuminate\Support\Str;
 
 class CreatePage extends Command
@@ -29,7 +29,7 @@ class CreatePage extends Command
      */
     public function handle()
     {
-        $directory = WLFRONT_PATH.'/install-stubs';
+        $directory = WLFRONT_PATH . '/install-stubs';
         $name = $this->argument('name');
 
         // Create Front Folder if doesnt exist
@@ -44,17 +44,17 @@ class CreatePage extends Command
 
         // Create resource base
         $file_name = app_path('Front/Pages/Page.php');
-        if(!FileModifier::file($file_name)->exists()) {
-            copy($directory.'/base-page.php', $file_name);
+        if (!FileModifier::file($file_name)->exists()) {
+            copy($directory . '/base-page.php', $file_name);
         }
 
         // Create resource
-        $file_name = app_path('Front/Pages/'.$name.'.php');
-        if(FileModifier::file($file_name)->exists()) {
+        $file_name = app_path('Front/Pages/' . $name . '.php');
+        if (FileModifier::file($file_name)->exists()) {
             $this->line('Page already exists.');
             return;
         }
-        copy($directory.'/page.php', $file_name);
+        copy($directory . '/page.php', $file_name);
 
         FileModifier::file($file_name)
             ->replace('{name}', $name)

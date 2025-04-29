@@ -1,23 +1,30 @@
 @php $helper = $front->getActionsHelper($object, $base_url, $edit_link ?? null, $show_link ?? null); @endphp
-<td class="text-center d-print-none">
+<td class="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
     @if( $helper->isSortable() )
-        <!-- Edit button -->
-        <a href="{{$helper->upUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Up') }}"><i class="fa fa-arrow-up"></i></a>
-        <a href="{{$helper->downUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Down') }}"><i class="fa fa-arrow-down"></i></a>
+        <!-- Sortable buttons -->
+        {!! \Front::buttons()->getByName('up')->addLink($helper->upUrl())->setType('')->setTitle('')->setClass('inline-block text-primary-600 hover:text-primary-800')->form() !!}
+        {!! \Front::buttons()->getByName('down')->addLink($helper->downUrl())->setType('')->setTitle('')->setClass('inline-block text-primary-600 hover:text-primary-800')->form() !!}
     @endif
-	@if( $helper->canShow() )
-    	<!-- Edit button -->
-        <a href="{{$helper->showUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('See') }}"><i class="fa fa-eye"></i></a>
+    @if( $helper->canShow() )
+        <!-- Edit button -->
+        {!! \Front::buttons()->getByName('show')->addLink($helper->showUrl())->setType('')->setTitle('')->setClass('inline-block text-primary-600 hover:text-primary-800')->form() !!}
     @endif
     @if( $helper->canUpdate() )
-    	<!-- Edit button -->
-        <a href="{{$helper->updateUrl()}}" class="btn btn-default p-0" aria-hidden="true" title="{{ __('Edit') }}"><i class="fa fa-edit"></i></a>
+        <!-- Edit button -->
+        {!! \Front::buttons()->getByName('edit')->addLink($helper->updateUrl())->setType('')->setTitle('')->setClass('inline-block text-primary-600 hover:text-primary-800')->form() !!}
     @endif
-    <!-- Remove button -->
-    @if( $helper->canRemove() )
-        <a data-type="confirm" title="{{ __('Delete') }}" data-info="{{ __('Do you really want to remove this item?') }}" data-button-yes="{{ __('Yes') }}" data-button-no="{{ __('No') }}" data-action="{{url($helper->removeUrl())}}" data-redirection="{{url($front->removeRedirectionUrl())}}" data-variables='{ "_method": "delete", "_token": "{{ csrf_token() }}" }' class="btn btn-default p-0" href="#"><i class="fa fa-times"></i></a>
-    @endif
+
     @foreach($helper->getActions($object) as $action)
-        <a href="{{ $action->url }}" class="btn btn-default p-0" aria-hidden="true" title="{{ $action->title }}"><i class="{{$action->icon}}"></i></a>
+        <a href="{{ $action->url }}" class="inline-block text-primary-600 hover:text-primary-800" title="{{ $action->title }}">
+            @if(str_contains($action->icon, 'fa-'))
+                <i class="{{$action->icon}} w-6 h-6 text-center text-xl block"></i>
+            @else
+                <x-icon name="{{$action->icon}}" class="w-6 h-6" />
+            @endif
+        </a>
     @endforeach
+    @if( $helper->canRemove() )
+        <!-- Remove button -->
+        {!! \Front::buttons()->getByName('delete', $front, $object)->setType('')->setTitle('')->setClass('inline-block text-red-400 hover:text-red-600')->form() !!}
+    @endif
 </td>

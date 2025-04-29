@@ -25,15 +25,17 @@ class FrontDestroy
      */
     public function handle()
     {
-        // Call the action to be done before is deleted
-        $this->front->destroy($this->object);
+        $continue = $this->front->destroy($this->object);
+        if (is_bool($continue) && !$continue) {
+            return false;
+        }
 
         // Process inputs actions for when is removed
         $this->front->processRemoves($this->object);
 
         // Delete the object
         $this->object->delete();
-        
+
         // Show success message
         flash(__(':name deleted successfully', ['name' => $this->front->label]))->success();
 

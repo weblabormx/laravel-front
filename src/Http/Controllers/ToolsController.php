@@ -16,7 +16,7 @@ class ToolsController extends Controller
 
         $new_file = Intervention::make($file);
         if ($new_file->height() > $variables->height || $new_file->width() > $variables->width) {
-            $new_file = $new_file->resize($variables->width, $variables->height, function($constraint) {
+            $new_file = $new_file->resize($variables->width, $variables->height, function ($constraint) {
                 $constraint->aspectRatio();
             });
         }
@@ -26,7 +26,7 @@ class ToolsController extends Controller
         $storage_file = Storage::put($file_name, (string) $new_file->encode(), 'public');
         $url = Storage::url($file_name);
 
-        $response = new \StdClass;
+        $response = new \StdClass();
         $response->link = $url;
         return response(stripslashes(json_encode($response)));
     }
@@ -34,9 +34,9 @@ class ToolsController extends Controller
     private function getFileName($file)
     {
         $file_name = Str::random(9);
-        if(is_string($file)) {
+        if (is_string($file)) {
             $extension = explode('.', $file);
-            $extension = $extension[count($extension)-1];
+            $extension = $extension[count($extension) - 1];
         } else {
             $extension = $file->guessExtension();
         }

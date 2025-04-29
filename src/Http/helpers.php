@@ -1,28 +1,34 @@
 <?php
 
+use WeblaborMx\Front\Front;
+use Illuminate\Support\Str;
+
 function getThumb($full_name, $prefix, $force = false)
 {
-    if(function_exists('validateGetThumb') && !$force) {
-        $execute = validateGetThumb($full_name);
-        if(!$execute) {
-            if(function_exists('editGetThumb')) {
-                return editGetThumb($full_name);
+    $editGetThumbHelper = 'editGetThumb';
+    $validateGetThumbHelper = 'validateGetThumb';
+
+    if (function_exists($validateGetThumbHelper) && !$force) {
+        $execute = $validateGetThumbHelper($full_name);
+        if (!$execute) {
+            if (function_exists($editGetThumbHelper)) {
+                return $editGetThumbHelper($full_name);
             }
             return $full_name;
         }
     }
     $full_name = explode('/', $full_name);
-    $key = count($full_name)-1;
+    $key = count($full_name) - 1;
 
     $name = explode('.', $full_name[$key]);
-    $name[0] = $name[0].$prefix;
+    $name[0] = $name[0] . $prefix;
     $name = implode('.', $name);
-    
+
     $full_name[$key] = $name;
     $full_name = implode('/', $full_name);
 
-    if(function_exists('editGetThumb')) {
-        return editGetThumb($full_name);
+    if (function_exists($editGetThumbHelper)) {
+        return $editGetThumbHelper($full_name);
     }
 
     return $full_name;
@@ -30,6 +36,40 @@ function getThumb($full_name, $prefix, $force = false)
 
 function getFront($model, $source = null)
 {
-	$model = config('front.resources_folder').'\\'.$model;
+    $model = config('front.resources_folder') . '\\' . $model;
     return new $model($source);
+}
+
+function getFrontByModel($object)
+{
+    $class = $object->getMorphClass();
+    $class = str_replace('App\\Models\\', '', $class);
+    return getFront($class)->setObject($object);
+}
+
+function getButtonByName($name, $front = null, $object = null)
+{
+    return (new Front)->buttons()->getByName($name, $front, $object);
+}
+
+function isResponse($response)
+{
+    if (!is_object($response)) {
+        return false;
+    }
+    $class = get_class($response);
+    $classes = [$class];
+    while (true) {
+        $class = get_parent_class($class);
+        if (!$class) {
+            break;
+        }
+        $classes[] = $class;
+    }
+    return collect($classes)->contains(function ($item) {
+        return Str::contains($item, [
+            'Symfony\Component\HttpFoundation\Response',
+            'Illuminate\View\View'
+        ]);
+    });
 }

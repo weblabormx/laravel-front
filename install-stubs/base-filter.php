@@ -6,7 +6,6 @@ use WeblaborMx\Front\Filters\Filter as Base;
 
 class Filter extends Base
 {
-
-	//
+    //
 
 }

@@ -47,7 +47,7 @@ class NumericCard extends Card
     public function getStyle()
     {
         $style = $this->style ?? '';
-        if(isset($this->background)) {
+        if (isset($this->background)) {
             $style .= ' background: '.$this->background;
         }
         return $style;
@@ -59,8 +59,8 @@ class NumericCard extends Card
 
     public function load()
     {
-        
-        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function() {
+
+        $values = Cache::remember($this->cacheName(), $this->cacheFor() ?? 0, function () {
             return [
                 'number' => $this->value(),
                 'porcentage' => $this->calculatePorcentage($this->value(), $this->old())
@@ -72,7 +72,7 @@ class NumericCard extends Card
 
     public function calculatePorcentage($now, $before)
     {
-        if($before==0) {
+        if ($before == 0) {
             return 0;
         }
         $diff = $now - $before;

@@ -2,18 +2,20 @@
 
 namespace WeblaborMx\Front\Filters;
 
-use App\Front\Resource;
 use Illuminate\Support\Str;
 
 class Filter
 {
-	public $resource; 
-	public $default = '';
+    public $resource;
+    public $slug;
+    public $default = '';
     public $show = true;
-    
+    public $visible = true;
+    public $execute_before = true;
+
     public function __construct()
     {
-        if(!isset($this->slug)) {
+        if (!isset($this->slug)) {
             $this->slug = Str::slug(Str::snake(class_basename(get_class($this))), '_');
         }
     }
@@ -22,7 +24,7 @@ class Filter
      * Needed functions
      */
 
-	public function default()
+    public function default()
     {
         return $this->default;
     }
@@ -43,14 +45,14 @@ class Filter
 
     public function setResource($resource)
     {
-    	$this->resource = $resource;
-    	return $this;
+        $this->resource = $resource;
+        return $this;
     }
 
     public function formHtml()
     {
         $input = $this->field();
-        if(is_null($input)) {
+        if (is_null($input)) {
             return;
         }
         return $input->setColumn($this->slug)->formHtml();
@@ -64,9 +66,9 @@ class Filter
 
     public function show($result)
     {
-        if(!is_string($result) && is_callable($result)) {
+        if (!is_string($result) && is_callable($result)) {
             $result = $result();
-        } 
+        }
         $this->show = $result;
         return $this;
     }
