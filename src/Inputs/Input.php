@@ -284,28 +284,24 @@ class Input implements Htmlable, \Stringable
     protected function castReturnValue(mixed $return): ?string
     {
         // Prevents model `$casts` exceptions
-        // PHP 7.1 compatible
-        if (isset($return) && !is_string($return)) {
-            if (is_scalar($return)) {
-                $return = strval($return);
-            } elseif (is_array($return)) {
-                $return = json_encode($return);
-            } elseif (gettype($return) === 'object') {
-                if (method_exists($return, '__toString')) {
-                    $return = $return->__toString();
-                } elseif ($return instanceof \UnitEnum) {
-                    if (method_exists($return, 'label')) {
-                        $return = $return->label();
-                    } elseif ($return instanceof \BackedEnum) {
-                        $return = $return->value;
-                    } else {
-                        $return = $return->name;
-                    }
-                } elseif ($return instanceof \JsonSerializable) {
-                    $return = json_encode($return);
-                }
-            }
-        }
+		// PHP 7.1 compatible
+		if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
+			if (is_scalar($return)) {
+				$return = strval($return);
+			} else if (enum_exists($return::class)) {
+				$return = $return->value ?? $return->name;
+			} else if (is_array($return)) {
+				$return = json_encode($return);
+			} else if (gettype($return) === 'object') {
+				if (method_exists($return, '__toString')) {
+					$return = $return->__toString();
+				} else if ($return instanceof \BackedEnum) {
+					$return = $return->value;
+				} else if ($return instanceof \JsonSerializable) {
+					$return = json_encode($return);
+				}
+			}
+		}
 
         return $return;
     }
