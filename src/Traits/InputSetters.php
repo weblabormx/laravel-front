@@ -96,14 +96,14 @@ trait InputSetters
         return $this;
     }
 
-    public function conditional($conditional)
-    {
-        // This work on form
-        $this->form_before = '<div data-type="conditional2" data-condition="' . $conditional . '" style="' . $this->style_width() . '">';
-        $this->form_after = '</div>';
-        $this->conditional = $conditional;
-        return $this;
-    }
+	public function conditional($conditional)
+	{
+		// This work on form
+		$this->form_before = '<div data-type="conditional2" class="col-span-12" data-condition="' . $conditional . '" style="' . $this->style_width() . '">';
+		$this->form_after = '</div>';
+		$this->conditional = $conditional;
+		return $this;
+	}
 
     public function validateConditional($object)
     {

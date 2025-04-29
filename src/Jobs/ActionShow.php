@@ -70,7 +70,7 @@ class ActionShow
         $result = $action->fields();
 
         // If returns a response so dont do any more
-        if ($this->isResponse($result)) {
+        if (isResponse($result)) {
             return $result;
         }
 

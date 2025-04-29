@@ -257,4 +257,24 @@ class FrontServiceProvider extends ServiceProvider
             Front::registerRoute($front, $value, $key);
         }
     }
+
+    /**
+     * Register the laravel collective created inputs
+     *
+     * @return void
+     */
+    public function loadInputs()
+    {
+        \Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
+            $value = \Form::getValueAttribute($name, $value);
+            if (!is_null($value) && !$value instanceof DateTime) {
+                try {
+                    $value = Carbon::parse($value);
+                } catch (\Exception $e) {
+                    
+                }
+            }
+            return \Form::datetimeLocal($name, $value, $options);;
+        });
+    }
 }

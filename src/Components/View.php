@@ -4,7 +4,8 @@ namespace WeblaborMx\Front\Components;
 
 class View extends Component
 {
-    private $with = [];
+	private $with = [];
+	public $needs_to_be_on_panel = false;
 
     public function form()
     {

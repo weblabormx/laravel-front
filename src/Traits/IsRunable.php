@@ -6,8 +6,6 @@ use Illuminate\Support\Str;
 
 trait IsRunable
 {
-    use ValidateResponse;
-
     public function run($object)
     {
         return $object->handle();

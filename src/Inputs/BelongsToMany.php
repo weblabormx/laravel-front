@@ -10,12 +10,8 @@ class BelongsToMany extends Input
 {
     use InputRelationship;
 
-    public $relation;
-    public $model_name;
-    public $relation_front;
-    public $search_field;
-    public $empty_title;
-    public $show_placeholder = true;
+	public $relation, $model_name, $relation_front, $search_field, $empty_title;
+	public $show_placeholder = true, $is_multiple = true;
 
     public function __construct($title, $relation = null, $model_name = null, $source = null)
     {
@@ -70,12 +66,10 @@ class BelongsToMany extends Input
         return '<ul>' . $value->implode('') . '</ul>';
     }
 
-    public function form()
-    {
-        $relation_front = $this->relation_front;
-
-        $model = $this->relation_front->getModel();
-        $model = new $model();
+	public function form()
+	{
+		$model = $this->relation_front->getModel();
+		$model = new $model;
 
         if (isset($this->force_query)) {
             $force_query = $this->force_query;
@@ -95,24 +89,26 @@ class BelongsToMany extends Input
             $options = $filter_collection($options);
         }
 
-        $title = $this->search_field ?? $this->relation_front->search_title;
-        $options = $options->pluck($title, $model->getKeyName());
-        $select = Select::make($this->title, $this->column)
-            ->options($options)
-            ->default($this->default_value, $this->default_value_force)
-            ->size($this->size)
-            ->setEmptyTitle($this->empty_title)
-            ->withMeta($this->attributes)
-            ->setPlaceholder($this->show_placeholder)
-            ->multiple();
-        return $select->form();
-    }
+		$title = $this->search_field ?? $this->relation_front->search_title;
+		$options = $options->pluck($title, $model->getKeyName());
+		$select = Select::make($this->title, $this->column)
+			->options($options)
+			->default($this->default_value, $this->default_value_force)
+			->size($this->size)
+			->setEmptyTitle($this->empty_title)
+			->withMeta($this->attributes)
+			->setPlaceholder($this->show_placeholder);
+		if($this->is_multiple) {
+			$select = $select->multiple();
+		}
+		return $select->form();
+	}
 
-    public function processData($data)
-    {
-        unset($data[$this->column]);
-        return $data;
-    }
+	public function processDataAfterValidation($data)
+	{
+		unset($data[$this->column]);
+		return $data;
+	}
 
     public function processAfterSave($object, $request)
     {
@@ -132,9 +128,15 @@ class BelongsToMany extends Input
         return $this;
     }
 
-    public function hidePlaceholder()
-    {
-        $this->show_placeholder = false;
-        return $this;
-    }
+	public function hidePlaceholder()
+	{
+		$this->show_placeholder = false;
+		return $this;
+	}
+
+	public function noMultiple()
+	{
+		$this->is_multiple = false;
+		return $this;
+	}
 }

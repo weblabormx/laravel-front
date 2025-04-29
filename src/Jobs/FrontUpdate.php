@@ -2,12 +2,8 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-use WeblaborMx\Front\Traits\ValidateResponse;
-
 class FrontUpdate
 {
-    use ValidateResponse;
-
     public $request;
     public $front;
     public $object;
@@ -33,7 +29,7 @@ class FrontUpdate
     {
         // Get data to be saved
         $data = $this->front->processData($this->request->all());
-        if ($this->isResponse($data)) {
+        if (isResponse($data)) {
             return $data;
         }
 

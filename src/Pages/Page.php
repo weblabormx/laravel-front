@@ -70,33 +70,33 @@ class Page
         return view($this->view, $this->getParameters($data));
     }
 
-    public function executePost($data)
-    {
-        $return = $this->post();
-        if ($this->isResponse($return)) {
-            return $return;
-        }
-        flash(__('Saved successfully'))->success();
-        return back();
-    }
+	public function executePost($data)
+	{
+		$return = $this->post();
+		if (isResponse($return)) {
+			return $return;
+		}
+		flash(__('Saved successfully'))->success();
+		return back();
+	}
 
-    public function executePut($data)
-    {
-        $return = $this->post();
-        if ($this->isResponse($return)) {
-            return $return;
-        }
-        flash(__('Updated successfully'))->success();
-        return back();
-    }
+	public function executePut($data)
+	{
+		$return = $this->post();
+		if (isResponse($return)) {
+			return $return;
+		}
+		flash(__('Updated successfully'))->success();
+		return back();
+	}
 
-    public function executeDelete($data)
-    {
-        $return = $this->delete();
-        if ($this->isResponse($return)) {
-            return $return;
-        }
-        flash(__('Deleted successfully'))->success();
-        return back();
-    }
+	public function executeDelete($data)
+	{
+		$return = $this->delete();
+		if (isResponse($return)) {
+			return $return;
+		}
+		flash(__('Deleted successfully'))->success();
+		return back();
+	}
 }

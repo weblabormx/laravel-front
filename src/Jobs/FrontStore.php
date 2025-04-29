@@ -31,7 +31,7 @@ class FrontStore
     {
         // Get data to be saved
         $data = $this->front->processData($this->request->all());
-        if ($this->isResponse($data)) {
+        if (isResponse($data)) {
             return $data;
         }
 
@@ -54,7 +54,7 @@ class FrontStore
             // Create the object
             $object = $this->front->create($result);
 
-            if ($this->isResponse($object)) {
+            if (isResponse($object)) {
                 return $object;
             }
 

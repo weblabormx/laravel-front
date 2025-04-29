@@ -11,6 +11,9 @@ class DateTime extends Input
 
     public function form()
     {
+		if($this?->resource?->object) {
+			$this->default_value = $this->getValue($this->resource->object);
+		}
         $this->attributes['pattern'] = $this->pattern;
 
         return html()

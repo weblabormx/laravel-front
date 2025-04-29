@@ -9,6 +9,7 @@
 
     {{ html()->modelForm($object, 'PUT', $front->getBaseUrl() . '/' . $object->getKey())->acceptsFiles() }}
 
+    {{ html()->hidden('redirect_url') }}
     @foreach ($front->editPanels() as $panel)
         {!! $panel->formHtml() !!}
     @endforeach

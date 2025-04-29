@@ -86,7 +86,7 @@ class ActionStore
         }
 
         // If returns a response so dont do any more
-        if ($this->isResponse($result)) {
+        if (isResponse($result)) {
             $this->request->flash();
             return $result;
         }
