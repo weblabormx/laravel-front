@@ -22,6 +22,9 @@
         "weblabormx/file-modifier": "*"
     },
     "autoload": {
+        "files": [
+            "src/Http/helpers.php"
+        ],
         "psr-4": {
             "WeblaborMx\\Front\\": "src/"
         }
