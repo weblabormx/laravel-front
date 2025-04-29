@@ -62,7 +62,7 @@
 
     <div class="text-right mt-3">
         @foreach ($front->getTableButtons() as $name => $title)
-            <button type="submit" class="btn btn-primary" @if (strlen($name) > 0) name="submitName" value="{{ $name }}" @endif>{!! $title !!}</button>
+            <button type="submit" class="ml-3 inline-flex items-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" @if (strlen($name) > 0) name="submitName" value="{{ $name }}" @endif>{!! $title !!}</button>
         @endforeach
     </div>
 

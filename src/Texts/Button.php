@@ -11,7 +11,7 @@ class Button extends Text
     public $style = '';
     public $extra = '';
     public $class = '';
-    public $type = 'btn-primary';
+    public $type = 'bg-blue-600 hover:bg-blue-700 text-white';
     public $icon = '';
 
     public function load()

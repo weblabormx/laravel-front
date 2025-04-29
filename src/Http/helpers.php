@@ -47,7 +47,7 @@ function getFrontByModel($object)
     return getFront($class)->setObject($object);
 }
 
-function getButtonByName($name, $front = null, $object = null)
+function \Front::buttons()->getByName($name, $front = null, $object = null)
 {
     $config = config('front.buttons.' . $name);
     $extra = '';

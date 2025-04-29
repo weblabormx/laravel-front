@@ -1,8 +1,8 @@
-<div class="card text-white bg-dark mb-3 text-center">
+<div class="p-5 text-white bg-gray-700 my-3 text-center">
     <div class="card-body" id="{{ $id }}">
         @php $column = $input->column; @endphp
         @if (isset($input->resource) && isset($input->resource->object) && isset($input->resource->object->$column))
-            <img src="{{ \Front::thumbs()->get($input->resource->object->$column, $input->view_size) }}" class="mw-100"><br /><br />
+            <img src="{{ \Front::thumbs()->get($input->resource->object->$column, $input->view_size) }}" class="mw-100 mx-auto"><br /><br />
         @elseif(isset($input->value))
             <img src="{{ $input->value }}" class="mw-100"><br /><br />
         @endif
