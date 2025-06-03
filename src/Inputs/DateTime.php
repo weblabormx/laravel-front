@@ -21,6 +21,20 @@ class DateTime extends Input
             ->attributes($this->attributes);
     }
 
+    public function getValue($object)
+    {
+		$column = $this->column;
+		$value = $object->$column;
+        if ($value instanceof Carbon && config('front.datetime_wrap')) {
+            $value = $value->{config('front.datetime_wrap')}();
+        }
+		if ($value instanceof Carbon) {
+			return $value->format(config('front.datetime_format'));
+		}
+
+        return parent::getValue($object);
+    }
+
     public function useSeconds()
     {
         $this->pattern = '^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$';
