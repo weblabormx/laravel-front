@@ -11,10 +11,7 @@ use Illuminate\Support\Str;
 
 class Input implements Htmlable, \Stringable
 {
-    use InputVisibility;
-    use InputSetters;
-    use InputRules;
-    use WithWidth;
+    use InputVisibility, InputSetters, InputRules, WithWidth;
 
     public $is_input = true;
     public $is_panel = false;

@@ -11,7 +11,7 @@ trait InputSetters
     public $help;
     public $resource;
     public $display_using;
-    public $link;
+    public $link, $link_target;
     public $rename_after;
     public $get_value_from;
     public $class = '';
