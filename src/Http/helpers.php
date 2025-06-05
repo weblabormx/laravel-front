@@ -1,7 +1,8 @@
 <?php
 
-use WeblaborMx\Front\Front;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image as Intervention;
+use WeblaborMx\Front\Front;
 
 function getThumb($full_name, $prefix, $force = false)
 {
@@ -71,5 +72,72 @@ function isResponse($response)
             'Symfony\Component\HttpFoundation\Response',
             'Illuminate\View\View'
         ]);
+    });
+}
+
+function saveImagesWithThumbs($image, $directory, $file_name, $disk = null)
+{
+    if (is_null($disk)) {
+        $disk = config('front.disk', 'public');
+    }
+
+    $thumbnails = config('front.thumbnails', []);
+    Storage::putFileAs($directory, $image, $file_name);
+
+    foreach ($thumbnails as $thumbnail) {
+        $width = $thumbnail['width'];
+        $height = $thumbnail['height'];
+        $prefix = $thumbnail['prefix'];
+        $is_fit = $thumbnail['fit'] ?? false;
+
+        // Make smaller the image
+        $new_file = Intervention::make($image);
+
+        if ($is_fit) {
+            $new_file = $new_file->fit($width, $height);
+        } elseif ($new_file->height() > $height || $new_file->width() > $width) {
+            $new_file = $new_file->resize($width, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        }
+
+        // Save the image
+        $new_name = getThumb($file_name, $prefix, true);
+        $new_file_name = $directory . '/' . $new_name;
+        Storage::put($new_file_name, (string) $new_file->encode(), 'public');
+    }
+    return $directory . '/' . $file_name;
+}
+
+function deleteImagesWithThumbs($file_name, $disk = null)
+{
+    if (is_null($disk)) {
+        $disk = config('front.disk', 'public');
+    }
+
+    $thumbnails = config('front.thumbnails', []);
+    foreach ($thumbnails as $thumbnail) {
+        $prefix = $thumbnail['prefix'];
+        $new_name = getThumb($file_name, $prefix, true);
+        Storage::delete($new_name);
+    }
+    return Storage::delete($file_name);
+}
+
+function showImage($path, $default = null, $disk = null)
+{
+    $disk = $disk ?? config('filesystems.default');
+    if (!Storage::disk($disk)->exists($path)) {
+        return $default;
+    }
+
+    $publicDisks = collect(config('filesystems.disks'))->where('visibility', 'public')->keys()->all();
+    if (in_array($disk, $publicDisks)) {
+        return Storage::disk($disk)->url($path);
+    }
+
+    $cacheKey = "temporary_url:{$disk}:{$path}";
+    return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($disk, $path) {
+        return Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
     });
 }
