@@ -158,4 +158,22 @@ return [
 
     'datetime_wrap' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Thumbnails
+    |--------------------------------------------------------------------------
+    |
+    | The default thumbnails used on the system, you can add more
+    | 
+    */
+
+    'thumbnails' => [
+        ['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
+        ['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
+        ['prefix' => 't', 'width' => 160,  'height' => 160,  'fit' => false], // Small Thumbnail
+        ['prefix' => 'm', 'width' => 320,  'height' => 320,  'fit' => false], // Medium Thumbnail
+        ['prefix' => 'l', 'width' => 640,  'height' => 640,  'fit' => false], // Large Thumbnail
+        ['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
+    ]
+
 ];

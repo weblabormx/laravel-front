@@ -19,14 +19,7 @@ class Image extends Input
     public $url_returned;
     public $extension;
     public $save = true;
-    public $thumbnails = [
-        ['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
-        ['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
-        ['prefix' => 't', 'width' => 160,  'height' => 160,  'fit' => false], // Small Thumbnail
-        ['prefix' => 'm', 'width' => 320,  'height' => 320,  'fit' => false], // Medium Thumbnail
-        ['prefix' => 'l', 'width' => 640,  'height' => 640,  'fit' => false], // Large Thumbnail
-        ['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
-    ];
+    public $thumbnails = [];
 
     /*
      * Basic functions
@@ -37,6 +30,7 @@ class Image extends Input
         $this->url_returned = function ($file_name) {
             return Storage::url($file_name);
         };
+        $this->thumbnails = config('front.thumbnails', []);
     }
 
     public function form()
