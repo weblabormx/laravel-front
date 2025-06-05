@@ -124,7 +124,7 @@ function deleteImagesWithThumbs($file_name, $disk = null)
     return Storage::delete($file_name);
 }
 
-function showImage($path, $default = null, $disk = null)
+function getImageUrl($path, $default = null, $disk = null)
 {
     $disk = $disk ?? config('filesystems.default');
     if (!Storage::disk($disk)->exists($path)) {
