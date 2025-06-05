@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image as Intervention;
 use WeblaborMx\Front\Front;
@@ -119,15 +121,21 @@ function deleteImagesWithThumbs($file_name, $disk = null)
     foreach ($thumbnails as $thumbnail) {
         $prefix = $thumbnail['prefix'];
         $new_name = getThumb($file_name, $prefix, true);
+        if(!Storage::exists($new_name)) {
+            continue;
+        }
         Storage::delete($new_name);
     }
-    return Storage::delete($file_name);
+    if (!Storage::exists($file_name)) {
+        return;
+    }
+    Storage::delete($file_name);
 }
 
 function getImageUrl($path, $default = null, $disk = null)
 {
     $disk = $disk ?? config('filesystems.default');
-    if (!Storage::disk($disk)->exists($path)) {
+    if (!$path || !Storage::disk($disk)->exists($path)) {
         return $default;
     }
 
