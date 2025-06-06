@@ -18,7 +18,7 @@
         "laracasts/flash": ">=3",
         "laravel/framework": ">5.5",
         "opis/closure": "^3.1",
-        "spatie/laravel-html": "dev-main",
+        "spatie/laravel-html": "dev-formWithDefaults",
         "weblabormx/file-modifier": "*"
     },
     "repositories": [
