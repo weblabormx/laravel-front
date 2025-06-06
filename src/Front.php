@@ -127,10 +127,6 @@ final class Front
             return $namespace . $basename;
         }
 
-        if (\count($found) > 1) {
-            throw new \InvalidArgumentException("Trying to resolve ambiguous resource '{$basename}'. Try using FQN classname instead");
-        }
-
         return $found[0];
     }
 
