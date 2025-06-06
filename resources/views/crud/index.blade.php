@@ -18,15 +18,17 @@
 
     @if(count($front->filters())>0)
         <div class="mt-6 font-bold">{{ __('FILTER RESULTS', ['name' => strtoupper($front->plural_label)]) }}</div>
-        {!! Form::open(['url' => request()->url(), 'method' => 'get', 'class' => 'mt-2 mb-4 flex gap-6 bg-slate-50 p-4 border border-gray-200 rounded-lg']) !!} 
-            {!! Form::hidden($front->getCurrentViewRequestName()) !!}
-            @foreach($front->getFilters() as $filter)
-                {!! $filter->formHtml() !!}
-            @endforeach
-            <div>
-                {!! Form::submit(__('Search'), ['class' => 'bg-primary-600 text-white px-4 rounded mt-6 py-2 cursor-pointer']) !!}
+        {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
+            <div class="mt-2 mb-4 flex gap-6 bg-slate-50 p-4 border border-gray-200 rounded-lg">
+                {{ html()->hidden($front->getCurrentViewRequestName()) }}
+                @foreach($front->getFilters() as $filter)
+                    {!! $filter->formHtml() !!}
+                @endforeach
+                <div>
+                    {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded mt-6 py-2 cursor-pointer') }}
+                </div>
             </div>
-        {{ html()->form()->close() }}
+        {{ html()->closeFormWithDefaults() }}
     @endif
 
     @if($front->getLenses()->count() > 1)
