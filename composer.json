@@ -18,15 +18,9 @@
         "laracasts/flash": ">=3",
         "laravel/framework": ">5.5",
         "opis/closure": "^3.1",
-        "spatie/laravel-html": "dev-formWithDefaults",
+        "spatie/laravel-html": "^3.11",
         "weblabormx/file-modifier": "*"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/skalero01/laravel-html"
-        }
-    ],
     "autoload": {
         "files": [
             "src/Http/helpers.php"
