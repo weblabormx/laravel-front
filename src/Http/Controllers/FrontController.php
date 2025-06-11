@@ -50,12 +50,10 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('index');
         $base_url = $front->getBaseUrl();
-
         $response = $this->processRequest(new FrontIndex($front, $base_url));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
-
         // Show view
         $result = $response;
         return view('front::crud.index', $this->getParameters(compact('result', 'front')));
@@ -68,7 +66,7 @@ class FrontController extends Controller
 
         $front = $this->front->setSource('create');
         $response = $this->processRequest();
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -83,7 +81,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('store');
         $response = $this->processRequest(new FrontStore($request, $front));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -103,7 +101,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
         $response = $this->processRequest(new FrontShow($object, $front));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -124,7 +122,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('edit')->setObject($object);
         $response = $this->processRequest();
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
@@ -144,7 +142,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('update')->setObject($object);
         $response = $this->processRequest(new FrontUpdate($request, $front, $object));
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
         // Redirect
@@ -163,7 +161,7 @@ class FrontController extends Controller
         // Front code
         $front = $this->front->setSource('show')->setObject($object);
         $response = $this->processRequest();
-        if ($this->isResponse($response)) {
+        if (isResponse($response)) {
             return $response;
         }
 
