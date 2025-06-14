@@ -44,7 +44,7 @@ class Image extends Input
     {
         $value = parent::getValue($object);
         if ($value == '--') {
-            return;
+            return $value;
         }
         $original = $value;
         $thumb = Front::thumbs()->get($value, $this->view_size);
