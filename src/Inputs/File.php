@@ -3,7 +3,6 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class File extends Input
 {
@@ -13,9 +12,8 @@ class File extends Input
 
     public function form()
     {
-        return html()
-            ->file($this->column)
-            ->attributes($this->attributes);
+        $input = $this;
+        return view('front::inputs.file-form', compact('input'));
     }
 
     public function setDirectory($directory)
