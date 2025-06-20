@@ -5,57 +5,24 @@ namespace WeblaborMx\Front;
 use Exception;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
-use WeblaborMx\Front\Traits\HasInputs;
-use WeblaborMx\Front\Traits\HasActions;
-use WeblaborMx\Front\Traits\HasLinks;
-use WeblaborMx\Front\Traits\HasBreadcrumbs;
-use WeblaborMx\Front\Traits\HasFilters;
-use WeblaborMx\Front\Traits\Sourceable;
-use WeblaborMx\Front\Traits\HasCards;
-use WeblaborMx\Front\Traits\HasLenses;
-use WeblaborMx\Front\Traits\ResourceHelpers;
-use WeblaborMx\Front\Traits\IsValidated;
-use WeblaborMx\Front\Traits\HasPermissions;
-use WeblaborMx\Front\Traits\HasMassiveEditions;
+use WeblaborMx\Front\Traits;
 use Illuminate\Support\Arr;
 use WeblaborMx\Front\Facades\Front;
 
 abstract class Resource
 {
-    use HasInputs;
-    use HasActions;
-    use HasLinks;
-    use HasBreadcrumbs;
-    use HasFilters;
-    use Sourceable;
-    use HasCards;
-    use HasLenses;
-    use ResourceHelpers;
-    use IsValidated;
-    use HasPermissions;
-    use HasMassiveEditions;
+    use Traits\HasInputs, Traits\HasActions,      Traits\HasLinks,    Traits\HasBreadcrumbs, Traits\HasFilters,         Traits\Sourceable,
+        Traits\HasLenses, Traits\ResourceHelpers, Traits\IsValidated, Traits\HasPermissions, Traits\HasMassiveEditions, Traits\HasCards;
 
-    public $data;
-    public $model;
-    public $search_title;
-    public $label;
-    public $base_url;
-    public $layout;
-    public $view_title;
-    public $plural_label;
-    public $object;
-    public $hide_columns;
+    public $base_url, $data, $label, $layout, $model, $object, $plural_label, $related_object, $search_title, $view_title;
+    public $functions_values = [], $hide_columns = [], $ignore_if_null = [], $index_views = [];
+    public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+    public $cache = ['indexQuery', 'indexResult'];
     public $title = 'name';
-    public $ignore_if_null = [];
-    public $show_title = true;
-    public $show_create_button_on_index = true;
     public $pagination = 50;
     public $search_limit = 10;
-    public $functions_values = [];
-    public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
-    public $index_views = [];
-    public $cache = ['indexQuery', 'indexResult'];
-    public $related_object;
+    public $show_create_button_on_index = true;
+    public $show_title = true;
     public $enable_massive_edition = false;
 
     public function __construct($source = null)

@@ -5,12 +5,12 @@
     @if (count($front->filters()) > 0)
         <div class="sidenav-header small font-weight-semibold mb-2 text-uppercase">{{ __('Options') }}</div>
         {{ html()->form('GET', request()->url())->open() }}
-        <div class="card pt-3 sidenav-forms">
-            @foreach ($input->getMassiveForms() as $form)
-                {!! $form->formHtml() !!}
-            @endforeach
-        </div>
-        {{ html()->submit(__('Search'))->class('btn btn-secondary btn-sm btn-block') }}
+            <div class="card pt-3 sidenav-forms">
+                @foreach ($input->getMassiveForms() as $form)
+                    {!! $form->formHtml() !!}
+                @endforeach
+            </div>
+            {{ html()->submit(__('Search'))->class('btn btn-secondary btn-sm btn-block') }}
         {{ html()->form()->close() }}
     @endif
 

@@ -1,7 +1,12 @@
 @php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null, $show_filters ?? null); @endphp
 
 @if ($result->count() > 0)
-    <div class="overflow-x-auto -mx-4 mt-6 ring-1 ring-black ring-opacity-5 shadow sm:-mx-6 md:mx-0 md:rounded-lg" style="{{ $style ?? '' }}">
+    <div class="pb-2 text-gray-500 mt-6">
+        {{ $helper->views() }}
+        {{ $helper->totals() }}
+        {{ $helper->filters() }}
+    </div>
+    <div class="overflow-x-auto -mx-4 ring-1 ring-black ring-opacity-5 shadow sm:-mx-6 md:mx-0 md:rounded-lg" style="{{ $style ?? '' }}">
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
                 <tr>

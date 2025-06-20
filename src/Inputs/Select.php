@@ -19,9 +19,11 @@ class Select extends Input
     {
         $select = html()
             ->select($this->column, $this->options)
-            ->value($this->default_value)
             ->attributes($this->attributes);
 
+        if($this->default_value) {
+            $select = $select->value($this->default_value);
+        }
         if ($this->show_placeholder) {
             $select = $select->placeholder(__($this->empty_title));
         }

@@ -144,6 +144,36 @@ return [
 
     'default_input_attributes' => [
         'class' => 'mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+    ],
+
+    /* 
+    |--------------------------------------------------------------------------
+    | Datetime Wrap
+    |--------------------------------------------------------------------------
+    |
+    | If you want to wrap the datetime inputs on a carbon macro
+    | This is useful if your user have a custom timezone
+    |
+    */
+
+    'datetime_wrap' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Thumbnails
+    |--------------------------------------------------------------------------
+    |
+    | The default thumbnails used on the system, you can add more
+    | 
+    */
+
+    'thumbnails' => [
+        ['prefix' => 's', 'width' => 90,   'height' => 90,   'fit' => true],  // Small Square
+        ['prefix' => 'b', 'width' => 160,  'height' => 160,  'fit' => true],  // Big Square
+        ['prefix' => 't', 'width' => 160,  'height' => 160,  'fit' => false], // Small Thumbnail
+        ['prefix' => 'm', 'width' => 320,  'height' => 320,  'fit' => false], // Medium Thumbnail
+        ['prefix' => 'l', 'width' => 640,  'height' => 640,  'fit' => false], // Large Thumbnail
+        ['prefix' => 'h', 'width' => 1024, 'height' => 1024, 'fit' => false], // Huge Thumbnail
     ]
 
 ];
