@@ -130,7 +130,31 @@ return [
             'name' => 'Down',
             'type' => 'btn-primary',
             'class' => ''
-        ]
+        ],
+        'trashedIndex' => [
+            'icon' => 'trash',
+            'name' => 'See Trashed Elements',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
+        'trashedReturn' => [
+            'icon' => 'arrow-left',
+            'name' => 'Return',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
+        'restore' => [
+            'icon' => 'arrow-uturn-left',
+            'name' => 'Restore',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
+        'forceDelete' => [
+            'icon' => 'trash',
+            'name' => 'force delete',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
     ],
 
     /*

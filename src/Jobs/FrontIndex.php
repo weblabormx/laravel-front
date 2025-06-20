@@ -7,25 +7,14 @@ use Illuminate\Support\Facades\Cache;
 
 class FrontIndex
 {
-    public $front;
-    public $base;
+    public $front, $base;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct($front, $base)
     {
         $this->front = $front;
         $this->base = $base;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         // Redirect if filters asks to do it
@@ -43,6 +32,10 @@ class FrontIndex
             return redirect($url);
         }
 
+        // If seeing trashed elements
+        if($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
+            $objects = $objects->onlyTrashed();
+        }
         // If is normal query paginate results
         $result = $this->paginate($objects);
 

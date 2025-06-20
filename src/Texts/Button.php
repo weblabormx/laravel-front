@@ -80,6 +80,10 @@ class Button extends Text
 
     private function generateText()
     {
-        $this->text = $this->icon.$this->title;
+        $title = $this->title;
+        if(isset($title) && strlen($title) > 0) {
+            $title = "<span class='ml-1'>{$title}</span>";
+        }
+        $this->text = $this->icon.$title;
     }
 }

@@ -11,6 +11,16 @@ trait HasPermissions
         return Gate::allows('viewAny', $this->getModel()) && in_array('index', $this->actions);
     }
 
+    public function canIndexDeleted()
+    {
+        if(!Gate::allows('viewDeleted', $this->getModel()) || !in_array('index', $this->actions)) {
+            return false;
+        }
+        $model = $this->getModel();
+        $model = new $model;
+        return method_exists($model, 'trashed');
+    }
+
     public function canCreate()
     {
         return Gate::allows('create', $this->getModel()) && in_array('create', $this->actions);
@@ -40,4 +50,19 @@ trait HasPermissions
         return Gate::allows('delete', $object) && in_array('destroy', $this->actions);
     }
 
+    public function canRestore($object = null)
+    {
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return Gate::allows('restore', $object) && in_array('index', $this->actions);
+    }
+
+    public function canForceDelete($object = null)
+    {
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return Gate::allows('forceDelete', $object) && in_array('destroy', $this->actions);
+    }
 }

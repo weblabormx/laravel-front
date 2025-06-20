@@ -47,10 +47,12 @@ trait IsRunable
      * Controller Internal Functions
      */
 
-    private function getObject($object)
+    private function getObject($object, $trashed = false)
     {
         $model = $this->front->getModel();
-        $object = $model::find($object);
+        $object = $model::when($trashed, function($query) {
+            return $query->withTrashed();
+        })->find($object);
         if (!is_object($object)) {
             abort(404);
         }
