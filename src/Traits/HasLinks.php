@@ -78,13 +78,17 @@ trait HasLinks
             $url = $this->getBaseUrl() . "/massive_edit" . $query;
             $links[] = Front::buttons()->getByName('edit')->addLink($url);
         }
-
+        // Show trashed elements button
+        if ($this->show_create_button_on_index && $this->canIndexDeleted()) {
+            $links[] = Front::buttons()->getByName('trashedIndex')->setTitle(__('Recycle Bin'))->addLink($this->getBaseUrl() .'?trashed=1');
+        }
         // Show create button
         if ($this->show_create_button_on_index && $this->canCreate()) {
             $url = $this->create_link;
             $url = str_replace('{base_url}', $this->getBaseUrl(), $url);
             $links[] = Front::buttons()->getByName('create')->setTitle(__('Create') . ' ' . $this->label)->addLink($url);
         }
+       
         return $links;
     }
 

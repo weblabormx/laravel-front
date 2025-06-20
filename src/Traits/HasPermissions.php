@@ -11,6 +11,11 @@ trait HasPermissions
         return Gate::allows('viewAny', $this->getModel()) && in_array('index', $this->actions);
     }
 
+    public function canIndexDeleted()
+    {
+        return Gate::allows('viewDeleted', $this->getModel()) && in_array('index', $this->actions);
+    }
+
     public function canCreate()
     {
         return Gate::allows('create', $this->getModel()) && in_array('create', $this->actions);

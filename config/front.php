@@ -130,7 +130,13 @@ return [
             'name' => 'Down',
             'type' => 'btn-primary',
             'class' => ''
-        ]
+        ],
+        'trashedIndex' => [
+            'icon' => 'trash',
+            'name' => 'See Trashed Elements',
+            'type' => 'btn-primary',
+            'class' => ''
+        ],
     ],
 
     /*
