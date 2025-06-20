@@ -54,5 +54,7 @@
     ":name updated successfully": ":name editado correctamente",
     ":name action executed successfully": ":name ejecutado correctamente",
     "New rows": "Nuevas filas",
-    "Options": "Opciones"
+    "Options": "Opciones",
+    "Recycle Bin": "Papelera de reciclaje",
+    "Return": "Regresar"
 }

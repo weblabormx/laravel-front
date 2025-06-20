@@ -134,10 +134,15 @@ return [
         'trashedIndex' => [
             'icon' => 'trash',
             'name' => 'See Trashed Elements',
-            'type' => 'btn-primary',
+            'type' => 'btn-secondary',
             'class' => ''
         ],
-    ],
+        'trashedReturn' => [
+            'icon' => 'arrow-left',
+            'name' => 'Return',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
 
     /*
     |--------------------------------------------------------------------------

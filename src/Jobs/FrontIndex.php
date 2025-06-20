@@ -32,6 +32,10 @@ class FrontIndex
             return redirect($url);
         }
 
+        // If seeing trashed elements
+        if($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
+            $objects = $objects->onlyTrashed();
+        }
         // If is normal query paginate results
         $result = $this->paginate($objects);
 

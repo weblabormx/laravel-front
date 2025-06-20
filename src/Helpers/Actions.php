@@ -23,6 +23,11 @@ class Actions
 
     }
 
+    public function isDeleted()
+    {
+        return $this->isEloquent() && $this->object->trashed();
+    }
+
     public function canShow()
     {
         if (!$this->isEloquent()) {
@@ -45,6 +50,22 @@ class Actions
             return false;
         }
         return $this->front->canRemove($this->object);
+    }
+
+    public function canRestore()
+    {
+        if (!$this->isEloquent()) {
+            return false;
+        }
+        return $this->front->canRestore($this->object);
+    }
+
+    public function canForceDelete()
+    {
+        if (!$this->isEloquent()) {
+            return false;
+        }
+        return $this->front->canForceDelete($this->object);
     }
 
     public function showUrl()
@@ -75,6 +96,18 @@ class Actions
     public function downUrl()
     {
         $link = $this->base_url.'/'.$this->object->getKey().'/sortable/down';
+        return $link;
+    }
+
+    public function restoreUrl()
+    {
+        $link = $this->base_url.'/'.$this->object->getKey().'/restore';
+        return $link;
+    }
+    
+    public function forceDeleteUrl()
+    {
+        $link = $this->base_url.'/'.$this->object->getKey().'/force-delete';
         return $link;
     }
 
