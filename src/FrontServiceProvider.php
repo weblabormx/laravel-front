@@ -2,6 +2,7 @@
 
 namespace WeblaborMx\Front;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -89,9 +90,7 @@ class FrontServiceProvider extends ServiceProvider
         Route::macro('front', function ($model) use ($provider) {
             $class = Front::registerResource($model);
             $front = Front::makeResource($class);
-
             $prefix = class_basename($front->base_url);
-
             return Route::prefix($prefix)->name('front.' . str($prefix)->classBasename()->snake()->lower())->group(function () use ($front, $model, $provider) {
                 $controller = new FrontController($model);
                 $provider->generateFrontRoutes($front, $controller);
@@ -252,7 +251,6 @@ class FrontServiceProvider extends ServiceProvider
             return $controller->sortable($controller->getParameter(), $request->input('order'), $request->input('start'));
         })->name('sort');
 
-
         foreach ($actions as $key => $value) {
             Front::registerRoute($front, $value, $key);
         }
@@ -267,7 +265,7 @@ class FrontServiceProvider extends ServiceProvider
     {
         \Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
             $value = \Form::getValueAttribute($name, $value);
-            if (!is_null($value) && !$value instanceof DateTime) {
+            if (!is_null($value) && !$value instanceof \DateTime) {
                 try {
                     $value = Carbon::parse($value);
                 } catch (\Exception $e) {

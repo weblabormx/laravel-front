@@ -104,7 +104,7 @@ class Actions
         $link = $this->base_url.'/'.$this->object->getKey().'/restore';
         return $link;
     }
-    
+
     public function forceDeleteUrl()
     {
         $link = $this->base_url.'/'.$this->object->getKey().'/force-delete';
