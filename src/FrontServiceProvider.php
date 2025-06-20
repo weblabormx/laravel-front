@@ -215,6 +215,14 @@ class FrontServiceProvider extends ServiceProvider
             return $controller->edit($controller->getParameter());
         })->name('.edit');
 
+        $actions['restore'] = Route::get('{front_object}/restore', function () use ($controller) {
+            return $controller->restore($controller->getParameter());
+        })->name('.restore');
+
+        $actions['force-delete'] = Route::get('{front_object}/force-delete', function () use ($controller) {
+            return $controller->forceDelete($controller->getParameter());
+        })->name('.force-delete');
+
         Route::put('{front_object}', function (Request $request) use ($controller) {
             return $controller->update($controller->getParameter(), $request);
         })->name('.update');

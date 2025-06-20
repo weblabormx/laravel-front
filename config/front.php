@@ -143,6 +143,19 @@ return [
             'type' => 'btn-secondary',
             'class' => ''
         ],
+        'restore' => [
+            'icon' => 'arrow-uturn-left',
+            'name' => 'Restore',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
+        'forceDelete' => [
+            'icon' => 'trash',
+            'name' => 'force delete',
+            'type' => 'btn-secondary',
+            'class' => ''
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------

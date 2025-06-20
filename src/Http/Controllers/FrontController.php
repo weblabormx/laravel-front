@@ -168,6 +168,28 @@ class FrontController extends Controller
         return $this->run(new FrontDestroy($front, $object));
     }
 
+    private function restore($object)
+    {
+        // Get object
+        $object = $this->getObject($object, true);
+
+        // Validate Policy
+        $this->authorize('restore', $object);
+        $object->restore();
+        return back();
+    }
+
+    private function forceDelete($object)
+    {
+        // Get object
+        $object = $this->getObject($object, true);
+
+        // Validate Policy
+        $this->authorize('forceDelete', $object);
+        $object->forceDelete();
+        return back();
+    }
+
     /*
      * Actions
      */

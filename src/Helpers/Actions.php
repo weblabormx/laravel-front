@@ -25,7 +25,7 @@ class Actions
 
     public function isDeleted()
     {
-        return $this->isEloquent() && $this->object->trashed();
+        return $this->isEloquent() && method_exists($this->object, 'trashed') && $this->object->trashed();
     }
 
     public function canShow()
