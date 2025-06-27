@@ -1,4 +1,4 @@
-<div class="pt-4">
+<div class="mt-4">
   @if(isset($panel->title) && strlen($panel->title) > 0)
     <h3 class="text-lg font-medium leading-6 text-gray-900">@lang($panel->title ?: 'Basic Information')</h3>
     <p class="mt-1 text-sm text-gray-600">{{$panel->description}}</p>
