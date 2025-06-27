@@ -64,7 +64,7 @@ trait HasLinks
             $query = request()->fullUrl();
             $query = explode('?', $query)[1] ?? '';
             $query = strlen($query) > 0 ? '?' . $query : '';
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
+            $links[] = Button::make($action->title)->setIcon($action->icon)->setType($action->type)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
         }
 
         // Show links added manually
