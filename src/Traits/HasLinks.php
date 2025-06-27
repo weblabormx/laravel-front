@@ -32,7 +32,7 @@ trait HasLinks
             return $item->hasPermissions($object);
         });
         foreach ($actions as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
+            $links[] = Button::make($action->title)->setIcon($action->icon)->setType($action->type)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
