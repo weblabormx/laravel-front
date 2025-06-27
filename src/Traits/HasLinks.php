@@ -60,7 +60,10 @@ trait HasLinks
         $links = [];
 
         // Show index actions
-        foreach ($this->getIndexActions() as $action) {
+        $actions = $this->getIndexActions()->filter(function ($item) {
+            return $item->hasIndexPermissions();
+        });
+        foreach ($actions as $action) {
             $query = request()->fullUrl();
             $query = explode('?', $query)[1] ?? '';
             $query = strlen($query) > 0 ? '?' . $query : '';
