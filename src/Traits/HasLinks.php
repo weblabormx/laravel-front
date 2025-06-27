@@ -81,9 +81,9 @@ trait HasLinks
         // Show trashed elements button
         if ($this->show_create_button_on_index && $this->canIndexDeleted()) {
             if(request()->filled('trashed') && request()->get('trashed')) {
-                $links[] = Front::buttons()->getByName('trashedReturn')->setTitle(__('Return'))->addLink($this->getBaseUrl());
+                $links[] = Front::buttons()->getByName('trashedReturn')->addLink($this->getBaseUrl());
             } else {
-                $links[] = Front::buttons()->getByName('trashedIndex')->setTitle(__('Recycle Bin'))->addLink($this->getBaseUrl() .'?trashed=1');
+                $links[] = Front::buttons()->getByName('trashedIndex')->addLink($this->getBaseUrl() .'?trashed=1');
             }
         }
         // Show create button

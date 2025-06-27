@@ -133,7 +133,7 @@ return [
         ],
         'trashedIndex' => [
             'icon' => 'trash',
-            'name' => 'See Trashed Elements',
+            'name' => '',
             'type' => 'btn-secondary',
             'class' => ''
         ],
