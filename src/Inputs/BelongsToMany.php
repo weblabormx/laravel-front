@@ -54,14 +54,15 @@ class BelongsToMany extends Input
         }
 
         $title_field = $this->search_field ?? $this->relation_front->title;
-        $value = $object->$relation->pluck($title_field);
+        $value = $object->$relation;
+        $link = $this->relation_front->getBaseUrl();
 
         if (strlen($value) <= 0) {
             return '--';
         }
 
-        $value = $value->map(function ($item) {
-            return "<li>" . $item . "</li>";
+        $value = $value->map(function ($item) use ($title_field, $link) {
+            return "<li><a href='" . $link . "/" . $item->getKey() . "'>" . $item->$title_field . "</a></li>";
         });
         return '<ul>' . $value->implode('') . '</ul>';
     }
