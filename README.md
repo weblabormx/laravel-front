@@ -350,6 +350,7 @@ All the fields available on front:
 - Textarea
 - Time
 - Trix
+- ToastEditor
 
 
 #### Text types
