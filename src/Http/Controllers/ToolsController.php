@@ -2,7 +2,7 @@
 
 namespace WeblaborMx\Front\Http\Controllers;
 
-use Intervention\Image\Facades\Image as Intervention;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,16 +14,15 @@ class ToolsController extends Controller
         $variables = json_decode($request->variables);
         $file = $request->file;
 
-        $new_file = Intervention::make($file);
+        $manager = ImageManager::imagick();
+        $new_file = $manager->read($file);
         if ($new_file->height() > $variables->height || $new_file->width() > $variables->width) {
-            $new_file = $new_file->resize($variables->width, $variables->height, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            $new_file->scaleDown(width: $variables->width, height: $variables->height);
         }
 
         $new_name = $this->getFileName($file);
         $file_name = $variables->directory.'/'.$new_name;
-        $storage_file = Storage::put($file_name, (string) $new_file->encode(), 'public');
+        Storage::put($file_name, (string) $new_file->encode(), 'public');
         $url = Storage::url($file_name);
 
         $response = new \StdClass();

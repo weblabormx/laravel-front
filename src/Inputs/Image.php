@@ -4,7 +4,7 @@ namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image as Intervention;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
 
@@ -233,14 +233,13 @@ class Image extends Input
     public function saveNewSize($file, $file_name, $width, $height, $prefix, $is_fit = false)
     {
         // Make smaller the image
-        $new_file = Intervention::make($file);
+        $manager = ImageManager::imagick();
+        $new_file = $manager->read($file);
 
         if ($is_fit) {
-            $new_file = $new_file->fit($width, $height);
+            $new_file->cover($width, $height);
         } elseif ($new_file->height() > $height || $new_file->width() > $width) {
-            $new_file = $new_file->resize($width, $height, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            $new_file->scaleDown(width: $width, height: $height);
         }
 
         // Save the image
