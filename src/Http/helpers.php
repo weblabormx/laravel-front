@@ -102,6 +102,20 @@ function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null,
         ];
     }
 
+    // Convert image on valid binary
+    if (is_string($image) && file_exists($image)) {
+        $image = file_get_contents($image);
+    } elseif (is_string($image) && str_starts_with($image, 'http')) {
+        // Remote URL
+        $image = file_get_contents($image);
+    } elseif (is_resource($image)) {
+        $image = stream_get_contents($image);
+    } elseif ($image instanceof \Livewire\TemporaryUploadedFile) {
+        $image = file_get_contents($image->getRealPath());
+    } else {
+        $image = (string) $image;
+    }
+
     // Execute the thumbnails
     foreach ($thumbnails as $thumbnail) {
         $width = $thumbnail['width'];
