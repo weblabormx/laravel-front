@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image as Intervention;
+use Intervention\Image\ImageManager;
 use WeblaborMx\Front\Front;
 
 function getThumb($full_name, $prefix, $force = false)
@@ -79,6 +79,7 @@ function isResponse($response)
 
 function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null, $max_height = null)
 {
+    $manager = ImageManager::imagick();
     $thumbnails = config('front.thumbnails', []);
 
     // Change the extension of the image if is heic,heif
@@ -107,12 +108,12 @@ function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null,
         $is_fit = $thumbnail['fit'] ?? false;
 
         // Make smaller the image
-        $new_file = Intervention::make($image);
+        $new_file = $manager->read($image);
 
         if ($is_fit) {
-            $new_file = $new_file->fit($width, $height);
+            $new_file->fit($width, $height);
         } elseif ($new_file->height() > $height || $new_file->width() > $width) {
-            $new_file = $new_file->resize($width, $height, function ($constraint) {
+            $new_file->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
             });
         }
