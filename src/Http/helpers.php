@@ -84,8 +84,10 @@ function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null,
 
     // Change the extension of the image if is heic,heif
     $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+    $convertToJpg = false;
     if (in_array($extension, ['heic', 'heif', 'avif'])) {
         $file_name = pathinfo($file_name, PATHINFO_FILENAME) . '.jpg';
+        $convertToJpg = true;
     }
 
     // Save the image if not max width and max height, otherwise add to thumbnails
@@ -111,17 +113,19 @@ function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null,
         $new_file = $manager->read($image);
 
         if ($is_fit) {
-            $new_file->fit($width, $height);
+            $new_file->cover($width, $height);
         } elseif ($new_file->height() > $height || $new_file->width() > $width) {
-            $new_file->resize($width, $height, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            $new_file->scaleDown(width: $width, height: $height);
         }
 
         // Save the image
         $new_name = getThumb($file_name, $prefix, true);
         $new_file_name = $directory . '/' . $new_name;
-        Storage::put($new_file_name, (string) $new_file->encode(), 'public');
+        if ($convertToJpg) {
+            Storage::put($new_file_name, (string) $new_file->toJpeg(90), 'public');
+        } else {
+            Storage::put($new_file_name, (string) $new_file->encode(), 'public');
+        }
     }
     return $directory . '/' . $file_name;
 }
