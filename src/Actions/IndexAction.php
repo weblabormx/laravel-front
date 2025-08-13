@@ -15,6 +15,7 @@ class IndexAction
 
     public $title, $button_text, $dat, $save_button, $slug, $front, $data, $url;
     public $icon = 'fa fa-book';
+    public $type = 'btn-primary';
     public $show = true;
     public $show_button = true;
 

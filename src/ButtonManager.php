@@ -13,7 +13,7 @@ class ButtonManager
         $extra = '';
 
         if ($name == 'delete') {
-            $extra = "data-type='confirm' title='" . __('Delete') . "' data-info='" . __('Do you really want to remove this item?') . "' data-button-yes='" . __('Yes') . "' data-button-no='" . __('No') . "' data-action='" . url($front->getBaseUrl() . '/' . $object->getKey()) . "' data-redirection='" . url($front->getBaseUrl()) . "' data-variables='{ \"_method\": \"delete\", \"_token\": \"" . csrf_token() . "\" }'";
+            $extra = "data-type='confirm' title='" . __('Delete') . "' data-info='" . __('Do you really want to remove this item?') . "' data-button-yes='" . __('Yes') . "' data-button-no='" . __('No') . "' data-action='" . url($front->getBaseUrl() . '/' . $object->getKey()) . "' data-redirection='" . url($front->removeRedirectionUrl()) . "' data-variables='{ \"_method\": \"delete\", \"_token\": \"" . csrf_token() . "\" }'";
         }
 
         return Button::make($config['name'])

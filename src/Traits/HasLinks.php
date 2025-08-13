@@ -32,7 +32,7 @@ trait HasLinks
             return $item->hasPermissions($object);
         });
         foreach ($actions as $action) {
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
+            $links[] = Button::make($action->title)->setIcon($action->icon)->setType($action->type)->addLink($this->getBaseUrl() . "/{$object->getKey()}/action/{$action->slug}");
         }
 
         // Show links added manually
@@ -60,11 +60,14 @@ trait HasLinks
         $links = [];
 
         // Show index actions
-        foreach ($this->getIndexActions() as $action) {
+        $actions = $this->getIndexActions()->filter(function ($item) {
+            return $item->hasIndexPermissions();
+        });
+        foreach ($actions as $action) {
             $query = request()->fullUrl();
             $query = explode('?', $query)[1] ?? '';
             $query = strlen($query) > 0 ? '?' . $query : '';
-            $links[] = Button::make($action->button_text)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
+            $links[] = Button::make($action->title)->setIcon($action->icon)->setType($action->type)->addLink($this->getBaseUrl() . "/action/{$action->slug}{$query}");
         }
 
         // Show links added manually
@@ -81,9 +84,9 @@ trait HasLinks
         // Show trashed elements button
         if ($this->show_create_button_on_index && $this->canIndexDeleted()) {
             if(request()->filled('trashed') && request()->get('trashed')) {
-                $links[] = Front::buttons()->getByName('trashedReturn')->setTitle(__('Return'))->addLink($this->getBaseUrl());
+                $links[] = Front::buttons()->getByName('trashedReturn')->addLink($this->getBaseUrl());
             } else {
-                $links[] = Front::buttons()->getByName('trashedIndex')->setTitle(__('Recycle Bin'))->addLink($this->getBaseUrl() .'?trashed=1');
+                $links[] = Front::buttons()->getByName('trashedIndex')->addLink($this->getBaseUrl() .'?trashed=1');
             }
         }
         // Show create button
