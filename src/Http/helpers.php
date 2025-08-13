@@ -77,15 +77,29 @@ function isResponse($response)
     });
 }
 
-function saveImagesWithThumbs($image, $directory, $file_name, $disk = null)
+function saveImagesWithThumbs($image, $directory, $file_name, $max_width = null, $max_height = null)
 {
-    if (is_null($disk)) {
-        $disk = config('front.disk', 'public');
+    $thumbnails = config('front.thumbnails', []);
+
+    // Change the extension of the image if is heic,heif
+    $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+    if (in_array($extension, ['heic', 'heif', 'avif'])) {
+        $file_name = pathinfo($file_name, PATHINFO_FILENAME) . '.jpg';
     }
 
-    $thumbnails = config('front.thumbnails', []);
-    Storage::putFileAs($directory, $image, $file_name);
+    // Save the image if not max width and max height, otherwise add to thumbnails
+    if(is_null($max_width) && is_null($max_height)) {
+        Storage::putFileAs($directory, $image, $file_name);
+    } else {
+        $thumbnails[] = [
+            'width' => $max_width,
+            'height' => $max_height,
+            'prefix' => '',
+            'fit' => false,
+        ];
+    }
 
+    // Execute the thumbnails
     foreach ($thumbnails as $thumbnail) {
         $width = $thumbnail['width'];
         $height = $thumbnail['height'];
@@ -111,12 +125,8 @@ function saveImagesWithThumbs($image, $directory, $file_name, $disk = null)
     return $directory . '/' . $file_name;
 }
 
-function deleteImagesWithThumbs($file_name, $disk = null)
+function deleteImagesWithThumbs($file_name)
 {
-    if (is_null($disk)) {
-        $disk = config('front.disk', 'public');
-    }
-
     $thumbnails = config('front.thumbnails', []);
     foreach ($thumbnails as $thumbnail) {
         $prefix = $thumbnail['prefix'];
