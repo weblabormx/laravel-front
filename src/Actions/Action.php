@@ -6,7 +6,7 @@ class Action extends IndexAction
 {
     public $show_on_index = false;
     
-    public function hasIndexPermissions()
+    public function hasPermissions($object)
     {
         return true;
     }

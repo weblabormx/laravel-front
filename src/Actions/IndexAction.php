@@ -72,11 +72,6 @@ class IndexAction
         return [];
     }
 
-    public function hasPermissions($object)
-    {
-        return true;
-    }
-
     public function validate($data)
     {
         $this->makeValidation($data);
@@ -191,4 +186,8 @@ class IndexAction
         return method_exists($this, 'handle');
     }
 
+    public function hasIndexPermissions()
+    {
+        return true;
+    }
 }
