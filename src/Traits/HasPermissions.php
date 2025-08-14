@@ -13,7 +13,7 @@ trait HasPermissions
 
     public function canIndexDeleted()
     {
-        if(!$this->canRemove() || !Gate::allows('viewDeleted', $this->getModel()) || !in_array('index', $this->actions)) {
+        if(!in_array('destroy', $this->actions) || !Gate::allows('viewDeleted', $this->getModel()) || !in_array('index', $this->actions)) {
             return false;
         }
         $model = $this->getModel();
