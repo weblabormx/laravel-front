@@ -8,7 +8,7 @@
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 {!! $front->getTitle($object) !!}</h2>
         </div>
-        <div class="flex flex-shrink-0 mt-4 md:mt-0 md:ml-4">
+        <div class="flex shrink-0 mt-4 md:mt-0 md:ml-4">
             @foreach ($front->getLinks($object) as $button)
                 {!! $button->form() !!}
             @endforeach
