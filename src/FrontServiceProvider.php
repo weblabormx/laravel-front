@@ -3,20 +3,19 @@
 namespace WeblaborMx\Front;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use WeblaborMx\Front\Http\Controllers\PageController;
 use Opis\Closure\SerializableClosure;
+use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Console\Commands\CreateResource;
 use WeblaborMx\Front\Console\Commands\CreatePage;
 use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Console\Commands\CreateFilter;
-use WeblaborMx\Front\Http\Controllers\FrontController;
-use Illuminate\Http\Request;
-use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Http\Controllers\FrontController;
+use WeblaborMx\Front\Http\Controllers\PageController;
 use WeblaborMx\Front\ThumbManager;
 
 class FrontServiceProvider extends ServiceProvider
@@ -32,16 +31,9 @@ class FrontServiceProvider extends ServiceProvider
             define('WLFRONT_PATH', realpath(__DIR__ . '/../'));
         }
 
+        $this->loadMacros();
         $this->registerFront();
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CreateResource::class,
-                CreatePage::class,
-                Install::class,
-                CreateFilter::class
-            ]);
-        }
+        $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
     }
 
     /**
@@ -51,17 +43,25 @@ class FrontServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMacros();
+        
         $this->publishes([__DIR__ . '/../config/front.php' => config_path('front.php')], 'config');
         $this->publishes([
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/front'),
         ]);
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
+        
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider());
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateResource::class,
+                CreatePage::class,
+                Install::class,
+                CreateFilter::class
+            ]);
+        }
     }
 
     /**
@@ -118,9 +118,6 @@ class FrontServiceProvider extends ServiceProvider
         $this->app->singleton(ButtonManager::class);
         $this->app->singleton(ThumbManager::class);
         $this->app->singleton('Front', Front::class);
-        $loader = AliasLoader::getInstance();
-
-        $loader->alias('Front', Front::class);
     }
 
     /**

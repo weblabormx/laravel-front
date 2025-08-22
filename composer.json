@@ -36,7 +36,10 @@
         "laravel": {
             "providers": [
                 "WeblaborMx\\Front\\FrontServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Front": "WeblaborMx\\Front\\Facades\\Front"
+            }
         }
     },
     "config": {
