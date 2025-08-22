@@ -51,40 +51,25 @@ class FrontServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadMacros();
         $this->publishes([__DIR__ . '/../config/front.php' => config_path('front.php')], 'config');
         $this->publishes([
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/front'),
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
-
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
-        $this->registerRoutes();
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider());
     }
 
     /**
-     * Register Front Facade
+     * Load the custom route macros
      *
      * @return void
      */
-    protected function registerFront()
-    {
-        $this->app->singleton(ButtonManager::class);
-        $this->app->singleton(ThumbManager::class);
-        $this->app->singleton('Front', Front::class);
-        $loader = AliasLoader::getInstance();
-
-        $loader->alias('Front', Front::class);
-    }
-
-    /**
-     * Register the package routes.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
+    protected function loadMacros()
     {
         $provider = $this;
         Route::macro('front', function ($model) use ($provider) {
@@ -121,8 +106,21 @@ class FrontServiceProvider extends ServiceProvider
                 Route::delete('/', fn() =>  app(PageController::class)->page($model, 'delete'))->name('.delete');
             });
         });
+    }
 
-        Route::post('api/laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
+    /**
+     * Register Front Facade
+     *
+     * @return void
+     */
+    protected function registerFront()
+    {
+        $this->app->singleton(ButtonManager::class);
+        $this->app->singleton(ThumbManager::class);
+        $this->app->singleton('Front', Front::class);
+        $loader = AliasLoader::getInstance();
+
+        $loader->alias('Front', Front::class);
     }
 
     /**
