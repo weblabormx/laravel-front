@@ -6,7 +6,8 @@
     <div class="mt-2 md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                {!! $front->getTitle($object) !!}</h2>
+                {!! $front->getTitle($object) !!}
+            </h2>
         </div>
         <div class="flex shrink-0 mt-4 md:mt-0 md:ml-4">
             @foreach ($front->getLinks($object) as $button)
@@ -23,7 +24,6 @@
         @php
             $porcentage = 0;
         @endphp
-
         @foreach ($front->showRelations() as $key => $relation)
             @php $porcentage += $relation->width_porcentage(); @endphp
             <div class="relation mt-8" style="{{ $relation->style_width() }}">
