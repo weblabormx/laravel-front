@@ -7,7 +7,7 @@
 
     <div class="mt-2 md:flex md:items-center md:justify-between">
         <div class="min-w-0 flex-1">
-          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{{ $action->title }}</h2>
+          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">{{ $action->title }}</h2>
         </div>
         <div class="mt-4 flex shrink-0 md:mt-0 md:ml-4">
             @foreach($action->buttons() as $link => $button)
