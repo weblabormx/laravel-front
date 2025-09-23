@@ -21,7 +21,7 @@ class Input implements Htmlable, \Stringable
     public $title;
     public $set_title_executed = false;
     public $needs_to_be_on_panel = true;
-    public $column, $extra, $source, $value, $size, $attribute, $format;
+    public $column, $extra, $source, $value, $size, $attributes, $format;
     public $input_formatted = true;
     public $show_on_filter = true;
 
