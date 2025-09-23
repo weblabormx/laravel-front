@@ -21,14 +21,9 @@ class Input implements Htmlable, \Stringable
     public $title;
     public $set_title_executed = false;
     public $needs_to_be_on_panel = true;
-    public $column;
-    public $extra;
-    public $source;
-    public $value;
-    public $size;
+    public $column, $extra, $source, $value, $size, $attribute, $format;
     public $input_formatted = true;
-    public $attributes;
-    public $format;
+    public $show_on_filter = true;
 
     public function __construct($title = null, $column = null, $extra = null, $source = null)
     {
