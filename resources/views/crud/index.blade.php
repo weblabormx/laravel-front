@@ -15,13 +15,12 @@
             @endforeach
         </div>
     </div>
-
-    @if(count($front->filters())>0)
+    @if($front->hasFilters())
         <div class="mt-6 font-bold">{{ __('FILTER RESULTS', ['name' => strtoupper($front->plural_label)]) }}</div>
         {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
             <div class="mt-2 mb-4 flex gap-6 bg-slate-50 p-4 border border-gray-200 rounded-lg">
                 {{ html()->hidden($front->getCurrentViewRequestName()) }}
-                @foreach($front->getFilters() as $filter)
+                @foreach($front->getFilterInputs() as $filter)
                     {!! $filter->formHtml() !!}
                 @endforeach
                 <div>

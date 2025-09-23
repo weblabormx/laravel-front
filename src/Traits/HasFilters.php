@@ -28,6 +28,20 @@ trait HasFilters
         });
     }
 
+    public function getFilterInputs()
+    {
+        return $this->getFilters()->map(function ($item) {
+            return $item->field();
+        })->flatten();
+    }
+
+    public function hasFilters()
+    {
+        return $this->getFilterInputs()->filter(function($item) {
+            return $item->show_on_filter;
+        })->count() > 0;
+    }
+
     public function getDefaultSearchFilter()
     {
         $default = $this->default_search_filter;

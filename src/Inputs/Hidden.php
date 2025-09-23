@@ -7,6 +7,7 @@ class Hidden extends Input
     public $show_on_index = false;
     public $show_on_show = false;
     public $needs_to_be_on_panel = false;
+    public $show_on_filter = false;
 
     public function form()
     {
