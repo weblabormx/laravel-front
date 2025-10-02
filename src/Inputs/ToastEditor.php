@@ -6,28 +6,29 @@ class ToastEditor extends Input
 {
     public float $height = 300;
     public string $previewStyle = 'tab';
-    public string $lang = 'markdown';
+    public string $lang = 'wysiwyg';
     public bool $dontTrim = false;
     public bool $hideModeSwitch = false;
     public bool $darkMode = false;
 
     public function form()
     {
-        $bools = \array_filter([
+        $attributes = collect([
             'data-no-trim' => $this->dontTrim,
             'data-hide-switch' => $this->hideModeSwitch,
             'data-dark' => $this->darkMode,
+        ])->filter(function($value) {
+            return $value;
+        })->merge([
+            'data-type' => 'toast-editor',
+            'data-height' => "{$this->height}px",
+            'data-preview' => $this->previewStyle,
+            'data-lang' => $this->lang,
         ]);
 
-        return \html()
+        return html()
             ->textarea($this->column, $this->default_value)
-            ->attributes([
-                'data-type' => 'toast-editor',
-                'data-height' => "{$this->height}px",
-                'data-preview' => $this->previewStyle,
-                'data-lang' => $this->lang,
-                ...$bools
-            ]);
+            ->attributes($attributes->all());
     }
 
     public function setHeight($height = 500)
