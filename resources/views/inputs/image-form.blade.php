@@ -2,9 +2,9 @@
     <div class="card-body" id="{{ $id }}">
         @php $column = $input->column; @endphp
         @if (isset($input->resource) && isset($input->resource->object) && isset($input->resource->object->$column))
-            <img src="{{ \Front::thumbs()->get($input->resource->object->$column, $input->view_size) }}" class="mw-100 mx-auto"><br /><br />
+            <img src="{{ \Front::thumbs()->get($input->resource->object->$column, $input->view_size) }}" class="mw-100 mx-auto mb-4">
         @elseif(isset($input->value))
-            <img src="{{ $input->value }}" class="mw-100"><br /><br />
+            <img src="{{ $input->value }}" class="mw-100 mb-4">
         @endif
         <p class="file-name"></p>
         <button type="button" class="bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded-lg cursor-pointer border border-gray-400" onclick="executeFile('{{ $id }}')">{{ __('Upload Image') }}</button>

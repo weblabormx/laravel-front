@@ -13,7 +13,8 @@ class File extends Input
     public function form()
     {
         $input = $this;
-        return view('front::inputs.file-form', compact('input'));
+        $id = 'file_' . rand();
+        return view('front::inputs.file-form', compact('input', 'id'));
     }
 
     public function setDirectory($directory)
@@ -24,6 +25,16 @@ class File extends Input
 
     public function processData($data)
     {
+        if (!isset($data[$this->column . '_new'])) {
+            unset($data[$this->column]);
+            return $data;
+        }
+        $file = $data[$this->column . '_new'];
+
+        // Assign data to request
+        $data[$this->column] = $file;
+        unset($data[$this->column . '_new']);
+        
         if (!isset($data[$this->column])) {
             return $data;
         }
