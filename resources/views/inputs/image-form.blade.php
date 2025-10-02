@@ -7,7 +7,7 @@
             <img src="{{ $input->value }}" class="mw-100"><br /><br />
         @endif
         <p class="file-name"></p>
-        <button type="button" class="btn btn-secondary" onclick="executeFile('{{ $id }}')">{{ __('Upload Image') }}</button>
+        <button type="button" class="bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded-lg cursor-pointer border border-gray-400" onclick="executeFile('{{ $id }}')">{{ __('Upload Image') }}</button>
         {{ html()->hidden($input->column, $input->value) }}
         {{ html()->file($input->column . '_new')->style('display:none;') }}
     </div>
@@ -24,6 +24,7 @@
     <script>
         $('#{{ $id }} > input[type="file"]').change(function(e) {
             var fileName = e.target.files[0].name;
+            fileName = "<span class='pb-2 block'>"+fileName+"</span>";
             $('#{{ $id }} .file-name').html(fileName);
         });
     </script>
