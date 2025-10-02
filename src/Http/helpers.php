@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\{HtmlString, Str};
+use Illuminate\Support\Facades\{Cache, Storage};
 use Intervention\Image\ImageManager;
+use League\CommonMark\CommonMarkConverter;
+use Symfony\Component\DomCrawler\Crawler;
 use WeblaborMx\Front\Front;
 
 function getThumb($full_name, $prefix, $force = false)
@@ -177,4 +178,152 @@ function getImageUrl($path, $default = null, $disk = null)
     return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($disk, $path) {
         return Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
     });
+}
+
+function markdownToHtml(?string $markdown, array $classes = []): HtmlString
+{
+    if (is_null($markdown)) {
+        return new HtmlString('');
+    }
+
+    $html = app(CommonMarkConverter::class)->convert($markdown);
+    // Convert \n inside <p> to <br>
+    $pattern = '/<p>(.*?)<\/p>/s';
+
+    // Función de reemplazo que convierte \n a <br> dentro de cada párrafo
+    $replacement = function ($matches) {
+        $content = $matches[1];
+        $content = str_replace("\n", '<br>', $content);
+
+        // Convertir \n a <br> pero preservar los que ya están como &nbsp; o HTML
+        // $content = preg_replace('/(?<!&)(?<!\&)\n(?!\;)/', '<br>', $content);
+        return '<p>' . $content . '</p>';
+    };
+
+    // Aplicar la conversión solo dentro de los párrafos
+    $html = preg_replace_callback($pattern, $replacement, $html);
+
+    // Continue of function
+    $crawler = new Crawler($html);
+    $defaultClasses = [
+        'p' => 'mb-4 text-base leading-relaxed text-gray-800',
+        'h1' => 'text-4xl font-bold mb-6',
+        'h2' => 'text-3xl font-semibold mb-5',
+        'h3' => 'text-2xl font-semibold mb-4',
+        'h4' => 'text-xl font-semibold mb-3',
+        'h5' => 'text-lg font-semibold mb-2',
+        'h6' => 'text-base font-semibold mb-1',
+        'ul' => 'list-disc pl-6 mb-4',
+        'ol' => 'list-decimal pl-6 mb-4',
+        'li' => 'mb-1',
+        'a' => 'text-blue-600 underline hover:text-blue-800',
+        'strong' => 'font-bold',
+        'em' => 'italic',
+        'blockquote' => 'border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4',
+        'code' => 'bg-gray-100 px-1 rounded text-sm font-mono',
+        'pre' => 'bg-gray-900 text-white text-sm p-4 rounded overflow-auto mb-4',
+        'hr' => 'my-8 border-t border-gray-300',
+        'img' => 'my-4 rounded',
+        'table' => 'table-auto w-full border-collapse my-6',
+        'thead' => 'bg-gray-100',
+        'tbody' => '',
+        'tr' => 'border-b',
+        'th' => 'px-4 py-2 text-left font-semibold',
+        'td' => 'px-4 py-2',
+    ];
+    $classes = collect($defaultClasses)->merge($classes);
+    $all = $classes['all'] ?? '';
+    unset($classes['all']);
+    $classes = $classes->map(function ($class) use ($all) {
+        return trim("{$all} {$class}");
+    })->all();
+
+    // * This probably could be extracted to a useful function to modify HTML
+    $extractMatchingHtml = function (Crawler $crawler, array $tagsToCheck) use (&$extractMatchingHtml) {
+        $html = '';
+
+        $children = count($crawler);
+
+        foreach ($crawler as $domElement) {
+            $tagName = $domElement->nodeName;
+
+            $childCrawler = new Crawler($domElement);
+            $children = $childCrawler->children();
+
+            if ($children->count()) {
+                $childrenHtml = $childCrawler->html();
+                for ($i = 0; $i < $children->count(); $i++) {
+                    $child = $children->eq($i);
+                    $beforeHtml = Str::before($childrenHtml, $child->outerHtml());
+                    $afterHtml = Str::after($childrenHtml, $child->outerHtml());
+                    $contentHtml =  $extractMatchingHtml($child, $tagsToCheck);
+                    $childrenHtml = "{$beforeHtml}{$contentHtml}{$afterHtml}";
+                }
+            } else {
+                $childrenHtml = $childCrawler->html();
+            }
+
+            $nodeAttrs = collect($domElement->attributes)->mapWithKeys(fn($v) => [$v->nodeName => $v->nodeValue]);
+
+            if (isset($tagsToCheck[$tagName])) {
+                $nodeClasses = explode(' ', $nodeAttrs->get('class', ''));
+                $mergeClasses  = explode(' ', $tagsToCheck[$tagName]);
+
+                $allClasses = collect([
+                    ...$nodeClasses,
+                    ...$mergeClasses
+                ])->map(fn($v) => trim($v))
+                    ->unique()
+                    ->join(' ');
+
+                $nodeAttrs['class'] = htmlspecialchars($allClasses);
+            }
+
+            $attrs = $nodeAttrs
+                ->map(fn($v, $k) => $k . '="' . htmlspecialchars($v) . '"')
+                ->join(' ');
+
+            $html .= "<{$tagName} {$attrs}>{$childrenHtml}</{$tagName}>";
+        }
+        return $html;
+    };
+    $html = $extractMatchingHtml($crawler->filter('body')->children(), $classes);
+    $html = str_replace('<br ></br>', '<br />', $html);
+    return new HtmlString($html);
+}
+
+function cleanMarkdown($markdown)
+{
+    // Eliminar encabezados
+    $markdown = preg_replace('/#+\s*(.*?)\s*#*$/m', '$1', $markdown);
+
+    // Eliminar negritas y cursivas
+    $markdown = preg_replace('/(\*\*|__)(.*?)\1/', '$2', $markdown);
+    $markdown = preg_replace('/(\*|_)(.*?)\1/', '$2', $markdown);
+
+    // Eliminar enlaces
+    $markdown = preg_replace('/\[([^\]]+)\]\([^)]+\)/', '$1', $markdown);
+
+    // Eliminar imágenes
+    $markdown = preg_replace('/!\[([^\]]+)\]\([^)]+\)/', '', $markdown);
+
+    // Eliminar código en línea y bloques
+    $markdown = preg_replace('/`([^`]+)`/', '$1', $markdown);
+    $markdown = preg_replace('/```.*?\n(.*?)```/s', '$1', $markdown);
+
+    // Eliminar listas
+    $markdown = preg_replace('/^[\*\-+]\s+/m', '', $markdown);
+    $markdown = preg_replace('/^\d+\.\s+/m', '', $markdown);
+
+    // Eliminar bloques de citas
+    $markdown = preg_replace('/^>\s+/m', '', $markdown);
+
+    // Eliminar líneas horizontales
+    $markdown = preg_replace('/^[-*_]{3,}\s*$/m', '', $markdown);
+
+    // Limpiar espacios múltiples y saltos de línea
+    $markdown = preg_replace('/\s+/', ' ', $markdown);
+    $markdown = trim($markdown);
+
+    return $markdown;
 }
