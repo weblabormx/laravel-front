@@ -13,14 +13,14 @@
     </div>
 </div>
 
-@pushonce('scripts-footer')
+@pushonce(config('front.scripts_stack'))
     <script>
         function executeFile(id) {
             $('#' + id + ' > input[type="file"]').click();
         };
     </script>
 @endpushonce
-@push('scripts-footer')
+@push(config('front.scripts_stack'))
     <script>
         $('#{{ $id }} > input[type="file"]').change(function(e) {
             var fileName = e.target.files[0].name;

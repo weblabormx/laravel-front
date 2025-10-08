@@ -5,7 +5,7 @@
     </div>
 </div>
 
-@pushonce('scripts-footer')
+@pushonce(config('front.scripts_stack'))
     <script>
         function executeFileMultiple(id) {
             $('#' + id).click();
