@@ -62,6 +62,16 @@ class FrontServiceProvider extends ServiceProvider
                 CreateFilter::class
             ]);
         }
+
+        // Registrar directiva @easyJsLibrary
+        Blade::directive('easyJsLibrary', function () {
+            return <<<'EOT'
+                <?php if(config('front.include_jquery')): ?>
+                    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+                <?php endif; ?>
+                <script type="text/javascript" src="https://weblabormx.github.io/Easy-JS-Library/library/script.js"></script>
+                EOT;
+        });
     }
 
     /**
