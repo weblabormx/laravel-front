@@ -16,18 +16,24 @@
         </div>
     </div>
     @if($front->hasFilters())
-        <div class="mt-6 font-bold">{{ __('FILTER RESULTS', ['name' => strtoupper($front->plural_label)]) }}</div>
-        {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
-            <div class="mt-2 mb-4 flex gap-6 bg-slate-50 p-4 border border-gray-200 rounded-lg">
-                {{ html()->hidden($front->getCurrentViewRequestName()) }}
-                @foreach($front->getFilterInputs() as $filter)
-                    {!! $filter->formHtml() !!}
-                @endforeach
-                <div>
-                    {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded mt-6 py-2 cursor-pointer') }}
-                </div>
+        <div x-data="{ filterShow: false }">
+            <div class="mt-6 font-bold">
+                {{ __('FILTER RESULTS', ['name' => strtoupper($front->plural_label)]) }}
+                <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1">{{ collect(request()->all())->whereNotNull()->count() }}</span>
+                <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
             </div>
-        {{ html()->closeFormWithDefaults() }}
+            {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
+                <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
+                    {{ html()->hidden($front->getCurrentViewRequestName()) }}
+                    @foreach($front->getFilterInputs() as $filter)
+                        {!! $filter->formHtml() !!}
+                    @endforeach
+                    <div>
+                        {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded md:mt-6 py-2 cursor-pointer') }}
+                    </div>
+                </div>
+            {{ html()->closeFormWithDefaults() }}
+        </div>
     @endif
 
     @if($front->getLenses()->count() > 1)
