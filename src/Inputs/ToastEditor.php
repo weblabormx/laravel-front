@@ -27,7 +27,7 @@ class ToastEditor extends Input
         ]);
 
         return html()
-            ->textarea($this->column, $this->default_value)
+            ->textarea($this->getColumn(), $this->default_value)
             ->attributes($attributes->all());
     }
 

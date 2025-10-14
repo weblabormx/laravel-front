@@ -11,7 +11,7 @@ class Number extends Input
         $this->attributes['step'] = $this->getStep();
 
         return html()
-            ->number($this->column, $this->default_value)
+            ->number($this->getColumn(), $this->default_value)
             ->attributes($this->attributes);
     }
 

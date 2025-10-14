@@ -11,7 +11,7 @@ class Boolean extends Input
     {
         return html()
             ->checkbox(
-                $this->column,
+                $this->getColumn(),
                 !is_null($this->default_value) ? $this->default_value == $this->true_value : null,
                 $this->true_value
             );

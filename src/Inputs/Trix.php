@@ -18,7 +18,7 @@ class Trix extends Input
         $this->attributes['data-upload-url'] = url('api/laravel-front/upload-image') . '?variables=' . json_encode($this->variables);
 
         return html()
-            ->textarea($this->column, $this->default_value)
+            ->textarea($this->getColumn(), $this->default_value)
             ->attributes($this->attributes);
     }
 

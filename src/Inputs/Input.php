@@ -193,7 +193,7 @@ class Input implements Htmlable, \Stringable
 
     public function massiveSize($size = null)
     {
-        if (\Cache::store('array')->get('is_massive') !== true) {
+        if (cache()->store('array')->get('is_massive') !== true) {
             return $this;
         }
         return $this->size($size);

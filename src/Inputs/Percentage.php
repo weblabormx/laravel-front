@@ -11,7 +11,7 @@ class Percentage extends Input
         $this->attributes['step'] = '.01';
 
         $input = html()
-            ->number($this->column, $this->default_value)
+            ->number($this->getColumn(), $this->default_value)
             ->attributes($this->attributes);
 
         return InputGroup::make(null, $input, '%')->form();

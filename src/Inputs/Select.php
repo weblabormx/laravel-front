@@ -18,7 +18,7 @@ class Select extends Input
     public function form()
     {
         $select = html()
-            ->select($this->column, $this->options)
+            ->select($this->getColumn(), $this->options)
             ->attributes($this->attributes);
 
         if($this->default_value) {
