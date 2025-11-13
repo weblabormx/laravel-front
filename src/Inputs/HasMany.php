@@ -36,9 +36,6 @@ class HasMany extends Input
             $this->title = $this->front->plural_label;
             $this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
         }
-		if (!method_exists($this->front->model, $this->relationship)) {
-			$this->relationship = Str::camel($this->relationship);
-		}
 
         $this->create_link = $this->front->getBaseUrl() . '/create';
         $this->show_before = $this->front->canIndex();
@@ -53,6 +50,10 @@ class HasMany extends Input
 
     public function setResource($resource)
     {
+		if (! method_exists($resource->getModel(), $this->relationship)) {
+			$this->relationship = Str::camel($this->relationship);
+		}
+
         // Get column name
         if (is_null($this->column)) {
             $relation = $this->relationship;
