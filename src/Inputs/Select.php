@@ -17,11 +17,14 @@ class Select extends Input
 
     public function form()
     {
+        $column = $this->getColumn();
         $select = html()
-            ->select($this->getColumn(), $this->options)
+            ->select($column, $this->options)
             ->attributes($this->attributes);
 
-        if($this->default_value) {
+        if(request()->filled($column)) {
+            $select = $select->value(request()->get($column));
+        } else if($this->default_value) {
             $select = $select->value($this->default_value);
         }
         if ($this->show_placeholder) {

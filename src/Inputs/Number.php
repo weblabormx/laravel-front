@@ -9,9 +9,9 @@ class Number extends Input
     public function form()
     {
         $this->attributes['step'] = $this->getStep();
-
+        $column = $this->getColumn();
         return html()
-            ->number($this->getColumn(), $this->default_value)
+            ->number($column, request()->$column ?? $this->default_value)
             ->attributes($this->attributes);
     }
 
