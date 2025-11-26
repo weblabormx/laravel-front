@@ -47,9 +47,11 @@ class Boolean extends Input
 
     public function processData($data)
     {
+        $data = collect($data)->dot();
         if (!isset($data[$this->column])) {
             $data[$this->column] = $this->false_value;
         }
+        $data = $data->undot()->all();
         return $data;
     }
 }
