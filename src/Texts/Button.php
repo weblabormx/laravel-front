@@ -61,7 +61,7 @@ class Button extends Text
 			$icon = "<i class='$icon'></i>";
 		} else if (!Str::contains($icon, '<')) {
 			$data = [
-				'name' => $icon, // Reemplaza con el nombre del icono
+				'name' => $icon, 
 				'class' => 'w-5 h-5',
 			];
 			$icon = Blade::render('<x-icon :name="$name" :class="$class" />', $data);
