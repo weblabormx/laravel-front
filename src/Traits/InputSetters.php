@@ -75,9 +75,13 @@ trait InputSetters
         return $this;
     }
 
-    public function disabled()
+    public function disabled($value = true)
     {
-        $this->attributes['disabled'] = 'disabled';
+        if ($value) {
+            $this->attributes['disabled'] = 'disabled';
+        } else {
+            unset($this->attributes['disabled']);
+        }
         return $this;
     }
 
