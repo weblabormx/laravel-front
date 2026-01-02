@@ -59,11 +59,14 @@ trait InputWithLinks
 
         // Add create link
         if (isset($this->create_link) && strlen($this->create_link) > 0 && $this->front->canCreate() && $can_edit) {
-            $title = Str::singular($this->title) ?? $this->front->label;
+            if($this->titleWasSet) {
+                $title = Str::singular($this->title);
+            } else {
+                $title = $this->front->label;
+            }
             $title = $this->create_button_title ?? __('Add') . " {$title}";
             $links[] = Front::buttons()->getByName('create')->addLink($this->create_link)->setTitle($title);
         }
-
         return $links;
     }
 }
