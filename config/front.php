@@ -63,18 +63,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Hidden default value
-    |--------------------------------------------------------------------------
-    |
-    | If you want to get the exactly value added on Hidden::make('The Value') set "title" (In this case it will use the column 'The Value')
-    | Otherwise put "value" to convert to lower case and Snake case, example: "the_value" instead
-    |
-    */
-
-    'hidden_value' => 'column',
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Date Format
     |--------------------------------------------------------------------------
     |

@@ -9,7 +9,7 @@ class Money extends Input
         $this->attributes['step'] = '.01';
 
         $input = html()
-            ->number($this->getColumn(), $this->default_value)
+            ->number($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
 
         return InputGroup::make('$', $input)->form();

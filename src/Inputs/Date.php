@@ -12,7 +12,7 @@ class Date extends Input
 			$this->default_value = $this->getValue($this->resource->object);
 		}
         return html()
-            ->date($this->getColumn(), $this->default_value)
+            ->date($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

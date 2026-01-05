@@ -138,6 +138,12 @@ class Input implements Htmlable, \Stringable
         return "{$column}[{$key}]";
     }
 
+    public function getDefaultValue()
+    {
+        $column = $this->getColumn();
+        return $this->default_value ?? request()->$column;
+    }
+
     public function form()
     {
         return;

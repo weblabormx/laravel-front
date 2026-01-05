@@ -11,10 +11,8 @@ class Hidden extends Input
 
     public function form()
     {
-        $column_to_use = config('front.hidden_value');
-
         return html()
-            ->hidden($this->$column_to_use, $this->default_value)
+            ->hidden($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

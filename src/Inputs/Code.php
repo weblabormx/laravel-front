@@ -14,7 +14,7 @@ class Code extends Input
         $this->attributes['data-lang'] = $this->lang;
 
         return html()
-            ->textarea($this->getColumn(), $this->default_value)
+            ->textarea($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

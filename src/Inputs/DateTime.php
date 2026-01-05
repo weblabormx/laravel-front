@@ -17,7 +17,7 @@ class DateTime extends Input
         $this->attributes['pattern'] = $this->pattern;
 
         return html()
-            ->datetime($this->getColumn(), $this->default_value)
+            ->datetime($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

@@ -11,7 +11,7 @@ class Textarea extends Input
     public function form()
     {
         return html()
-            ->textarea($this->getColumn(), $this->default_value)
+            ->textarea($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

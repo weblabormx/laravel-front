@@ -6,9 +6,8 @@ class Text extends Input
 {
     public function form()
     {
-        $column = $this->getColumn();
         return html()
-            ->text($column, request()->$column ?? $this->default_value)
+            ->text($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 }

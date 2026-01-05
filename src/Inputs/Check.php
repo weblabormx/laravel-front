@@ -7,7 +7,7 @@ class Check extends Input
     public function form()
     {
         return html()
-            ->checkbox($this->getColumn(), $this->default_value)
+            ->checkbox($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

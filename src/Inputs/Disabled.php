@@ -12,11 +12,11 @@ class Disabled extends Input
         $attributes['disabled'] = 'disabled';
 
         return html()
-            ->text($this->column, $this->default_value)
+            ->text($this->getColumn(), $this->getDefaultValue())
             ->attributes($attributes)
             .
             html()
-            ->hidden($this->column, $this->default_value)
+            ->hidden($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 

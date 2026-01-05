@@ -9,10 +9,11 @@ class Boolean extends Input
 
     public function form()
     {
+        $value = $this->getDefaultValue();
         return html()
             ->checkbox(
                 $this->getColumn(),
-                !is_null($this->default_value) ? $this->default_value == $this->true_value : null,
+                !is_null($value) ? $value == $this->true_value : null,
                 $this->true_value
             );
     }

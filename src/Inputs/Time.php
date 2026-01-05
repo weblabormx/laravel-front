@@ -13,9 +13,9 @@ class Time extends Input
         $type = $this->input_type;
 
         if ($type === 'text') {
-            $form = html()->text($this->getColumn(), $this->default_value);
+            $form = html()->text($this->getColumn(), $this->getDefaultValue());
         } elseif ($type === 'time') {
-            $form = html()->time($this->getColumn(), $this->default_value);
+            $form = html()->time($this->getColumn(), $this->getDefaultValue());
         }
 
         return $form->attributes($this->attributes);

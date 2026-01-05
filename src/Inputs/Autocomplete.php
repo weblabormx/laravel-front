@@ -12,7 +12,7 @@ class Autocomplete extends Input
         $this->attributes['data-type'] = 'autocomplete';
         $this->attributes['src'] = $this->url;
 
-        $value = isset($this->default_value) ? $this->default_value : html()->value($this->column);
+        $value = $this->getDefaultValue() ?? html()->value($this->column);
         if (!is_null($value)) {
             $this->attributes['data-selected-value'] = $value;
             // Fill text
@@ -29,12 +29,12 @@ class Autocomplete extends Input
 
         if (isset($this->attributes['disabled'])) {
             return html()
-                ->text($this->column . '_hidden', $this->attributes['data-selected-text'] ?? false)
+                ->text($this->getColumn() . '_hidden', $this->attributes['data-selected-text'] ?? false)
                 ->attributes(['disabled' => 'disabled']);
         }
 
         return html()
-            ->text($this->column, $this->default_value)
+            ->text($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
     }
 
