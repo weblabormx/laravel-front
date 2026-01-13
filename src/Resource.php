@@ -193,10 +193,15 @@ abstract class Resource
     }
 
     // Change url for redirection after a creation is done
-
     public function createRedirectionUrl($object)
     {
         return $this->getBaseUrl();
+    }
+
+    // Change url for redirection after a update is done, if null we go back
+    public function updateRedirectionUrl($object)
+    {
+        return;
     }
 
     // Change url for redirection after a delete is done
