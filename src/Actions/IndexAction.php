@@ -13,11 +13,12 @@ class IndexAction
 {
     use HasInputs, IsValidated;
 
-    public $title, $button_text, $dat, $save_button, $slug, $front, $data, $url;
+    public $title, $title_shown, $button_text, $dat, $save_button, $slug, $front, $data, $url;
     public $icon = 'fa fa-book';
     public $type = 'btn-primary';
     public $show = true;
     public $show_button = true;
+    public $show_text = true;
 
     public function __construct()
     {
@@ -33,7 +34,7 @@ class IndexAction
             $this->save_button = __('Save changes');
         }
         $this->title = __($this->title);
-        $this->button_text = $this->getIconHtml()." $this->title";
+        $this->generateButton();
     }
 
     private function getIconHtml()
@@ -117,7 +118,7 @@ class IndexAction
         }
         $this->title = $title;
         $this->title = __($this->title);
-        $this->button_text = $this->getIconHtml()." $this->title";
+        $this->generateButton();
         return $this;
     }
 
@@ -136,7 +137,7 @@ class IndexAction
             return $this;
         }
         $this->icon = $icon;
-        $this->button_text = $this->getIconHtml()." $this->title";
+        $this->generateButton();
         return $this;
     }
 
@@ -152,6 +153,18 @@ class IndexAction
             return 'background: '.$this->color;
         }
         return '';
+    }
+
+    public function generateButton()
+    {
+        if(!$this->show_text) {
+            $this->button_text = $this->getIconHtml();
+            $this->title_shown = '';
+            return $this;
+        }
+        $this->button_text = $this->getIconHtml()." $this->title";
+        $this->title_shown = $this->title;
+        return $this;
     }
 
     public function __get($name)
