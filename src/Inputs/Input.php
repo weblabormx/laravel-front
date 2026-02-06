@@ -7,7 +7,7 @@ use WeblaborMx\Front\Traits\InputVisibility;
 use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputRules;
 use WeblaborMx\Front\Traits\WithWidth;
-use Illuminate\Support\Str;
+use Illuminate\Support\{Arr, Str};
 
 class Input implements Htmlable, \Stringable
 {
@@ -78,15 +78,7 @@ class Input implements Htmlable, \Stringable
         if (!is_string($column) && is_callable($column)) {
             $return = $column($object);
         } elseif (Str::contains($column, '.')) {
-            $return = collect(explode('.', $column))->reduce(function ($carry, $item) use ($object) {
-                if (isset($carry[$item])) {
-                    return $carry[$item];
-                }
-                if (is_object($carry) && isset($carry->$item)) {
-                    return $carry?->$item;
-                }
-                return null;
-            }, $object);
+            $return = Arr::get($object, $column);
         } else {
             $return = $object?->$column;
         }
