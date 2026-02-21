@@ -10,6 +10,9 @@ class ToastEditor extends Input
     public bool $dontTrim = false;
     public bool $hideModeSwitch = false;
     public bool $darkMode = false;
+    public bool $hideImage = false;
+    public bool $hideLink = false;
+    public bool $hideTable = false;
 
     public function form()
     {
@@ -17,6 +20,9 @@ class ToastEditor extends Input
             'data-no-trim' => $this->dontTrim,
             'data-hide-switch' => $this->hideModeSwitch,
             'data-dark' => $this->darkMode,
+            'data-hide-image' => $this->hideImage,
+            'data-hide-link' => $this->hideLink,
+            'data-hide-table' => $this->hideTable,
         ])->filter(function($value) {
             return $value;
         })->merge([
@@ -76,6 +82,24 @@ class ToastEditor extends Input
     public function markdown()
     {
         $this->setLang('markdown');
+        return $this;
+    }
+
+    public function hideImage(bool $enable = true)
+    {
+        $this->hideImage = $enable;
+        return $this;
+    }
+
+    public function hideLink(bool $enable = true)
+    {
+        $this->hideLink = $enable;
+        return $this;
+    }
+
+    public function hideTable(bool $enable = true)
+    {
+        $this->hideTable = $enable;
         return $this;
     }
 }
