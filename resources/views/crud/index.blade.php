@@ -9,7 +9,7 @@
         <div class="min-w-0 flex-1">
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">{{$front->plural_label}}</h2>
         </div>
-        <div class="mt-4 flex shrink-0 md:mt-0 md:ml-4">
+        <div class="mt-4 flex flex-wrap gap-2 shrink-0 md:mt-0 md:ml-4">
             @foreach($front->getIndexLinks() as $button)
                 {!! $button->form() !!}
             @endforeach
@@ -37,7 +37,7 @@
     @endif
 
     @if($front->getLenses()->count() > 1)
-        <div class="flex items-center mt-6">
+        <div class="flex flex-wrap gap-3 items-center mt-6">
             <h4 class="text-lg font-medium">Lenses</h4>
             @foreach($front->getLenses() as $button)
                 {!! $button->form() !!}
