@@ -19,7 +19,7 @@
         <div x-data="{ filterShow: false }">
             <div class="mt-6 font-bold">
                 {{ __('FILTER RESULTS', ['name' => strtoupper($front->plural_label)]) }}
-                <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1">{{ collect(request()->all())->whereNotNull()->count() }}</span>
+                <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1">{{ collect($front->getFilters())->filter(fn($f) => request()->filled($f->slug))->count() }}</span>
                 <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
             </div>
             {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
