@@ -51,6 +51,7 @@ class FrontServiceProvider extends ServiceProvider
         
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider());
 
