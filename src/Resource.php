@@ -285,7 +285,7 @@ abstract class Resource
         $exist_filter_value = false;
 
         // Get all the filters variables with their default values
-        $filters = collect($this->filters())->mapWithKeys(function ($filter) use ($try, &$exist_filter_value) {
+        $filters = collect($this->cachedFilters())->mapWithKeys(function ($filter) use ($try, &$exist_filter_value) {
             // Default value
             $default = $filter->setResource($this)->default();
             if (is_array($default) && isset($default[$try])) {
