@@ -6,7 +6,7 @@ class ToastEditor extends Input
 {
     public float $height = 300;
     public string $previewStyle = 'tab';
-    public string $lang = 'wysiwyg';
+    public string $lang = 'markdown';
     public bool $dontTrim = false;
     public bool $hideModeSwitch = false;
     public bool $darkMode = false;
@@ -35,6 +35,16 @@ class ToastEditor extends Input
         return html()
             ->textarea($this->getColumn(), $this->getDefaultValue())
             ->attributes($attributes->all());
+    }
+
+    public function getValue($object)
+    {
+        $value = parent::getValue($object);
+        if ($this->lang == 'json') {
+            $value = json_decode($value);
+            $value = json_encode($value, JSON_PRETTY_PRINT);
+        }
+        return markdownToHtml($value);
     }
 
     public function setHeight($height = 500)
