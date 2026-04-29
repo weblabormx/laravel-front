@@ -105,6 +105,16 @@ final class Front
             return $resource;
         }
 
+        $namespace = $this->baseNamespace();
+        $basename = str($resource)
+            ->after($namespace)
+            ->toString();
+        $resourceClass = $namespace . $basename;
+
+        if (!\str_contains($resource, '\\') && \class_exists($resourceClass) && \is_subclass_of($resourceClass, Resource::class)) {
+            return $resourceClass;
+        }
+
         if (\class_exists($resource)) {
             if (\is_subclass_of($resource, Resource::class)) {
                 return $resource;
@@ -113,18 +123,13 @@ final class Front
             }
         }
 
-        $namespace = $this->baseNamespace();
-        $basename = str($resource)
-            ->after($namespace)
-            ->toString();
-
         $found = \array_values(\array_filter(
             $this->cachedResourceClasses,
             fn($class) => \str_ends_with($class, $basename)
         ));
 
         if (empty($found)) {
-            return $namespace . $basename;
+            return $resourceClass;
         }
 
         return $found[0];
