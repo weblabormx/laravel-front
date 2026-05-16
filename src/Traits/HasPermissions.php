@@ -35,10 +35,10 @@ trait HasPermissions
 
     public function canShow($object = null)
     {
-        return cache()->store('array')->rememberForever('HasPermission:canShow:'.$this->getModel().':'.$this->object->getKey(), function() use ($object) {
-            if (is_null($object)) {
-                $object = $this->object;
-            }
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return cache()->store('array')->rememberForever('HasPermission:canShow:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
             return in_array('show', $this->actions) && Gate::allows('view', $object);
         });
         
@@ -46,40 +46,40 @@ trait HasPermissions
 
     public function canUpdate($object = null)
     {
-        return cache()->store('array')->rememberForever('HasPermission:canUpdate:'.$this->getModel().':'.$this->object->getKey(), function() use ($object) {
-            if (is_null($object)) {
-                $object = $this->object;
-            }
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return cache()->store('array')->rememberForever('HasPermission:canUpdate:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
             return in_array('edit', $this->actions) && Gate::allows('update', $object);
         });
     }
 
     public function canRemove($object = null)
     {
-        return cache()->store('array')->rememberForever('HasPermission:canRemove:'.$this->getModel().':'.$this->object->getKey(), function() use ($object) {
-            if (is_null($object)) {
-                $object = $this->object;
-            }
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return cache()->store('array')->rememberForever('HasPermission:canRemove:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
             return in_array('destroy', $this->actions) && Gate::allows('delete', $object);
         });
     }
 
     public function canRestore($object = null)
     {
-        return cache()->store('array')->rememberForever('HasPermission:canRestore:'.$this->getModel().':'.$this->object->getKey(), function() use ($object) {
-            if (is_null($object)) {
-                $object = $this->object;
-            }
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return cache()->store('array')->rememberForever('HasPermission:canRestore:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
             return in_array('index', $this->actions) && Gate::allows('restore', $object);
         });
     }
 
     public function canForceDelete($object = null)
     {
-        return cache()->store('array')->rememberForever('HasPermission:canForceDelete:'.$this->getModel().':'.$this->object->getKey(), function() use ($object) {
-            if (is_null($object)) {
-                $object = $this->object;
-            }
+        if (is_null($object)) {
+            $object = $this->object;
+        }
+        return cache()->store('array')->rememberForever('HasPermission:canForceDelete:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
             return in_array('destroy', $this->actions) && Gate::allows('forceDelete', $object);
         });
     }
