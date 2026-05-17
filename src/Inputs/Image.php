@@ -22,6 +22,7 @@ class Image extends Input
     public $extension;
     public $save = true;
     public $thumbnails = [];
+    public $style;
 
     /*
      * Basic functions
@@ -51,8 +52,9 @@ class Image extends Input
         }
         $original = $value;
         $thumb = Front::thumbs()->get($value, $this->view_size);
+        $style = $this->style;
 
-        return view('front::inputs.image', compact('original', 'thumb'));
+        return view('front::inputs.image', compact('original', 'thumb', 'style'));
     }
 
     public function getExcelValue($object)
@@ -145,35 +147,36 @@ class Image extends Input
     public function sizeToShow($size)
     {
         $this->view_size = $size;
-
         return $this;
     }
 
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
-
         return $this;
     }
 
     public function setExtension($extension)
     {
         $this->extension = $extension;
-
         return $this;
     }
 
     public function setMaxSize($max_size)
     {
         $this->max_size = $max_size;
+        return $this;
+    }
 
+    public function setStyle($style)
+    {
+        $this->style = $style;
         return $this;
     }
 
     public function noSave()
     {
         $this->save = false;
-
         return $this;
     }
 
