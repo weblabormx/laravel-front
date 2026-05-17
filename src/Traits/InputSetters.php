@@ -38,6 +38,14 @@ trait InputSetters
 
     public $sortable = null;
 
+    public $exportable = null;
+
+    public $importable = null;
+
+    public $import_callback = null;
+
+    public $front_column_key = null;
+
     public function setData($column, $value)
     {
         $this->extra_data[$column] = $value;
@@ -134,6 +142,42 @@ trait InputSetters
     {
         $this->sortable = true;
         $this->sort_callback = $callback;
+
+        return $this;
+    }
+
+    public function exportable($exportable = true)
+    {
+        $this->exportable = $exportable;
+
+        return $this;
+    }
+
+    public function unexportable()
+    {
+        $this->exportable = false;
+
+        return $this;
+    }
+
+    public function importable($importable = true)
+    {
+        $this->importable = $importable;
+
+        return $this;
+    }
+
+    public function unimportable()
+    {
+        $this->importable = false;
+
+        return $this;
+    }
+
+    public function importUsing($callback)
+    {
+        $this->importable = true;
+        $this->import_callback = $callback;
 
         return $this;
     }

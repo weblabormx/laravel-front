@@ -6,7 +6,11 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use Maatwebsite\Excel\Facades\Excel;
+use WeblaborMx\Front\Exports\FrontResourceExport;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Imports\FrontResourceImport;
 use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Traits\IsRunable;
 
@@ -14,6 +18,7 @@ class ResourceIndex extends Component
 {
     use AuthorizesRequests;
     use IsRunable;
+    use WithFileUploads;
 
     #[Locked]
     public $resource;
@@ -22,13 +27,23 @@ class ResourceIndex extends Component
     public $sort = null;
 
     #[Url(as: 'direction')]
-    public $direction = 'asc';
+    public $direction;
 
     public $show_columns = false;
+
+    public $show_import = false;
+
+    public $import_file;
+
+    public $import_preview = [];
+
+    public $import_summary = null;
 
     public function mount(string $resource): void
     {
         $this->resource = $resource;
+        $this->sort = request()->get('sort', $this->sort);
+        $this->direction = request()->get('direction', $this->direction) === 'desc' ? 'desc' : 'asc';
         $front = $this->front();
 
         $this->authorize('viewAny', $front->getModel());
@@ -121,6 +136,61 @@ class ResourceIndex extends Component
         cache()->forget($this->columnPreferenceCacheKey());
     }
 
+    public function export()
+    {
+        $front = $this->front();
+
+        if (! $front->enable_export) {
+            abort(403, 'This action is unauthorized.');
+        }
+
+        $this->authorizeIndex($front);
+        $this->syncSortRequest();
+
+        return Excel::download(
+            new FrontResourceExport($front, $this->visibleColumnKeys()),
+            str($front->plural_label)->slug('_')->toString().'.xlsx'
+        );
+    }
+
+    public function updatedImportFile(): void
+    {
+        $this->validate([
+            'import_file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
+        ]);
+
+        $this->import_preview = $this->buildImportPreview();
+        $this->import_summary = null;
+    }
+
+    public function runImport(): void
+    {
+        $front = $this->front();
+
+        if (! $front->enable_import) {
+            abort(403, 'This action is unauthorized.');
+        }
+
+        $this->authorizeIndex($front);
+        $storeFront = Front::makeResource($this->resource)->setSource('store');
+        $this->authorize('create', $storeFront->getModel());
+        $this->frontAuthorize($storeFront, 'create');
+        $this->frontAuthorize($storeFront, 'store');
+
+        $this->validate([
+            'import_file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
+        ]);
+
+        $import = new FrontResourceImport($this->resource, $this->visibleColumnKeys());
+        Excel::import($import, $this->import_file);
+
+        $this->import_summary = [
+            'imported' => $import->imported,
+            'ignored' => $import->ignored,
+            'errors' => $import->errors,
+        ];
+    }
+
     public function columnsEnabled(): bool
     {
         return (bool) $this->front()->enable_column_preferences;
@@ -131,18 +201,31 @@ class ResourceIndex extends Component
         return (bool) $this->front()->enable_index_sorting;
     }
 
+    public function exportEnabled(): bool
+    {
+        return (bool) $this->front()->enable_export;
+    }
+
+    public function importEnabled(): bool
+    {
+        return (bool) $this->front()->enable_import;
+    }
+
     public function availableColumns()
     {
         $front = $this->front();
+        $columns = collect();
 
-        return $front->configurableIndexFields()->mapWithKeys(function ($field, $index) use ($front) {
+        foreach ($front->configurableIndexFields() as $index => $field) {
             $key = $front->indexColumnKey($field, $index);
 
-            return [$key => [
+            $columns->put($key, [
                 'key' => $key,
                 'title' => $field->title,
-            ]];
-        });
+            ]);
+        }
+
+        return $columns;
     }
 
     public function visibleColumnKeys(): array
@@ -168,13 +251,8 @@ class ResourceIndex extends Component
     {
         $front = Front::makeResource($this->resource)->setSource('index');
 
-        request()->merge([
-            'sort' => $this->sort,
-            'direction' => $this->direction,
-        ]);
-
-        $this->authorize('viewAny', $front->getModel());
-        $this->frontAuthorize($front, 'index');
+        $this->syncSortRequest();
+        $this->authorizeIndex($front);
 
         $response = $front->beforeRequest();
 
@@ -183,6 +261,20 @@ class ResourceIndex extends Component
         }
 
         return $this->run(new FrontIndex($front, $front->getBaseUrl()));
+    }
+
+    private function authorizeIndex($front): void
+    {
+        $this->authorize('viewAny', $front->getModel());
+        $this->frontAuthorize($front, 'index');
+    }
+
+    private function syncSortRequest(): void
+    {
+        request()->merge([
+            'sort' => $this->sort,
+            'direction' => $this->direction,
+        ]);
     }
 
     private function frontAuthorize($front, string $method): void
@@ -195,10 +287,13 @@ class ResourceIndex extends Component
     private function availableDefaultColumnKeys(): array
     {
         $front = $this->front();
+        $columns = [];
 
-        return $front->indexFields()->map(function ($field, $index) use ($front) {
-            return $front->indexColumnKey($field, $index);
-        })->values()->all();
+        foreach ($front->indexFields() as $index => $field) {
+            $columns[] = $front->indexColumnKey($field, $index);
+        }
+
+        return $columns;
     }
 
     private function columnPreferences(): array
@@ -219,6 +314,24 @@ class ResourceIndex extends Component
         $userKey = auth()->id() ? 'user:'.auth()->id() : 'session:'.session()->getId();
 
         return 'front:index-columns:'.$userKey.':'.md5($this->resource.':'.$this->front()->getCurrentViewName());
+    }
+
+    private function buildImportPreview(): array
+    {
+        $front = $this->front();
+        $fields = $front->configurableIndexFieldsForColumns($this->visibleColumnKeys());
+        $importable = $front->importableIndexFields($this->visibleColumnKeys());
+        $importableKeys = $importable->pluck('front_column_key')->all();
+        $preview = [];
+
+        foreach ($fields as $field) {
+            $preview[] = [
+                'title' => $field->title,
+                'status' => in_array($field->front_column_key, $importableKeys) ? 'importable' : 'ignored',
+            ];
+        }
+
+        return $preview;
     }
 
     public function render()

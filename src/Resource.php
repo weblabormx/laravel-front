@@ -5,13 +5,26 @@ namespace WeblaborMx\Front;
 use Exception;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Traits\HasActions;
+use WeblaborMx\Front\Traits\HasBreadcrumbs;
+use WeblaborMx\Front\Traits\HasCards;
+use WeblaborMx\Front\Traits\HasFilters;
+use WeblaborMx\Front\Traits\HasInputs;
+use WeblaborMx\Front\Traits\HasLenses;
+use WeblaborMx\Front\Traits\HasLinks;
+use WeblaborMx\Front\Traits\HasMassiveEditions;
+use WeblaborMx\Front\Traits\HasPermissions;
+use WeblaborMx\Front\Traits\IsValidated;
+use WeblaborMx\Front\Traits\ResourceHelpers;
+use WeblaborMx\Front\Traits\Sourceable;
 
 abstract class Resource
 {
-    use Traits\HasActions, Traits\HasBreadcrumbs,      Traits\HasCards,    Traits\HasFilters, Traits\HasInputs,         Traits\HasLenses,
-        Traits\HasLinks, Traits\HasMassiveEditions, Traits\HasPermissions, Traits\IsValidated, Traits\ResourceHelpers, Traits\Sourceable;
+    use HasActions, HasBreadcrumbs, HasCards, HasFilters, HasInputs, HasLenses;
+    use HasLinks, HasMassiveEditions, HasPermissions, IsValidated, ResourceHelpers, Sourceable;
 
     public $base_url;
 
@@ -65,6 +78,10 @@ abstract class Resource
 
     public bool $enable_column_preferences = true;
 
+    public bool $enable_export = true;
+
+    public bool $enable_import = true;
+
     public function __construct($source = null)
     {
         if (! isset($this->label)) {
@@ -90,7 +107,7 @@ abstract class Resource
             $this->index_views = [
                 'normal' => [
                     'icon' => 'fa fa-th-list',
-                    'title' => 'Normal',
+                    'title' => __('Normal'),
                     'view' => 'front::crud.partial-index',
                 ],
             ];
@@ -335,7 +352,7 @@ abstract class Resource
             return $query;
         }
 
-        $query = method_exists($query, 'reorder') ? $query->reorder() : $query;
+        $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
         $query = $query->orderBy($column, $direction);
 
         $model = $this->getModel();
@@ -372,6 +389,49 @@ abstract class Resource
         }
 
         return 'column_'.md5(get_class($field).':'.$field->title.':'.$index);
+    }
+
+    public function exportableIndexFields(array $columns)
+    {
+        return $this->configurableIndexFieldsForColumns($columns)->filter(function ($field) {
+            return $field->exportable !== false;
+        });
+    }
+
+    public function importableIndexFields(array $columns = [])
+    {
+        $fields = count($columns) > 0
+            ? $this->configurableIndexFieldsForColumns($columns)
+            : $this->configurableIndexFields();
+        $model = $this->getModel();
+        $table = (new $model)->getTable();
+
+        return $fields->filter(function ($field) use ($table) {
+            if ($field->importable === false) {
+                return false;
+            }
+
+            if ($field->importable === true || is_callable($field->import_callback)) {
+                return true;
+            }
+
+            return is_string($field->column)
+                && ! Str::contains($field->column, ['.', '[', ']'])
+                && Schema::hasColumn($table, $field->column);
+        });
+    }
+
+    public function configurableIndexFieldsForColumns(array $columns)
+    {
+        $fields = $this->configurableIndexFields()->map(function ($field, $index) {
+            $field->front_column_key = $this->indexColumnKey($field, $index);
+
+            return $field;
+        });
+
+        return collect($columns)->map(function ($column) use ($fields) {
+            return $fields->firstWhere('front_column_key', $column);
+        })->filter()->values();
     }
 
     public function sourceIsForm()
