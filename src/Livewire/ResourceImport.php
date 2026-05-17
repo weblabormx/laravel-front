@@ -60,8 +60,10 @@ class ResourceImport extends Component
         $this->authorizeImport($this->front());
         $this->validateImportFile();
 
+        $file = null;
         try {
-            $this->extractHeadings();
+            $file = $this->localImportFile();
+            $this->extractHeadings($file['path']);
         } catch (Throwable $throwable) {
             report($throwable);
             $this->import_headings = [];
@@ -74,6 +76,8 @@ class ResourceImport extends Component
             $this->analyzed = true;
 
             return;
+        } finally {
+            $this->deleteLocalImportFile($file);
         }
 
         $this->import_preview = $this->buildImportPreview();
@@ -96,9 +100,11 @@ class ResourceImport extends Component
             return;
         }
 
+        $file = null;
         try {
+            $file = $this->localImportFile();
             $import = new Importer($this->resource, $this->importColumnKeys(), $this->import_sheet_index);
-            Excel::import($import, $this->import_file);
+            Excel::import($import, $file['path']);
         } catch (Throwable $throwable) {
             report($throwable);
             $this->import_summary = [
@@ -113,6 +119,8 @@ class ResourceImport extends Component
             ];
 
             return;
+        } finally {
+            $this->deleteLocalImportFile($file);
         }
 
         $this->import_summary = [
@@ -198,9 +206,9 @@ class ResourceImport extends Component
         return $preview;
     }
 
-    private function extractHeadings()
+    private function extractHeadings($file)
     {
-        $sheets = (new HeadingRowImport)->toArray($this->import_file);
+        $sheets = (new HeadingRowImport)->toArray($file);
         $selected = $this->selectHeadingsSheet($sheets);
         $this->import_sheet_index = $selected['index'];
         $this->import_heading_labels = $selected['labels'];
@@ -293,6 +301,35 @@ class ResourceImport extends Component
         });
 
         return $headings->flatten()->unique()->values()->all();
+    }
+
+    private function localImportFile()
+    {
+        $path = $this->import_file->getRealPath();
+        if (is_string($path) && is_file($path)) {
+            return [
+                'path' => $path,
+                'temporary' => false,
+            ];
+        }
+
+        $extension = $this->import_file->getClientOriginalExtension() ?: 'xlsx';
+        $base = tempnam(sys_get_temp_dir(), 'front-import-');
+        $temporary = $base.'.'.$extension;
+        rename($base, $temporary);
+        file_put_contents($temporary, $this->import_file->get());
+
+        return [
+            'path' => $temporary,
+            'temporary' => true,
+        ];
+    }
+
+    private function deleteLocalImportFile($file): void
+    {
+        if (is_array($file) && ($file['temporary'] ?? false) && is_file($file['path'])) {
+            @unlink($file['path']);
+        }
     }
 
     public function render()
