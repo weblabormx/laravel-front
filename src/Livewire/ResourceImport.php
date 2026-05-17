@@ -70,7 +70,7 @@ class ResourceImport extends Component
             $this->import_heading_labels = [];
             $this->import_preview = $this->buildImportPreview();
             $this->import_structure_errors = [
-                __('front::messages.unreadable_file'),
+                __('The file structure could not be read. Verify the format and try again.'),
             ];
             $this->import_summary = null;
             $this->analyzed = true;
@@ -113,7 +113,7 @@ class ResourceImport extends Component
                 'errors' => [
                     [
                         'row' => '-',
-                        'message' => __('front::messages.unreadable_file'),
+                        'message' => __('The file structure could not be read. Verify the format and try again.'),
                     ],
                 ],
             ];
@@ -263,7 +263,7 @@ class ResourceImport extends Component
         $front = $this->front();
         if (!in_array($front->excelIdHeadingKey(), $this->import_headings)) {
             return [
-                __('front::messages.missing_excel_id'),
+                __('The import file must include an ID column exported from this resource.'),
             ];
         }
 
@@ -278,7 +278,7 @@ class ResourceImport extends Component
         }
 
         return [
-            __('front::messages.no_importable_columns'),
+            __('No importable columns were found in the file.'),
         ];
     }
 

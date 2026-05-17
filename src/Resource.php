@@ -72,7 +72,7 @@ abstract class Resource
             $this->index_views = [
                 'normal' => [
                     'icon' => 'fa fa-th-list',
-                    'title' => __('front::messages.normal'),
+                    'title' => __('Normal'),
                     'view' => 'front::crud.partial-index',
                 ],
             ];

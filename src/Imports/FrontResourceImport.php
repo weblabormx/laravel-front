@@ -39,7 +39,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
             $id = $row[$idHeading] ?? null;
             $object = filled($id) ? $indexFront->excelObjectForKey($id) : null;
             if (filled($id) && is_null($object)) {
-                $this->addError($rowIndex, __('front::messages.import_id_not_found'));
+                $this->addError($rowIndex, __('The row ID does not exist or is not available for this resource.'));
 
                 continue;
             }
