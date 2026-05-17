@@ -3,12 +3,14 @@
 namespace WeblaborMx\Front;
 
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Inputs\BelongsTo as BelongsToInput;
 use WeblaborMx\Front\Traits\HasActions;
 use WeblaborMx\Front\Traits\HasBreadcrumbs;
 use WeblaborMx\Front\Traits\HasCards;
@@ -347,20 +349,141 @@ abstract class Resource
             return $callback($query, $direction, $field);
         }
 
-        $column = $field->sort_column ?? $field->column;
-
-        if (! is_string($column)) {
-            return $query;
-        }
-
         $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
-        $query = $query->orderBy($column, $direction);
+
+        $belongsToSortedQuery = ! isset($field->sort_column)
+            ? $this->applyBelongsToIndexSorting($query, $field, $direction)
+            : null;
+
+        if (! is_null($belongsToSortedQuery)) {
+            $query = $belongsToSortedQuery;
+        } else {
+            $column = $field->sort_column ?? $field->column;
+
+            if (! is_string($column)) {
+                return $query;
+            }
+
+            $query = $query->orderBy($column, $direction);
+        }
 
         $model = $this->getModel();
         $model = new $model;
         $key = $model->getQualifiedKeyName();
 
         return $query->orderBy($key);
+    }
+
+    private function applyBelongsToIndexSorting($query, $field, string $direction)
+    {
+        $relation = $this->belongsToSortRelation($field);
+
+        if (is_null($relation)) {
+            return null;
+        }
+
+        $titleColumn = $this->belongsToSortTitleColumn($field, $relation);
+
+        if (is_null($titleColumn)) {
+            return null;
+        }
+
+        $relatedModel = $relation->getRelated();
+        $relatedQuery = $relatedModel->newQuery()
+            ->select($relatedModel->qualifyColumn($titleColumn))
+            ->whereColumn(
+                $relatedModel->qualifyColumn($relation->getOwnerKeyName()),
+                $relation->getQualifiedForeignKeyName()
+            )
+            ->limit(1);
+
+        return $query->orderBy($relatedQuery, $direction);
+    }
+
+    private function belongsToSortRelation($field): ?EloquentBelongsTo
+    {
+        $relationName = $this->belongsToSortRelationName($field);
+
+        if (is_null($relationName)) {
+            return null;
+        }
+
+        $model = $this->getModel();
+        $model = new $model;
+
+        if (! method_exists($model, $relationName)) {
+            return null;
+        }
+
+        $relation = $model->$relationName();
+
+        if (! $relation instanceof EloquentBelongsTo) {
+            return null;
+        }
+
+        return $relation;
+    }
+
+    private function belongsToSortRelationName($field): ?string
+    {
+        if ($field instanceof BelongsToInput) {
+            return $field->relation;
+        }
+
+        if (! is_string($field->column) || ! Str::endsWith($field->column, '_id')) {
+            return null;
+        }
+
+        return Str::camel(Str::beforeLast($field->column, '_id'));
+    }
+
+    private function belongsToSortTitleColumn($field, EloquentBelongsTo $relation): ?string
+    {
+        if ($field instanceof BelongsToInput) {
+            $titleColumn = $field->search_field ?? $field->relation_front->search_title;
+
+            return $this->belongsToSortColumnExists($relation, $titleColumn) ? $titleColumn : null;
+        }
+
+        $resourceTitleColumn = $this->relatedResourceTitleColumn($relation);
+
+        if (! is_null($resourceTitleColumn)) {
+            return $resourceTitleColumn;
+        }
+
+        foreach (['name', 'title'] as $titleColumn) {
+            if ($this->belongsToSortColumnExists($relation, $titleColumn)) {
+                return $titleColumn;
+            }
+        }
+
+        return null;
+    }
+
+    private function relatedResourceTitleColumn(EloquentBelongsTo $relation): ?string
+    {
+        $relatedModel = get_class($relation->getRelated());
+
+        foreach (Front::getRegisteredResources() as $resourceClass) {
+            $resource = Front::makeResource($resourceClass);
+
+            if ($resource->getModel() !== $relatedModel) {
+                continue;
+            }
+
+            $titleColumn = $resource->search_title ?? $resource->title;
+
+            return $this->belongsToSortColumnExists($relation, $titleColumn) ? $titleColumn : null;
+        }
+
+        return null;
+    }
+
+    private function belongsToSortColumnExists(EloquentBelongsTo $relation, ?string $column): bool
+    {
+        return is_string($column)
+            && ! Str::contains($column, ['.', '[', ']'])
+            && $relation->getRelated()->getConnection()->getSchemaBuilder()->hasColumn($relation->getRelated()->getTable(), $column);
     }
 
     public function sortableIndexFields()
