@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Throwable;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontUpdate;
 
 class FrontResourceImport implements ToCollection, WithHeadingRow
@@ -33,57 +34,62 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
         $originalRequest = request();
 
         foreach ($rows as $rowIndex => $row) {
-            $object = $indexFront->excelObjectForKey($row[$idHeading] ?? null);
-            if (is_null($object)) {
-                $this->ignored++;
+            $id = $row[$idHeading] ?? null;
+            $object = filled($id) ? $indexFront->excelObjectForKey($id) : null;
+            if (filled($id) && is_null($object)) {
+                $this->addError($rowIndex, __('front::messages.import_id_not_found'));
 
                 continue;
             }
 
-            $data = [];
+            try {
+                $data = [];
 
-            foreach ($fields as $field) {
-                $heading = $indexFront->excelHeadingForField($field);
+                foreach ($fields as $field) {
+                    $heading = $indexFront->excelHeadingForField($field);
 
-                if (!$row->has($heading)) {
-                    $this->ignored++;
+                    if (!$row->has($heading)) {
+                        continue;
+                    }
 
-                    continue;
+                    if (is_callable($field->import_callback)) {
+                        $callback = $field->import_callback;
+                        $data = $callback($data, $row[$heading], $field, $row);
+
+                        continue;
+                    }
+
+                    $data[$field->column] = $field->parseExcelValue($row[$heading]);
                 }
 
-                if (is_callable($field->import_callback)) {
-                    $callback = $field->import_callback;
-                    $data = $callback($data, $row[$heading], $field, $row);
+                $data = $indexFront->processExcel($data, 'import', $row, $object);
+                $data = $indexFront->importData($data, $object, $row);
+            } catch (ValidationException $exception) {
+                $this->addError($rowIndex, collect($exception->errors())->flatten()->implode(' '));
 
-                    continue;
-                }
+                continue;
+            } catch (Throwable $throwable) {
+                report($throwable);
+                $this->addError($rowIndex, __('The row could not be imported.'));
 
-                $data[$field->column] = $field->parseExcelValue($row[$heading]);
+                continue;
             }
 
-            $data = $indexFront->processExcel($data, 'import', $row, $object);
-
-            if (count($data) === 0) {
+            if (!is_array($data) || count($data) === 0) {
                 $this->ignored++;
 
                 continue;
             }
 
             try {
-                $updateFront = $this->updateFront($object);
-                Gate::authorize('update', $object);
-                $rowRequest = $this->requestForRow($originalRequest, $data);
+                $rowRequest = $this->requestForRow($originalRequest, $data, is_null($object) ? 'POST' : 'PUT');
                 app()->instance('request', $rowRequest);
 
-                $response = $updateFront->beforeRequest();
+                $response = is_null($object)
+                    ? $this->storeRow($rowRequest)
+                    : $this->updateRow($rowRequest, $object);
+
                 if ($response) {
-                    $this->addError($rowIndex, __('The row could not be imported.'));
-
-                    continue;
-                }
-
-                $response = (new FrontUpdate($rowRequest, $updateFront, $object))->handle();
-                if (isResponse($response)) {
                     $this->addError($rowIndex, __('The row could not be imported.'));
 
                     continue;
@@ -106,12 +112,60 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
         return Front::makeResource($this->resource)->setSource('index');
     }
 
+    private function createFront()
+    {
+        return Front::makeResource($this->resource)->setSource('store');
+    }
+
     private function updateFront($object)
     {
         return Front::makeResource($this->resource)->setSource('update')->setObject($object);
     }
 
-    private function requestForRow(Request $originalRequest, array $data): Request
+    private function storeRow(Request $request)
+    {
+        $front = $this->createFront();
+        if (!$this->hasAction($front, 'create') || !$this->hasAction($front, 'store')) {
+            return true;
+        }
+
+        Gate::authorize('create', $front->getModel());
+
+        $response = $front->beforeRequest();
+        if ($response) {
+            return $response;
+        }
+
+        $response = (new FrontStore($request, $front))->handle();
+
+        return isResponse($response);
+    }
+
+    private function updateRow(Request $request, $object)
+    {
+        $front = $this->updateFront($object);
+        if (!$this->hasAction($front, 'edit') || !$this->hasAction($front, 'update')) {
+            return true;
+        }
+
+        Gate::authorize('update', $object);
+
+        $response = $front->beforeRequest();
+        if ($response) {
+            return $response;
+        }
+
+        $response = (new FrontUpdate($request, $front, $object))->handle();
+
+        return isResponse($response);
+    }
+
+    private function hasAction($front, string $method): bool
+    {
+        return in_array($method, $front->actions);
+    }
+
+    private function requestForRow(Request $originalRequest, array $data, string $method): Request
     {
         $rowRequest = $originalRequest->duplicate(
             $originalRequest->query->all(),
@@ -121,7 +175,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
             [],
             $originalRequest->server->all(),
         );
-        $rowRequest->setMethod('PUT');
+        $rowRequest->setMethod($method);
         $rowRequest->setUserResolver($originalRequest->getUserResolver());
         $rowRequest->setRouteResolver($originalRequest->getRouteResolver());
 

@@ -583,6 +583,11 @@ abstract class Resource
         return $data;
     }
 
+    public function importData($data, $object = null, $row = null)
+    {
+        return $data;
+    }
+
     private function withExcelIdField($fields)
     {
         $key = $this->excelIdKeyName();

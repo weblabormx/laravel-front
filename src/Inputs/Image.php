@@ -4,6 +4,7 @@ namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -206,6 +207,12 @@ class Image extends Input
             return $data;
         }
         if ($this->isUrlValue($data[$this->column])) {
+            $data[$this->column] = $this->normalizeStorageUrl($data[$this->column]);
+            if ($this->isStoredUrlValue($data[$this->column])) {
+                return $data;
+            }
+            $data[$this->column] = $this->saveRemoteUrl($data, $data[$this->column]);
+
             return $data;
         }
 
@@ -362,5 +369,70 @@ class Image extends Input
     private function isUrlValue($value): bool
     {
         return is_string($value) && Str::startsWith($value, ['http://', 'https://']);
+    }
+
+    private function normalizeStorageUrl($value)
+    {
+        $base = $this->storageUrlBase();
+        $absoluteBase = $this->isUrlValue($base) ? $base : rtrim(url($base), '/').'/';
+
+        if (Str::startsWith($value, $absoluteBase)) {
+            return $base.Str::after($value, $absoluteBase);
+        }
+
+        return $value;
+    }
+
+    private function isStoredUrlValue($value): bool
+    {
+        return is_string($value) && Str::startsWith($value, $this->storageUrlBase());
+    }
+
+    private function storageUrlBase()
+    {
+        $function = $this->url_returned;
+        $format = $function('test.test');
+
+        return str_replace('test.test', '', $format);
+    }
+
+    private function saveRemoteUrl($data, $url)
+    {
+        $contents = @file_get_contents($url);
+        if ($contents === false) {
+            throw ValidationException::withMessages([
+                $this->column => __('The selected :attribute is invalid.', ['attribute' => $this->title]),
+            ]);
+        }
+
+        $extension = pathinfo(parse_url($url, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION) ?: 'jpg';
+        $file_name = Str::random(40).'.'.$extension;
+
+        if (!is_null($this->file_name)) {
+            $file_name = $this->getFileName($data, new class($extension) {
+                private $extension;
+
+                public function __construct($extension)
+                {
+                    $this->extension = $extension;
+                }
+
+                public function guessExtension()
+                {
+                    return $this->extension;
+                }
+            });
+        }
+
+        $storage_file = $this->directory.'/'.$file_name;
+        Storage::put($storage_file, $contents, $this->visibility);
+
+        foreach ($this->thumbnails as $thumbnail) {
+            $this->saveNewSize($contents, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']);
+        }
+
+        $url_returned = $this->url_returned;
+
+        return $url_returned($storage_file);
     }
 }

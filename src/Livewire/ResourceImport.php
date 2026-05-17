@@ -18,8 +18,6 @@ class ResourceImport extends Component
     use WithFileUploads;
 
     private const IndexSource = 'index';
-    private const UpdateSource = 'update';
-
     #[Locked]
     public $resource;
     public $import_file;
@@ -153,10 +151,6 @@ class ResourceImport extends Component
 
         $this->authorize('viewAny', $front->getModel());
         $this->frontAuthorize($front, self::IndexSource);
-
-        $updateFront = Front::makeResource($this->resource)->setSource(self::UpdateSource);
-        $this->frontAuthorize($updateFront, 'edit');
-        $this->frontAuthorize($updateFront, self::UpdateSource);
     }
 
     private function frontAuthorize($front, string $method): void
