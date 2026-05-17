@@ -139,6 +139,13 @@
                 </div>
             @endif
 
+            @if(count($this->import_heading_labels) > 0)
+                <div class="mb-5 rounded-md border border-secondary-100 bg-secondary-50 px-3 py-2">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-secondary-500">{{ __('Columns read from file') }}</p>
+                    <p class="mt-1 text-sm text-secondary-700">{{ collect($this->import_heading_labels)->filter()->implode(', ') }}</p>
+                </div>
+            @endif
+
             <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($this->import_preview as $fieldIndex => $field)
                     <div wire:key="import-preview-{{ $fieldIndex }}" class="flex items-center justify-between gap-3 rounded-md border border-secondary-100 px-3 py-2 text-sm">

@@ -111,5 +111,6 @@
     "Normal": "Normal",
     "Select at least one column.": "Selecciona al menos una columna.",
     "Extra columns in file": "Columnas extra en el archivo",
-    "Ignored from file": "Se ignorará"
+    "Ignored from file": "Se ignorará",
+    "Columns read from file": "Columnas leídas del archivo"
 }

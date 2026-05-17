@@ -25,7 +25,9 @@ class ResourceImport extends Component
     public $import_summary = null;
     public $import_structure_errors = [];
     public $import_headings = [];
+    public $import_heading_labels = [];
     public $import_extra_headings = [];
+    public $import_sheet_index = 0;
     public $analyzed = false;
 
     public function mount(string $resource): void
@@ -39,7 +41,9 @@ class ResourceImport extends Component
     public function updatedImportFile(): void
     {
         $this->import_headings = [];
+        $this->import_heading_labels = [];
         $this->import_extra_headings = [];
+        $this->import_sheet_index = 0;
         $this->import_preview = [];
         $this->import_structure_errors = [];
         $this->import_summary = null;
@@ -57,10 +61,11 @@ class ResourceImport extends Component
         $this->validateImportFile();
 
         try {
-            $this->import_headings = $this->extractHeadings();
+            $this->extractHeadings();
         } catch (Throwable $throwable) {
             report($throwable);
             $this->import_headings = [];
+            $this->import_heading_labels = [];
             $this->import_preview = $this->buildImportPreview();
             $this->import_structure_errors = [
                 __('front::messages.unreadable_file'),
@@ -92,7 +97,7 @@ class ResourceImport extends Component
         }
 
         try {
-            $import = new Importer($this->resource, $this->importColumnKeys());
+            $import = new Importer($this->resource, $this->importColumnKeys(), $this->import_sheet_index);
             Excel::import($import, $this->import_file);
         } catch (Throwable $throwable) {
             report($throwable);
@@ -193,11 +198,43 @@ class ResourceImport extends Component
         return $preview;
     }
 
-    private function extractHeadings(): array
+    private function extractHeadings()
     {
-        $headings = (new HeadingRowImport)->toArray($this->import_file)[0][0] ?? [];
+        $sheets = (new HeadingRowImport)->toArray($this->import_file);
+        $selected = $this->selectHeadingsSheet($sheets);
+        $this->import_sheet_index = $selected['index'];
+        $this->import_heading_labels = $selected['labels'];
 
-        return collect($headings)
+        $this->import_headings = collect($selected['labels'])
+            ->filter()
+            ->map(function ($heading) {
+                return str($heading)->slug('_')->toString();
+            })
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function selectHeadingsSheet(array $sheets): array
+    {
+        foreach ($sheets as $index => $sheet) {
+            $labels = $sheet[0] ?? [];
+            $headings = $this->normalizeHeadings($labels);
+
+            if (in_array($this->front()->excelIdHeadingKey(), $headings)) {
+                return compact('index', 'labels');
+            }
+        }
+
+        $index = array_key_first($sheets) ?? 0;
+        $labels = $sheets[$index][0] ?? [];
+
+        return compact('index', 'labels');
+    }
+
+    private function normalizeHeadings(array $labels): array
+    {
+        return collect($labels)
             ->filter()
             ->map(function ($heading) {
                 return str($heading)->slug('_')->toString();
@@ -233,8 +270,15 @@ class ResourceImport extends Component
 
     private function buildExtraHeadings(): array
     {
+        $labels = collect($this->import_heading_labels)->mapWithKeys(function ($label) {
+            return [str($label)->slug('_')->toString() => $label];
+        });
+
         return collect($this->import_headings)
             ->diff($this->knownHeadings())
+            ->map(function ($heading) use ($labels) {
+                return $labels->get($heading, $heading);
+            })
             ->values()
             ->all();
     }

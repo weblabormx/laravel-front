@@ -14,5 +14,6 @@
     "Normal": "Normal",
     "Select at least one column.": "Select at least one column.",
     "Extra columns in file": "Extra columns in file",
-    "Ignored from file": "Ignored from file"
+    "Ignored from file": "Ignored from file",
+    "Columns read from file": "Columns read from file"
 }

@@ -25,6 +25,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
     public function __construct(
         private string $resource,
         private array $columns,
+        private int $sheet_index = 0,
     ) {}
 
     public function collection(Collection $rows): void
@@ -110,7 +111,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
     public function sheets(): array
     {
         return [
-            0 => $this,
+            $this->sheet_index => $this,
         ];
     }
 
