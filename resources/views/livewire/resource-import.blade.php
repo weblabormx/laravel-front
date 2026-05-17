@@ -3,7 +3,7 @@
 @endphp
 
 <section aria-label="{{ __('Import :resource', ['resource' => $front->plural_label]) }}" class="space-y-6">
-    @include('front::elements.breadcrumbs')
+    @include('front::elements.breadcrumbs', ['data' => ['import' => true]])
 
     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
