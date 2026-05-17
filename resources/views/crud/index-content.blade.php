@@ -12,23 +12,43 @@
     </div>
 </div>
 @if($front->hasFilters())
+    @php
+        $isLivewireIndex = isset($frontIndexComponent);
+        $activeFiltersCount = $isLivewireIndex
+            ? $frontIndexComponent->activeFiltersCount()
+            : $front->activeFiltersCount();
+    @endphp
     <div x-data="{ filterShow: false }">
         <div class="mt-6 font-bold">
             <span class="uppercase">{{ __('Filter') }} {{ $front->plural_label }}</span>
-            <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1">{{ collect(request()->all())->whereNotNull()->count() }}</span>
+            <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1" data-filter-count="{{ $activeFiltersCount }}">{{ $activeFiltersCount }}</span>
             <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
         </div>
-        {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
+        @if($isLivewireIndex)
             <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
-                {{ html()->hidden($front->getCurrentViewRequestName()) }}
-                @foreach($front->getFilterInputs() as $filter)
-                    {!! $filter->formHtml() !!}
+                @foreach($front->getFilters() as $filter)
+                    @foreach($front->filterInputs($filter) as $filterInput)
+                        @php
+                            $filterInput->setColumn($filterInput->column ?: $filter->slug);
+                            $filterInput->addAttribute('wire:model.live.debounce.500ms', 'filters.'.$frontIndexComponent->filterModelKey($filter->slug));
+                        @endphp
+                        {!! $filterInput->formHtml() !!}
+                    @endforeach
                 @endforeach
-                <div>
-                    {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded md:mt-6 py-2 cursor-pointer') }}
-                </div>
             </div>
-        {{ html()->closeFormWithDefaults() }}
+        @else
+            {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
+                <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
+                    {{ html()->hidden($front->getCurrentViewRequestName()) }}
+                    @foreach($front->getFilterInputs() as $filter)
+                        {!! $filter->formHtml() !!}
+                    @endforeach
+                    <div>
+                        {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded md:mt-6 py-2 cursor-pointer') }}
+                    </div>
+                </div>
+            {{ html()->closeFormWithDefaults() }}
+        @endif
     </div>
 @endif
 

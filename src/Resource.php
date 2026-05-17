@@ -5,6 +5,7 @@ namespace WeblaborMx\Front;
 use Exception;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
@@ -497,6 +498,44 @@ abstract class Resource
         $url .= '?'.http_build_query($filters->toArray());
 
         return $url;
+    }
+
+    public function activeFiltersCount(?array $values = null): int
+    {
+        $values ??= request()->all();
+        $count = 0;
+
+        foreach ($this->getFilters() as $filter) {
+            foreach ($this->filterInputs($filter) as $input) {
+                if (! $input->show_on_filter) {
+                    continue;
+                }
+
+                $value = $values[$filter->slug] ?? request()->input($filter->slug);
+
+                if (filled($value)) {
+                    $count++;
+                    break;
+                }
+            }
+        }
+
+        return $count;
+    }
+
+    public function filterInputs($filter)
+    {
+        $field = $filter->field();
+
+        if ($field instanceof Collection) {
+            return $field->filter();
+        }
+
+        if (is_array($field)) {
+            return collect($field)->filter();
+        }
+
+        return collect([$field])->filter();
     }
 
     public function validate($data)

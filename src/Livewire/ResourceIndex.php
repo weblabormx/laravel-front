@@ -3,6 +3,7 @@
 namespace WeblaborMx\Front\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Arr;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -39,12 +40,15 @@ class ResourceIndex extends Component
 
     public $import_summary = null;
 
+    public $filters = [];
+
     public function mount(string $resource): void
     {
         $this->resource = $resource;
         $this->sort = request()->get('sort', $this->sort);
         $this->direction = request()->get('direction', $this->direction) === 'desc' ? 'desc' : 'asc';
         $front = $this->front();
+        $this->filters = $this->initialFilters($front);
 
         $this->authorize('viewAny', $front->getModel());
         $this->frontAuthorize($front, 'index');
@@ -58,6 +62,11 @@ class ResourceIndex extends Component
     public function result()
     {
         return $this->indexResponse();
+    }
+
+    public function updatedFilters(): void
+    {
+        request()->query->remove('page');
     }
 
     public function sortBy($column): void
@@ -221,6 +230,16 @@ class ResourceIndex extends Component
         return (bool) $this->front()->enable_import;
     }
 
+    public function filterModelKey(string $slug): string
+    {
+        return trim(str_replace(['[', ']'], ['.', ''], $slug), '.');
+    }
+
+    public function activeFiltersCount(): int
+    {
+        return $this->front()->activeFiltersCount($this->filterRequestValues());
+    }
+
     public function availableColumns()
     {
         $front = $this->front();
@@ -281,11 +300,34 @@ class ResourceIndex extends Component
 
     private function syncSortRequest(): void
     {
-        request()->merge([
+        request()->merge($this->filterRequestValues() + [
             'sort' => $this->sort,
             'direction' => $this->direction,
             'dont_redirect' => true,
         ]);
+    }
+
+    private function initialFilters($front): array
+    {
+        $filters = [];
+
+        foreach ($front->getFilters() as $filter) {
+            $key = $this->filterModelKey($filter->slug);
+            Arr::set($filters, $key, request()->input($filter->slug));
+        }
+
+        return $filters;
+    }
+
+    private function filterRequestValues(): array
+    {
+        $values = [];
+
+        foreach ($this->front()->getFilters() as $filter) {
+            $values[$filter->slug] = Arr::get($this->filters, $this->filterModelKey($filter->slug));
+        }
+
+        return $values;
     }
 
     private function frontAuthorize($front, string $method): void
