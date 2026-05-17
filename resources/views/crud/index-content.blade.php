@@ -1,16 +1,25 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 @include('front::elements.breadcrumbs')
 
-<div class="mt-2 md:flex md:items-center md:justify-between">
+<div class="mt-2 md:flex md:items-start md:justify-between">
     <div class="min-w-0 flex-1">
         <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">{{$front->plural_label}}</h2>
     </div>
-    <div class="mt-4 flex flex-wrap gap-2 shrink-0 md:mt-0 md:ml-4">
-        @foreach($front->getIndexLinks() as $button)
-            {!! $button->form() !!}
-        @endforeach
+    <div class="mt-4 flex shrink-0 flex-col items-start gap-3 md:mt-0 md:ml-4 md:items-end">
+        @if(isset($frontIndexComponent))
+            @include('front::livewire.index-actions')
+        @endif
+
+        <div class="flex flex-wrap gap-2">
+            @foreach($front->getIndexLinks() as $button)
+                {!! $button->form() !!}
+            @endforeach
+        </div>
     </div>
 </div>
+@if(isset($frontIndexComponent))
+    @include('front::livewire.column-preferences')
+@endif
 @if($front->hasFilters())
     @php
         $isLivewireIndex = isset($frontIndexComponent);

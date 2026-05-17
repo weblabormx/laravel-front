@@ -7,11 +7,10 @@ use Illuminate\Support\Arr;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
+use Throwable;
 use WeblaborMx\Front\Exports\FrontResourceExport;
 use WeblaborMx\Front\Facades\Front;
-use WeblaborMx\Front\Imports\FrontResourceImport;
 use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Traits\IsRunable;
 
@@ -19,7 +18,6 @@ class ResourceIndex extends Component
 {
     use AuthorizesRequests;
     use IsRunable;
-    use WithFileUploads;
 
     #[Locked]
     public $resource;
@@ -31,14 +29,6 @@ class ResourceIndex extends Component
     public $direction;
 
     public $show_columns = false;
-
-    public $show_import = false;
-
-    public $import_file;
-
-    public $import_preview = [];
-
-    public $import_summary = null;
 
     public $filters = [];
 
@@ -150,11 +140,6 @@ class ResourceIndex extends Component
         $this->show_columns = ! $this->show_columns;
     }
 
-    public function toggleImport(): void
-    {
-        $this->show_import = ! $this->show_import;
-    }
-
     public function export()
     {
         $front = $this->front();
@@ -170,44 +155,6 @@ class ResourceIndex extends Component
             new FrontResourceExport($front, $this->visibleColumnKeys()),
             str($front->plural_label)->slug('_')->toString().'.xlsx'
         );
-    }
-
-    public function updatedImportFile(): void
-    {
-        $this->validate([
-            'import_file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
-        ]);
-
-        $this->import_preview = $this->buildImportPreview();
-        $this->import_summary = null;
-    }
-
-    public function runImport(): void
-    {
-        $front = $this->front();
-
-        if (! $front->enable_import) {
-            abort(403, 'This action is unauthorized.');
-        }
-
-        $this->authorizeIndex($front);
-        $storeFront = Front::makeResource($this->resource)->setSource('store');
-        $this->authorize('create', $storeFront->getModel());
-        $this->frontAuthorize($storeFront, 'create');
-        $this->frontAuthorize($storeFront, 'store');
-
-        $this->validate([
-            'import_file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
-        ]);
-
-        $import = new FrontResourceImport($this->resource, $this->visibleColumnKeys());
-        Excel::import($import, $this->import_file);
-
-        $this->import_summary = [
-            'imported' => $import->imported,
-            'ignored' => $import->ignored,
-            'errors' => $import->errors,
-        ];
     }
 
     public function columnsEnabled(): bool
@@ -227,7 +174,25 @@ class ResourceIndex extends Component
 
     public function importEnabled(): bool
     {
-        return (bool) $this->front()->enable_import;
+        $front = $this->front();
+
+        if (! $front->enable_import) {
+            return false;
+        }
+
+        try {
+            $this->authorize('viewAny', $front->getModel());
+            $this->frontAuthorize($front, 'index');
+
+            $storeFront = Front::makeResource($this->resource)->setSource('store');
+            $this->authorize('create', $storeFront->getModel());
+            $this->frontAuthorize($storeFront, 'create');
+            $this->frontAuthorize($storeFront, 'store');
+        } catch (Throwable $throwable) {
+            return false;
+        }
+
+        return true;
     }
 
     public function filterModelKey(string $slug): string
@@ -367,24 +332,6 @@ class ResourceIndex extends Component
         $userKey = auth()->id() ? 'user:'.auth()->id() : 'session:'.session()->getId();
 
         return 'front:index-columns:'.$userKey.':'.md5($this->resource.':'.$this->front()->getCurrentViewName());
-    }
-
-    private function buildImportPreview(): array
-    {
-        $front = $this->front();
-        $fields = $front->configurableIndexFieldsForColumns($this->visibleColumnKeys());
-        $importable = $front->importableIndexFields($this->visibleColumnKeys());
-        $importableKeys = $importable->pluck('front_column_key')->all();
-        $preview = [];
-
-        foreach ($fields as $field) {
-            $preview[] = [
-                'title' => $field->title,
-                'status' => in_array($field->front_column_key, $importableKeys) ? 'importable' : 'ignored',
-            ];
-        }
-
-        return $preview;
     }
 
     public function render()
