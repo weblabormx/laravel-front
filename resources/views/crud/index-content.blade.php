@@ -6,10 +6,6 @@
         <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">{{$front->plural_label}}</h2>
     </div>
     <div class="mt-4 flex shrink-0 flex-col items-start gap-3 md:mt-0 md:ml-4 md:items-end">
-        @if(isset($frontIndexComponent))
-            @include('front::livewire.index-actions')
-        @endif
-
         <div class="flex flex-wrap gap-2">
             @foreach($front->getIndexLinks() as $button)
                 {!! $button->form() !!}
@@ -28,10 +24,15 @@
             : $front->activeFiltersCount();
     @endphp
     <div x-data="{ filterShow: false }">
-        <div class="mt-6 font-bold">
-            <span class="uppercase">{{ __('Filter') }} {{ $front->plural_label }}</span>
-            <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1" data-filter-count="{{ $activeFiltersCount }}">{{ $activeFiltersCount }}</span>
-            <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
+        <div class="mt-6 flex items-center justify-between gap-4 font-bold">
+            <div>
+                <span class="uppercase">{{ __('Filter') }} {{ $front->plural_label }}</span>
+                <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1" data-filter-count="{{ $activeFiltersCount }}">{{ $activeFiltersCount }}</span>
+                <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
+            </div>
+            @if(isset($frontIndexComponent))
+                @include('front::livewire.index-actions')
+            @endif
         </div>
         @if($isLivewireIndex)
             <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
@@ -58,6 +59,10 @@
                 </div>
             {{ html()->closeFormWithDefaults() }}
         @endif
+    </div>
+@elseif(isset($frontIndexComponent))
+    <div class="mt-4 flex justify-end">
+        @include('front::livewire.index-actions')
     </div>
 @endif
 
