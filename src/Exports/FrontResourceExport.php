@@ -69,6 +69,7 @@ class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnF
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
+                $this->hideIdColumn($event);
                 $this->applySelectValidations($event);
             },
         ];
@@ -77,6 +78,11 @@ class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnF
     private function fields()
     {
         return $this->front->exportableIndexFields($this->columns);
+    }
+
+    private function hideIdColumn(AfterSheet $event): void
+    {
+        $event->sheet->getColumnDimension('A')->setVisible(false);
     }
 
     private function applySelectValidations(AfterSheet $event): void

@@ -76,6 +76,19 @@ class Image extends Input
         return is_string($value) && $value !== '' ? $value : null;
     }
 
+    public function getRules($source = 'store')
+    {
+        $rules = parent::getRules($source);
+
+        if (!$this->isUrlValue(request()->input($this->column))) {
+            return $rules;
+        }
+
+        return collect($rules)->reject(function ($rule) {
+            return $rule === 'image' || (is_string($rule) && Str::startsWith($rule, 'mimes:'));
+        })->values()->all();
+    }
+
     public function excelFormat(): ?string
     {
         return $this->excel_type ?? NumberFormat::FORMAT_TEXT;
