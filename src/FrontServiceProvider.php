@@ -221,12 +221,11 @@ class FrontServiceProvider extends ServiceProvider
         Route::get('import', function () use ($front) {
             $resource = $front::class;
             $front = Front::makeResource($resource)->setSource('index');
-            $storeFront = Front::makeResource($resource)->setSource('store');
+            $updateFront = Front::makeResource($resource)->setSource('update');
 
             Gate::authorize('viewAny', $front->getModel());
-            Gate::authorize('create', $storeFront->getModel());
 
-            if (! $front->enable_import || ! in_array('index', $front->actions) || ! in_array('create', $storeFront->actions) || ! in_array('store', $storeFront->actions)) {
+            if (! $front->enable_import || ! in_array('index', $front->actions) || ! in_array('edit', $updateFront->actions) || ! in_array('update', $updateFront->actions)) {
                 abort(403, __('This action is unauthorized.'));
             }
 

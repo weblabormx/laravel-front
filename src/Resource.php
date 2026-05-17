@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Inputs\BelongsTo as BelongsToInput;
+use WeblaborMx\Front\Inputs\ID as IDInput;
 use WeblaborMx\Front\Traits\HasActions;
 use WeblaborMx\Front\Traits\HasBreadcrumbs;
 use WeblaborMx\Front\Traits\HasCards;
@@ -542,9 +543,11 @@ abstract class Resource
 
     public function exportableIndexFields(array $columns)
     {
-        return $this->configurableIndexFieldsForColumns($columns)->filter(function ($field) {
+        $fields = $this->configurableIndexFieldsForColumns($columns)->filter(function ($field) {
             return $field->exportable !== false;
         });
+
+        return $this->withExcelIdField($fields);
     }
 
     public function importableIndexFields(array $columns = [])
@@ -566,8 +569,68 @@ abstract class Resource
 
             return is_string($field->column)
                 && ! Str::contains($field->column, ['.', '[', ']'])
+                && $field->column !== $this->excelIdKeyName()
                 && Schema::hasColumn($table, $field->column);
         });
+    }
+
+    public function excelIdKeyName(): string
+    {
+        $model = $this->getModel();
+        $model = new $model;
+
+        return $model->getKeyName();
+    }
+
+    public function excelIdHeading(): string
+    {
+        return 'ID';
+    }
+
+    public function excelIdHeadingKey(): string
+    {
+        return str($this->excelIdHeading())->slug('_')->toString();
+    }
+
+    public function excelIdField()
+    {
+        $field = IDInput::make(null, $this->excelIdKeyName())
+            ->setResource($this)
+            ->setSource('index');
+        $field->title = $this->excelIdHeading();
+        $field->front_column_key = $this->excelIdKeyName();
+
+        return $field;
+    }
+
+    public function excelHeadingForField($field): string
+    {
+        return str($field->title)->slug('_')->toString();
+    }
+
+    public function excelObjectForKey($key)
+    {
+        if (is_null($key) || $key === '') {
+            return null;
+        }
+
+        return $this->globalIndexQuery()->whereKey($key)->first();
+    }
+
+    public function processExcel(array $data, string $direction = 'import', $row = null, $object = null): array
+    {
+        return $data;
+    }
+
+    private function withExcelIdField($fields)
+    {
+        $key = $this->excelIdKeyName();
+
+        return collect([$this->excelIdField()])
+            ->merge($fields->reject(function ($field) use ($key) {
+                return $field->column === $key;
+            }))
+            ->values();
     }
 
     public function configurableIndexFieldsForColumns(array $columns)

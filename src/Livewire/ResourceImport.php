@@ -19,7 +19,7 @@ class ResourceImport extends Component
 
     private const IndexSource = 'index';
 
-    private const StoreSource = 'store';
+    private const UpdateSource = 'update';
 
     #[Locked]
     public $resource;
@@ -161,10 +161,9 @@ class ResourceImport extends Component
         $this->authorize('viewAny', $front->getModel());
         $this->frontAuthorize($front, self::IndexSource);
 
-        $storeFront = Front::makeResource($this->resource)->setSource(self::StoreSource);
-        $this->authorize('create', $storeFront->getModel());
-        $this->frontAuthorize($storeFront, 'create');
-        $this->frontAuthorize($storeFront, self::StoreSource);
+        $updateFront = Front::makeResource($this->resource)->setSource(self::UpdateSource);
+        $this->frontAuthorize($updateFront, 'edit');
+        $this->frontAuthorize($updateFront, self::UpdateSource);
     }
 
     private function frontAuthorize($front, string $method): void
@@ -180,10 +179,15 @@ class ResourceImport extends Component
         $fields = $front->configurableIndexFieldsForColumns($this->importColumnKeys());
         $importable = $front->importableIndexFields($this->importColumnKeys());
         $importableKeys = $importable->pluck('front_column_key')->all();
-        $preview = [];
+        $preview = [
+            [
+                'title' => $front->excelIdHeading(),
+                'status' => in_array($front->excelIdHeadingKey(), $this->import_headings) ? 'importable' : 'missing',
+            ],
+        ];
 
         foreach ($fields as $field) {
-            $heading = str($field->title)->slug('_')->toString();
+            $heading = $front->excelHeadingForField($field);
             $isImportable = in_array($field->front_column_key, $importableKeys);
             $isPresent = in_array($heading, $this->import_headings);
 
@@ -217,9 +221,15 @@ class ResourceImport extends Component
     private function buildImportStructureErrors(): array
     {
         $front = $this->front();
+        if (! in_array($front->excelIdHeadingKey(), $this->import_headings)) {
+            return [
+                __('front::messages.missing_excel_id'),
+            ];
+        }
+
         $importableHeadings = $front->importableIndexFields($this->importColumnKeys())
-            ->map(function ($field) {
-                return str($field->title)->slug('_')->toString();
+            ->map(function ($field) use ($front) {
+                return $front->excelHeadingForField($field);
             })
             ->intersect($this->import_headings);
 

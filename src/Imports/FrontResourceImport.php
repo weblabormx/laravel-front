@@ -4,12 +4,13 @@ namespace WeblaborMx\Front\Imports;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Throwable;
 use WeblaborMx\Front\Facades\Front;
-use WeblaborMx\Front\Jobs\FrontStore;
+use WeblaborMx\Front\Jobs\FrontUpdate;
 
 class FrontResourceImport implements ToCollection, WithHeadingRow
 {
@@ -26,14 +27,23 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows): void
     {
-        $fields = $this->indexFront()->importableIndexFields($this->columns);
+        $indexFront = $this->indexFront();
+        $fields = $indexFront->importableIndexFields($this->columns);
+        $idHeading = $indexFront->excelIdHeadingKey();
         $originalRequest = request();
 
         foreach ($rows as $rowIndex => $row) {
+            $object = $indexFront->excelObjectForKey($row[$idHeading] ?? null);
+            if (is_null($object)) {
+                $this->ignored++;
+
+                continue;
+            }
+
             $data = [];
 
             foreach ($fields as $field) {
-                $heading = str($field->title)->slug('_')->toString();
+                $heading = $indexFront->excelHeadingForField($field);
 
                 if (! $row->has($heading)) {
                     $this->ignored++;
@@ -51,6 +61,8 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
                 $data[$field->column] = $field->parseExcelValue($row[$heading]);
             }
 
+            $data = $indexFront->processExcel($data, 'import', $row, $object);
+
             if (count($data) === 0) {
                 $this->ignored++;
 
@@ -58,18 +70,19 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
             }
 
             try {
-                $storeFront = $this->storeFront();
+                $updateFront = $this->updateFront($object);
+                Gate::authorize('update', $object);
                 $rowRequest = $this->requestForRow($originalRequest, $data);
                 app()->instance('request', $rowRequest);
 
-                $response = $storeFront->beforeRequest();
+                $response = $updateFront->beforeRequest();
                 if ($response) {
                     $this->addError($rowIndex, __('The row could not be imported.'));
 
                     continue;
                 }
 
-                $response = (new FrontStore($rowRequest, $storeFront))->handle();
+                $response = (new FrontUpdate($rowRequest, $updateFront, $object))->handle();
                 if (isResponse($response)) {
                     $this->addError($rowIndex, __('The row could not be imported.'));
 
@@ -93,9 +106,9 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
         return Front::makeResource($this->resource)->setSource('index');
     }
 
-    private function storeFront()
+    private function updateFront($object)
     {
-        return Front::makeResource($this->resource)->setSource('store');
+        return Front::makeResource($this->resource)->setSource('update')->setObject($object);
     }
 
     private function requestForRow(Request $originalRequest, array $data): Request
@@ -108,7 +121,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
             [],
             $originalRequest->server->all(),
         );
-        $rowRequest->setMethod('POST');
+        $rowRequest->setMethod('PUT');
         $rowRequest->setUserResolver($originalRequest->getUserResolver());
         $rowRequest->setRouteResolver($originalRequest->getRouteResolver());
 

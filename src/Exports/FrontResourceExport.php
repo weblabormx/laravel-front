@@ -30,18 +30,22 @@ class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnF
         return $objects->map(function ($object) use ($fields) {
             $this->front->setObject($object);
 
-            return $fields->map(function ($field) use ($object) {
+            $data = $fields->map(function ($field) use ($object) {
                 $value = $field->getExcelValue($object);
 
                 return is_string($value) ? trim(strip_tags($value)) : $value;
-            })->values();
+            })->values()->all();
+
+            return $this->front->processExcel($data, 'export', null, $object);
         });
     }
 
     public function headings(): array
     {
         return $this->fields()
-            ->pluck('title')
+            ->map(function ($field) {
+                return $field->title;
+            })
             ->all();
     }
 
