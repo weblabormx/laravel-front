@@ -40,6 +40,7 @@
                     @foreach($front->filterInputs($filter) as $filterInput)
                         @php
                             $filterInput->setColumn($filterInput->column ?: $filter->slug);
+                            $filterInput->addAttribute('spinner', true);
                             $filterInput->addAttribute('wire:model.live.debounce.500ms', 'filters.'.$frontIndexComponent->filterModelKey($filter->slug));
                         @endphp
                         {!! $filterInput->formHtml() !!}
