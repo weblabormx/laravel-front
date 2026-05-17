@@ -193,11 +193,14 @@ class ResourceImport extends Component
             $isImportable = in_array($field->front_column_key, $importableKeys);
             $isPresent = count(array_intersect($front->excelHeadingsForField($field), $this->import_headings)) > 0;
 
+            if (!$isPresent) {
+                continue;
+            }
+
             $preview[] = [
                 'title' => $field->title,
                 'status' => match (true) {
                     !$isImportable => 'ignored',
-                    !$isPresent => 'missing',
                     default => 'importable',
                 },
             ];
