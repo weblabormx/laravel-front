@@ -213,23 +213,17 @@ class ResourceImport extends Component
     {
         $sheets = (new HeadingRowImport)->toArray($file);
         $selected = $this->selectHeadingsSheet($sheets);
+        $labels = $this->filledHeadingLabels($selected['labels']);
         $this->import_sheet_index = $selected['index'];
-        $this->import_heading_labels = $selected['labels'];
+        $this->import_heading_labels = $labels;
 
-        $this->import_headings = collect($selected['labels'])
-            ->filter()
-            ->map(function ($heading) {
-                return str($heading)->slug('_')->toString();
-            })
-            ->unique()
-            ->values()
-            ->all();
+        $this->import_headings = $this->normalizeHeadings($labels);
     }
 
     private function selectHeadingsSheet(array $sheets): array
     {
         foreach ($sheets as $index => $sheet) {
-            $labels = $sheet[0] ?? [];
+            $labels = $this->filledHeadingLabels($sheet[0] ?? []);
             $headings = $this->normalizeHeadings($labels);
 
             if (in_array($this->front()->excelIdHeadingKey(), $headings)) {
@@ -238,19 +232,28 @@ class ResourceImport extends Component
         }
 
         $index = array_key_first($sheets) ?? 0;
-        $labels = $sheets[$index][0] ?? [];
+        $labels = $this->filledHeadingLabels($sheets[$index][0] ?? []);
 
         return compact('index', 'labels');
     }
 
     private function normalizeHeadings(array $labels): array
     {
-        return collect($labels)
-            ->filter()
+        return collect($this->filledHeadingLabels($labels))
             ->map(function ($heading) {
                 return str($heading)->slug('_')->toString();
             })
             ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function filledHeadingLabels(array $labels): array
+    {
+        return collect($labels)
+            ->filter(function ($heading) {
+                return is_string($heading) && trim($heading) !== '';
+            })
             ->values()
             ->all();
     }
