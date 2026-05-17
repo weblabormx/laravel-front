@@ -14,6 +14,8 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings
 {
     private int $row_count = 0;
+    private int $validation_column_index = 1;
+    private $validation_sheet;
 
     public function __construct(
         private $front,
@@ -85,10 +87,7 @@ class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnF
                 continue;
             }
 
-            $formula = '"'.str_replace('"', '""', implode(',', $options)).'"';
-            if (strlen($formula) > 255) {
-                continue;
-            }
+            $formula = $this->selectValidationFormula($event, $options);
 
             $column = Coordinate::stringFromColumnIndex($index + 1);
             $last_row = max($this->row_count + 1, 2);
@@ -102,5 +101,43 @@ class FrontResourceExport implements FromCollection, ShouldAutoSize, WithColumnF
                 $validation->setFormula1($formula);
             }
         }
+    }
+
+    private function selectValidationFormula(AfterSheet $event, array $options)
+    {
+        $formula = '"'.str_replace('"', '""', implode(',', $options)).'"';
+        if (strlen($formula) <= 255) {
+            return $formula;
+        }
+
+        return $this->validationRangeFormula($event, $options);
+    }
+
+    private function validationRangeFormula(AfterSheet $event, array $options)
+    {
+        $sheet = $this->validationSheet($event);
+        $column = Coordinate::stringFromColumnIndex($this->validation_column_index);
+
+        foreach (array_values($options) as $index => $option) {
+            $sheet->setCellValue($column.($index + 1), $option);
+        }
+
+        $this->validation_column_index++;
+
+        return "'".$sheet->getTitle()."'!".'$'.$column.'$1:$'.$column.'$'.count($options);
+    }
+
+    private function validationSheet(AfterSheet $event)
+    {
+        if ($this->validation_sheet) {
+            return $this->validation_sheet;
+        }
+
+        $spreadsheet = $event->sheet->getDelegate()->getParent();
+        $this->validation_sheet = $spreadsheet->createSheet();
+        $this->validation_sheet->setTitle('__front_options');
+        $this->validation_sheet->setSheetState(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::SHEETSTATE_HIDDEN);
+
+        return $this->validation_sheet;
     }
 }
