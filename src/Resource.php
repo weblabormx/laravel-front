@@ -566,7 +566,25 @@ abstract class Resource
 
     public function excelHeadingForField($field): string
     {
-        return str($field->title)->slug('_')->toString();
+        return $this->normalizeExcelHeading($field->title);
+    }
+
+    public function excelHeadingsForField($field): array
+    {
+        return collect([
+            $field->title,
+            $field->front_column_key,
+            $field->column,
+        ])->filter(function ($heading) {
+            return is_string($heading);
+        })->map(function ($heading) {
+            return $this->normalizeExcelHeading($heading);
+        })->unique()->values()->all();
+    }
+
+    public function normalizeExcelHeading($heading): string
+    {
+        return str($heading)->slug('_')->toString();
     }
 
     public function excelObjectForKey($key)

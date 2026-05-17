@@ -12,5 +12,7 @@
     "Apply columns": "Apply columns",
     "Cancel": "Cancel",
     "Normal": "Normal",
-    "Select at least one column.": "Select at least one column."
+    "Select at least one column.": "Select at least one column.",
+    "Extra columns in file": "Extra columns in file",
+    "Ignored from file": "Ignored from file"
 }

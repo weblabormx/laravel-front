@@ -25,6 +25,7 @@ class ResourceImport extends Component
     public $import_summary = null;
     public $import_structure_errors = [];
     public $import_headings = [];
+    public $import_extra_headings = [];
     public $analyzed = false;
 
     public function mount(string $resource): void
@@ -38,6 +39,7 @@ class ResourceImport extends Component
     public function updatedImportFile(): void
     {
         $this->import_headings = [];
+        $this->import_extra_headings = [];
         $this->import_preview = [];
         $this->import_structure_errors = [];
         $this->import_summary = null;
@@ -70,6 +72,7 @@ class ResourceImport extends Component
         }
 
         $this->import_preview = $this->buildImportPreview();
+        $this->import_extra_headings = $this->buildExtraHeadings();
         $this->import_structure_errors = $this->buildImportStructureErrors();
         $this->import_summary = null;
         $this->analyzed = true;
@@ -174,9 +177,8 @@ class ResourceImport extends Component
         ];
 
         foreach ($fields as $field) {
-            $heading = $front->excelHeadingForField($field);
             $isImportable = in_array($field->front_column_key, $importableKeys);
-            $isPresent = in_array($heading, $this->import_headings);
+            $isPresent = count(array_intersect($front->excelHeadingsForField($field), $this->import_headings)) > 0;
 
             $preview[] = [
                 'title' => $field->title,
@@ -216,8 +218,8 @@ class ResourceImport extends Component
 
         $importableHeadings = $front->importableIndexFields($this->importColumnKeys())
             ->map(function ($field) use ($front) {
-                return $front->excelHeadingForField($field);
-            })
+                return $front->excelHeadingsForField($field);
+            })->flatten()
             ->intersect($this->import_headings);
 
         if ($importableHeadings->isNotEmpty()) {
@@ -227,6 +229,26 @@ class ResourceImport extends Component
         return [
             __('front::messages.no_importable_columns'),
         ];
+    }
+
+    private function buildExtraHeadings(): array
+    {
+        return collect($this->import_headings)
+            ->diff($this->knownHeadings())
+            ->values()
+            ->all();
+    }
+
+    private function knownHeadings(): array
+    {
+        $front = $this->front();
+        $headings = collect([$front->excelIdHeadingKey()]);
+
+        $front->configurableIndexFieldsForColumns($this->importColumnKeys())->each(function ($field) use ($front, $headings) {
+            $headings->push($front->excelHeadingsForField($field));
+        });
+
+        return $headings->flatten()->unique()->values()->all();
     }
 
     public function render()

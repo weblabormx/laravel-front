@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Throwable;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Jobs\FrontStore;
 use WeblaborMx\Front\Jobs\FrontUpdate;
 
-class FrontResourceImport implements ToCollection, WithHeadingRow
+class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 {
     public int $imported = 0;
 
@@ -46,9 +47,8 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
                 $data = [];
 
                 foreach ($fields as $field) {
-                    $heading = $indexFront->excelHeadingForField($field);
-
-                    if (!$row->has($heading)) {
+                    $heading = $this->headingForRow($indexFront, $field, $row);
+                    if (is_null($heading)) {
                         continue;
                     }
 
@@ -107,6 +107,13 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
         }
     }
 
+    public function sheets(): array
+    {
+        return [
+            0 => $this,
+        ];
+    }
+
     private function indexFront()
     {
         return Front::makeResource($this->resource)->setSource('index');
@@ -163,6 +170,17 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
     private function hasAction($front, string $method): bool
     {
         return in_array($method, $front->actions);
+    }
+
+    private function headingForRow($front, $field, Collection $row)
+    {
+        foreach ($front->excelHeadingsForField($field) as $heading) {
+            if ($row->has($heading)) {
+                return $heading;
+            }
+        }
+
+        return null;
     }
 
     private function requestForRow(Request $originalRequest, array $data, string $method): Request

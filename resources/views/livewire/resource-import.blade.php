@@ -160,6 +160,20 @@
                     </div>
                 @endforeach
             </div>
+
+            @if(count($this->import_extra_headings) > 0)
+                <div class="mt-5">
+                    <h4 class="text-xs font-semibold uppercase tracking-wide text-secondary-500">{{ __('Extra columns in file') }}</h4>
+                    <div class="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($this->import_extra_headings as $extraHeading)
+                            <div wire:key="import-extra-heading-{{ $extraHeading }}" class="flex items-center justify-between gap-3 rounded-md border border-secondary-100 px-3 py-2 text-sm">
+                                <span class="text-secondary-700">{{ $extraHeading }}</span>
+                                <span class="text-xs font-semibold text-secondary-400">{{ __('Ignored from file') }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
     @endif
 
