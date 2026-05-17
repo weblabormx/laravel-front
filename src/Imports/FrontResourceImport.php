@@ -45,7 +45,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
             foreach ($fields as $field) {
                 $heading = $indexFront->excelHeadingForField($field);
 
-                if (! $row->has($heading)) {
+                if (!$row->has($heading)) {
                     $this->ignored++;
 
                     continue;

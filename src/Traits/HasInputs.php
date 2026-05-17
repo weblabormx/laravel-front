@@ -80,10 +80,10 @@ trait HasInputs
                     if (is_array($field)) {
                         return $field;
                     }
-                    $field->show_on_index = ! $panel->show_on_index ? false : $field->show_on_index;
-                    $field->show_on_show = ! $panel->show_on_show ? false : $field->show_on_show;
-                    $field->show_on_edit = ! $panel->show_on_edit ? false : $field->show_on_edit;
-                    $field->show_on_create = ! $panel->show_on_create ? false : $field->show_on_create;
+                    $field->show_on_index = !$panel->show_on_index ? false : $field->show_on_index;
+                    $field->show_on_show = !$panel->show_on_show ? false : $field->show_on_show;
+                    $field->show_on_edit = !$panel->show_on_edit ? false : $field->show_on_edit;
+                    $field->show_on_create = !$panel->show_on_create ? false : $field->show_on_create;
 
                     return $field;
                 })->all();
@@ -92,18 +92,18 @@ trait HasInputs
 
                 return $item->$field && $item->shouldBeShown();
             })->filter(function ($item) {
-                if (! isset($this->hide_columns) || is_null($item->column)) {
+                if (!isset($this->hide_columns) || is_null($item->column)) {
                     return true;
                 }
                 $columns = $this->hide_columns;
-                if (! is_array($columns)) {
+                if (!is_array($columns)) {
                     $columns = [$columns];
                 }
-                if (! is_string($item->column) && is_callable($item->column)) {
+                if (!is_string($item->column) && is_callable($item->column)) {
                     return true;
                 }
 
-                return ! collect($columns)->contains($item->column);
+                return !collect($columns)->contains($item->column);
             })->map(function ($item) use ($where) {
                 return $item->setResource($this)->setSource($where);
             });
@@ -161,21 +161,21 @@ trait HasInputs
         })->map(function ($item) {
             return $item->setResource($this)->setSource('index');
         })->filter(function ($item) {
-            if (! isset($this->hide_columns) || is_null($item->column)) {
+            if (!isset($this->hide_columns) || is_null($item->column)) {
                 return true;
             }
 
             $columns = $this->hide_columns;
 
-            if (! is_array($columns)) {
+            if (!is_array($columns)) {
                 $columns = [$columns];
             }
 
-            if (! is_string($item->column) && is_callable($item->column)) {
+            if (!is_string($item->column) && is_callable($item->column)) {
                 return true;
             }
 
-            return ! collect($columns)->contains($item->column);
+            return !collect($columns)->contains($item->column);
         });
 
         return $fields->values();
@@ -200,27 +200,27 @@ trait HasInputs
         })->filter()->filter(function ($item) {
             return $item->is_input
                 && $item->shouldBeShown()
-                && ! is_null($item->column)
+                && !is_null($item->column)
                 && (is_string($item->column) || is_callable($item->column))
-                && ! $this->isLargeColumnPreferenceInput($item);
+                && !$this->isLargeColumnPreferenceInput($item);
         })->map(function ($item) {
             return $item->setResource($this)->setSource('index');
         })->filter(function ($item) {
-            if (! isset($this->hide_columns) || is_null($item->column)) {
+            if (!isset($this->hide_columns) || is_null($item->column)) {
                 return true;
             }
 
             $columns = $this->hide_columns;
 
-            if (! is_array($columns)) {
+            if (!is_array($columns)) {
                 $columns = [$columns];
             }
 
-            if (! is_string($item->column) && is_callable($item->column)) {
+            if (!is_string($item->column) && is_callable($item->column)) {
                 return true;
             }
 
-            return ! collect($columns)->contains($item->column);
+            return !collect($columns)->contains($item->column);
         })->values();
     }
 
@@ -267,17 +267,17 @@ trait HasInputs
                 return $item;
             }) // Fourth: Unpack items from Panels
             ->filter(function ($item) {
-                if (! isset($this->hide_columns) || is_null($item->column)) {
+                if (!isset($this->hide_columns) || is_null($item->column)) {
                     return true;
                 }
 
                 $columns = $this->hide_columns;
 
-                if (! is_array($columns)) {
+                if (!is_array($columns)) {
                     $columns = [$columns];
                 }
 
-                return ! in_array($item->column, $columns);
+                return !in_array($item->column, $columns);
             }); // Fifth: Check if the column should be hidden
 
         return $collection;
@@ -287,12 +287,12 @@ trait HasInputs
     {
         // Get all fields that are not relationships
         $fields = $this->filterFields($type)->filter(function ($item) {
-            return ! Str::contains(class_basename(get_class($item)), $this->relations);
+            return !Str::contains(class_basename(get_class($item)), $this->relations);
         });
 
         // Get components or elements that dont need to have a panel
         $components = $fields->filter(function ($item) {
-            return class_basename(get_class($item)) == 'Panel' || ! $item->needs_to_be_on_panel;
+            return class_basename(get_class($item)) == 'Panel' || !$item->needs_to_be_on_panel;
         })->filter(function ($item) {
             return class_basename(get_class($item)) != 'Panel' || $item->fields()->count() > 0;
         });
@@ -395,7 +395,7 @@ trait HasInputs
 
         // Remove inputs of conditionals not true
         $fields->filter(function ($item) {
-            return ! $item->validateConditional(request()->all());
+            return !$item->validateConditional(request()->all());
         })->each(function ($item) use (&$inputs) {
             unset($inputs[$item->column]);
         });

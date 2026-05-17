@@ -7,9 +7,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 class Select extends Input
 {
     public $options = [];
-
     public $empty_title = 'Pick one..';
-
     public $show_placeholder = true;
 
     public function getValue($object)
@@ -58,7 +56,7 @@ class Select extends Input
     {
         return collect($this->options)
             ->filter(function ($value) {
-                return ! is_null($value) && $value !== '';
+                return !is_null($value) && $value !== '';
             })
             ->map(function ($value) {
                 return (string) $value;
@@ -90,14 +88,14 @@ class Select extends Input
 
     public function options($array)
     {
-        if (! $this->showOnHere()) {
+        if (!$this->showOnHere()) {
             return $this;
         }
         if (is_callable($array)) {
             $array = $array();
         }
         $this->options = collect($array)->map(function ($item) {
-            if (! is_string($item)) {
+            if (!is_string($item)) {
                 return $item;
             }
 

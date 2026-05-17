@@ -21,15 +21,11 @@ class ResourceIndex extends Component
 
     #[Locked]
     public $resource;
-
     #[Url(as: 'sort')]
     public $sort = null;
-
     #[Url(as: 'direction')]
     public $direction;
-
     public $show_columns = false;
-
     public $filters = [];
 
     public function mount(string $resource): void
@@ -63,7 +59,7 @@ class ResourceIndex extends Component
     {
         $front = $this->front();
 
-        if (! $front->enable_index_sorting || ! $front->sortableIndexFields()->has($column)) {
+        if (!$front->enable_index_sorting || !$front->sortableIndexFields()->has($column)) {
             return;
         }
 
@@ -79,7 +75,7 @@ class ResourceIndex extends Component
     {
         $front = $this->front();
 
-        if (! $front->enable_column_preferences || ! $this->availableColumns()->has($column)) {
+        if (!$front->enable_column_preferences || !$this->availableColumns()->has($column)) {
             return;
         }
 
@@ -100,13 +96,13 @@ class ResourceIndex extends Component
 
     public function moveColumn($column, $direction): void
     {
-        if (! in_array($direction, ['up', 'down'])) {
+        if (!in_array($direction, ['up', 'down'])) {
             return;
         }
 
         $front = $this->front();
 
-        if (! $front->enable_column_preferences || ! $this->availableColumns()->has($column)) {
+        if (!$front->enable_column_preferences || !$this->availableColumns()->has($column)) {
             return;
         }
 
@@ -119,7 +115,7 @@ class ResourceIndex extends Component
 
         $newIndex = $direction === 'up' ? $index - 1 : $index + 1;
 
-        if (! isset($columns[$newIndex])) {
+        if (!isset($columns[$newIndex])) {
             return;
         }
 
@@ -137,7 +133,7 @@ class ResourceIndex extends Component
 
     public function toggleColumns(): void
     {
-        $this->show_columns = ! $this->show_columns;
+        $this->show_columns = !$this->show_columns;
     }
 
     public function applyColumnPreferences(array $columns, array $manual = []): void
@@ -158,7 +154,7 @@ class ResourceIndex extends Component
     {
         $front = $this->front();
 
-        if (! $front->enable_export) {
+        if (!$front->enable_export) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -190,7 +186,7 @@ class ResourceIndex extends Component
     {
         $front = $this->front();
 
-        if (! $front->enable_import) {
+        if (!$front->enable_import) {
             return false;
         }
 
@@ -249,7 +245,7 @@ class ResourceIndex extends Component
         }
 
         foreach ($available as $key => $column) {
-            if (! in_array($key, $visible)) {
+            if (!in_array($key, $visible)) {
                 $ordered[] = $column;
             }
         }
@@ -337,7 +333,7 @@ class ResourceIndex extends Component
 
     private function frontAuthorize($front, string $method): void
     {
-        if (! in_array($method, $front->actions)) {
+        if (!in_array($method, $front->actions)) {
             abort(403, 'This action is unauthorized.');
         }
     }

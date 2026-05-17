@@ -18,22 +18,15 @@ class ResourceImport extends Component
     use WithFileUploads;
 
     private const IndexSource = 'index';
-
     private const UpdateSource = 'update';
 
     #[Locked]
     public $resource;
-
     public $import_file;
-
     public $import_preview = [];
-
     public $import_summary = null;
-
     public $import_structure_errors = [];
-
     public $import_headings = [];
-
     public $analyzed = false;
 
     public function mount(string $resource): void
@@ -89,11 +82,11 @@ class ResourceImport extends Component
         $this->authorizeImport($this->front());
         $this->validateImportFile();
 
-        if (! $this->analyzed) {
+        if (!$this->analyzed) {
             $this->analyzeImport();
         }
 
-        if (! $this->canImport()) {
+        if (!$this->canImport()) {
             return;
         }
 
@@ -154,7 +147,7 @@ class ResourceImport extends Component
 
     private function authorizeImport($front): void
     {
-        if (! $front->enable_import) {
+        if (!$front->enable_import) {
             abort(403, __('This action is unauthorized.'));
         }
 
@@ -168,7 +161,7 @@ class ResourceImport extends Component
 
     private function frontAuthorize($front, string $method): void
     {
-        if (! in_array($method, $front->actions)) {
+        if (!in_array($method, $front->actions)) {
             abort(403, __('This action is unauthorized.'));
         }
     }
@@ -194,8 +187,8 @@ class ResourceImport extends Component
             $preview[] = [
                 'title' => $field->title,
                 'status' => match (true) {
-                    ! $isImportable => 'ignored',
-                    ! $isPresent => 'missing',
+                    !$isImportable => 'ignored',
+                    !$isPresent => 'missing',
                     default => 'importable',
                 },
             ];
@@ -221,7 +214,7 @@ class ResourceImport extends Component
     private function buildImportStructureErrors(): array
     {
         $front = $this->front();
-        if (! in_array($front->excelIdHeadingKey(), $this->import_headings)) {
+        if (!in_array($front->excelIdHeadingKey(), $this->import_headings)) {
             return [
                 __('front::messages.missing_excel_id'),
             ];

@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class DateTime extends Input
 {
     public $pattern = null;
-
     public $input_type = 'frontDatetime';
 
     public function form()
@@ -69,7 +68,7 @@ class DateTime extends Input
 
     public function processData($data)
     {
-        if (! isset($data[$this->column]) || $this->input_type != 'frontDatetime') {
+        if (!isset($data[$this->column]) || $this->input_type != 'frontDatetime') {
             return $data;
         }
 

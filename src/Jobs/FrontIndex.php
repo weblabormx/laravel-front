@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 class FrontIndex
 {
     public $front;
-
     public $base;
 
     public function __construct($front, $base)
@@ -29,7 +28,7 @@ class FrontIndex
         $objects = $this->front->globalIndexQuery();
 
         // Detect if crud is just for 1 item and redirects
-        if (! Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
+        if (!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
             $url = $this->base.'/'.$objects->getKey().'/edit';
 
             return redirect($url);
@@ -64,7 +63,7 @@ class FrontIndex
             $redirect_url = $this->front->redirects(false);
 
             // If there isn't any redirect url don't do anything
-            if (! isset($redirect_url) || url()->full() == $redirect_url) {
+            if (!isset($redirect_url) || url()->full() == $redirect_url) {
                 return $result;
             }
 
@@ -92,7 +91,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if ($cache == false || ! in_array('indexQuery', $this->front->cache)) {
+        if ($cache == false || !in_array('indexQuery', $this->front->cache)) {
             return $objects->paginate($this->front->pagination);
         }
 
@@ -123,7 +122,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if ($cache == false || ! in_array('indexResult', $this->front->cache)) {
+        if ($cache == false || !in_array('indexResult', $this->front->cache)) {
             return $this->front->indexResult($result);
         }
 

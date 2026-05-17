@@ -29,7 +29,7 @@ class Percentage extends Input
     public function getValue($object)
     {
         $value = parent::getValue($object);
-        if (is_null($this->decimals) || ! is_numeric($value) || ! is_numeric($this->decimals)) {
+        if (is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
             return $value.'%';
         }
 
@@ -42,7 +42,7 @@ class Percentage extends Input
         if (is_null($value) || $value === '') {
             return null;
         }
-        if (! is_numeric($value)) {
+        if (!is_numeric($value)) {
             return parent::getExcelValue($object);
         }
 
@@ -51,7 +51,7 @@ class Percentage extends Input
 
     public function excelFormat(): ?string
     {
-        if (! is_null($this->excel_type)) {
+        if (!is_null($this->excel_type)) {
             return $this->excel_type;
         }
         if (is_numeric($this->decimals) && (int) $this->decimals > 0) {

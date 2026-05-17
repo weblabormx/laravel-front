@@ -8,21 +8,13 @@ use Illuminate\Support\Str;
 class PartialIndex
 {
     private $front;
-
     private $result;
-
     private $page_name;
-
     private $headers;
-
     private $rows;
-
     private $show_filters;
-
     private $selected_columns = null;
-
     private $manual_columns = [];
-
     public $show_actions;
 
     public function __construct($front, $result, $page_name = 'page', $show_filters = false)
@@ -37,13 +29,13 @@ class PartialIndex
             $this->show_actions = $this->front->show_actions;
 
             // If not check if there are enough actions to show
-        } elseif (! isset($this->show_actions)) {
+        } elseif (!isset($this->show_actions)) {
             $this->show_actions = in_array('show', $front->actions) || in_array('edit', $front->actions) || in_array('destroy', $front->actions);
         }
 
         // Check if individual object has permissions
         if (isset($front) && isset($front->related_object) && isset($front->related_object->block_edition)) {
-            $this->show_actions = ! $front->related_object->block_edition && $this->show_actions;
+            $this->show_actions = !$front->related_object->block_edition && $this->show_actions;
         }
 
         if ($this->result->count() > 0) {
@@ -64,7 +56,7 @@ class PartialIndex
 
     public function links()
     {
-        if (! $this->result instanceof LengthAwarePaginator) {
+        if (!$this->result instanceof LengthAwarePaginator) {
             return;
         }
         $appends = collect(request()->except($this->page_name))->map(function ($item) {
@@ -91,7 +83,7 @@ class PartialIndex
     public function filters()
     {
         // Show if set by relationship
-        if (! $this->show_filters || count($this->front->filters()) <= 0) {
+        if (!$this->show_filters || count($this->front->filters()) <= 0) {
             return;
         }
         $front = $this->front;
@@ -163,7 +155,7 @@ class PartialIndex
 
             return $item == $total_items;
         })->keys()->filter(function ($key) use ($headers) {
-            return ! in_array($headers[$key]->key, $this->manual_columns);
+            return !in_array($headers[$key]->key, $this->manual_columns);
         });
 
         foreach ($unused_columns as $key) {
@@ -189,7 +181,7 @@ class PartialIndex
             return $field;
         });
 
-        if (! is_array($this->selected_columns)) {
+        if (!is_array($this->selected_columns)) {
             return $fields;
         }
 

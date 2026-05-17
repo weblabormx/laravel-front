@@ -30,84 +30,45 @@ abstract class Resource
     use HasActions, HasBreadcrumbs, HasCards, HasFilters, HasInputs, HasLenses;
     use HasLinks, HasMassiveEditions, HasPermissions, IsValidated, ResourceHelpers, Sourceable;
 
-    public $base_url;
-
-    public $data;
-
-    public $label;
-
-    public $layout;
-
-    public $model;
-
-    public $object;
-
-    public $plural_label;
-
-    public $related_object;
-
-    public $search_title;
-
-    public $view_title;
-
-    public $functions_values = [];
-
-    public $hide_columns = [];
-
-    public $ignore_if_null = [];
-
-    public $index_views = [];
-
+    public $base_url, $data, $label, $layout, $model, $object, $plural_label, $related_object, $search_title, $view_title;
+    public $functions_values = [], $hide_columns = [], $ignore_if_null = [], $index_views = [];
     public $actions = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
-
     public $cache = ['indexQuery', 'indexResult'];
-
     public $title = 'name';
-
     public $pagination = 50;
-
     public $search_limit = 10;
-
     public $show_create_button_on_index = true;
-
     public $show_title = true;
-
     public $enable_massive_edition = false;
-
-    public ?string $default_sort = null;
-
-    public string $default_sort_direction = 'desc';
-
-    public bool $enable_index_sorting = true;
-
-    public bool $enable_column_preferences = true;
-
-    public bool $enable_export = true;
-
-    public bool $enable_import = true;
+    public $default_sort = null;
+    public $default_sort_direction = 'desc';
+    public $enable_index_sorting = true;
+    public $enable_column_preferences = true;
+    public $enable_export = true;
+    public $enable_import = true;
 
     public function __construct($source = null)
     {
-        if (! isset($this->label)) {
+        if (!isset($this->label)) {
             $base = Str::contains(get_class($this), 'Lense') ? get_parent_class($this) : get_class($this);
             $base = class_basename($base);
             $label = trim(preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $base));
             $this->label = $label;
         }
 
-        if (! isset($this->plural_label)) {
+        if (!isset($this->plural_label)) {
             $this->plural_label = __(Str::plural($label ?? $this->label));
         }
         $this->label = __($this->label);
 
         $this->setSource($source);
-        if (! isset($this->view_title)) {
+        if (!isset($this->view_title)) {
             $this->view_title = $this->title;
         }
-        if (! isset($this->search_title)) {
+        if (!isset($this->search_title)) {
             $this->search_title = $this->title;
         }
-        if (! isset($this->index_views) || (is_array($this->index_views) && count($this->index_views) == 0)) {
+        if (!isset($this->index_views) || (is_array($this->index_views) && count($this->index_views) == 0)) {
             $this->index_views = [
                 'normal' => [
                     'icon' => 'fa fa-th-list',
@@ -294,7 +255,7 @@ abstract class Resource
             $field = $filter->slug;
             $field = str_replace('[', '', $field);
             $field = str_replace(']', '', $field);
-            if (! request()->filled($field) || ! $filter->execute_before) {
+            if (!request()->filled($field) || !$filter->execute_before) {
                 continue;
             }
             $filter->setResource($this);
@@ -309,7 +270,7 @@ abstract class Resource
             $field = $filter->slug;
             $field = str_replace('[', '', $field);
             $field = str_replace(']', '', $field);
-            if (! request()->filled($field) || $filter->execute_before) {
+            if (!request()->filled($field) || $filter->execute_before) {
                 continue;
             }
             $filter->setResource($this);
@@ -330,14 +291,14 @@ abstract class Resource
         $hasRequestedSort = request()->filled('sort');
         $sort = $hasRequestedSort ? request()->get('sort') : $this->defaultIndexSortColumn();
 
-        if (($hasRequestedSort && ! $this->enable_index_sorting) || ! $sort) {
+        if (($hasRequestedSort && !$this->enable_index_sorting) || !$sort) {
             return $query;
         }
 
         $field = $this->sortableIndexFields()->get($sort);
 
         if (is_null($field)) {
-            if ($hasRequestedSort || ! is_string($sort)) {
+            if ($hasRequestedSort || !is_string($sort)) {
                 return $query;
             }
 
@@ -357,16 +318,16 @@ abstract class Resource
 
         $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
 
-        $belongsToSortedQuery = ! isset($field->sort_column)
+        $belongsToSortedQuery = !isset($field->sort_column)
             ? $this->applyBelongsToIndexSorting($query, $field, $direction)
             : null;
 
-        if (! is_null($belongsToSortedQuery)) {
+        if (!is_null($belongsToSortedQuery)) {
             $query = $belongsToSortedQuery;
         } else {
             $column = $field->sort_column ?? $field->column;
 
-            if (! is_string($column)) {
+            if (!is_string($column)) {
                 return $query;
             }
 
@@ -437,13 +398,13 @@ abstract class Resource
         $model = $this->getModel();
         $model = new $model;
 
-        if (! method_exists($model, $relationName)) {
+        if (!method_exists($model, $relationName)) {
             return null;
         }
 
         $relation = $model->$relationName();
 
-        if (! $relation instanceof EloquentBelongsTo) {
+        if (!$relation instanceof EloquentBelongsTo) {
             return null;
         }
 
@@ -456,7 +417,7 @@ abstract class Resource
             return $field->relation;
         }
 
-        if (! is_string($field->column) || ! Str::endsWith($field->column, '_id')) {
+        if (!is_string($field->column) || !Str::endsWith($field->column, '_id')) {
             return null;
         }
 
@@ -473,7 +434,7 @@ abstract class Resource
 
         $resourceTitleColumn = $this->relatedResourceTitleColumn($relation);
 
-        if (! is_null($resourceTitleColumn)) {
+        if (!is_null($resourceTitleColumn)) {
             return $resourceTitleColumn;
         }
 
@@ -508,7 +469,7 @@ abstract class Resource
     private function belongsToSortColumnExists(EloquentBelongsTo $relation, ?string $column): bool
     {
         return is_string($column)
-            && ! Str::contains($column, ['.', '[', ']'])
+            && !Str::contains($column, ['.', '[', ']'])
             && $relation->getRelated()->getConnection()->getSchemaBuilder()->hasColumn($relation->getRelated()->getTable(), $column);
     }
 
@@ -526,7 +487,7 @@ abstract class Resource
             $column = $field->sort_column ?? $field->column;
 
             return is_string($column)
-                && ! Str::contains($column, ['.', '[', ']']);
+                && !Str::contains($column, ['.', '[', ']']);
         })->mapWithKeys(function ($field, $index) {
             return [$this->indexColumnKey($field, $index) => $field];
         });
@@ -568,7 +529,7 @@ abstract class Resource
             }
 
             return is_string($field->column)
-                && ! Str::contains($field->column, ['.', '[', ']'])
+                && !Str::contains($field->column, ['.', '[', ']'])
                 && $field->column !== $this->excelIdKeyName()
                 && Schema::hasColumn($table, $field->column);
         });
@@ -672,7 +633,7 @@ abstract class Resource
             if (is_array($default) && isset($default[$try])) {
                 $default = $default[$try];
                 $exist_filter_value = true;
-            } elseif (is_array($default) && ! isset($default[$try])) {
+            } elseif (is_array($default) && !isset($default[$try])) {
                 $default = $default[0];
             }
 
@@ -691,7 +652,7 @@ abstract class Resource
         $filters_with_default_values_are_set = $clean_filters->keys()->intersect(collect(request()->all())->keys())->count() == $filters->count();
 
         // Only will acess if the url doesnt have the required variables
-        if ($filters_with_default_values_are_set && ! request()->filled('is_redirect')) {
+        if ($filters_with_default_values_are_set && !request()->filled('is_redirect')) {
             return;
         }
 
@@ -699,7 +660,7 @@ abstract class Resource
 
         // Respect currect request data
         $filters = collect(request()->all())->merge($filters);
-        if (! $exist_filter_value) {
+        if (!$exist_filter_value) {
             $filters['dont_redirect'] = true;
         }
 
@@ -718,7 +679,7 @@ abstract class Resource
 
         foreach ($this->getFilters() as $filter) {
             foreach ($this->filterInputs($filter) as $input) {
-                if (! $input->show_on_filter) {
+                if (!$input->show_on_filter) {
                     continue;
                 }
 
@@ -837,7 +798,7 @@ abstract class Resource
             $result_explode = explode(':', $result);
 
             // if value on base url doesnt exist on parameters so ignore
-            if (! isset($parameters[$result_explode[0]])) {
+            if (!isset($parameters[$result_explode[0]])) {
                 continue;
             }
 
@@ -846,7 +807,7 @@ abstract class Resource
 
             // If there isnt any field selected
             $column = $result_explode[1] ?? null;
-            if (! isset($result_explode[1]) || ! isset($value->$column)) {
+            if (!isset($result_explode[1]) || !isset($value->$column)) {
                 $base_url = str_replace('{'.$result.'}', $value, $base_url);
             } else {
                 $base_url = str_replace('{'.$result.'}', $value->$column, $base_url);

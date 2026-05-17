@@ -36,13 +36,13 @@
         <div @class([
             'rounded-xl border p-5 shadow-sm',
             'border-primary-200 bg-primary-50' => $this->analyzed,
-            'border-secondary-200 bg-white' => ! $this->analyzed,
+            'border-secondary-200 bg-white' => !$this->analyzed,
         ])>
             <div class="flex items-start gap-3">
                 <span @class([
                     'flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold',
                     'bg-primary-600 text-white' => $this->analyzed,
-                    'bg-secondary-100 text-secondary-600' => ! $this->analyzed,
+                    'bg-secondary-100 text-secondary-600' => !$this->analyzed,
                 ])>2</span>
                 <div>
                     <h3 class="text-sm font-semibold text-secondary-950">{{ __('Analyze structure') }}</h3>
@@ -54,13 +54,13 @@
         <div @class([
             'rounded-xl border p-5 shadow-sm',
             'border-primary-200 bg-primary-50' => $this->import_summary,
-            'border-secondary-200 bg-white' => ! $this->import_summary,
+            'border-secondary-200 bg-white' => !$this->import_summary,
         ])>
             <div class="flex items-start gap-3">
                 <span @class([
                     'flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold',
                     'bg-primary-600 text-white' => $this->import_summary,
-                    'bg-secondary-100 text-secondary-600' => ! $this->import_summary,
+                    'bg-secondary-100 text-secondary-600' => !$this->import_summary,
                 ])>3</span>
                 <div>
                     <h3 class="text-sm font-semibold text-secondary-950">{{ __('Import rows') }}</h3>
@@ -102,7 +102,7 @@
                 <x-icon name="document-magnifying-glass" class="h-4 w-4" />
                 {{ __('Analyze file') }}
             </button>
-            <button type="button" wire:click="runImport" @disabled(! $this->canImport()) class="inline-flex items-center gap-2 rounded-md bg-secondary-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-secondary-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" wire:click="runImport" @disabled(!$this->canImport()) class="inline-flex items-center gap-2 rounded-md bg-secondary-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-secondary-800 disabled:cursor-not-allowed disabled:opacity-50">
                 <x-icon name="cloud-arrow-up" class="h-4 w-4" />
                 {{ __('Import rows') }}
             </button>
@@ -127,7 +127,7 @@
                 <span @class([
                     'rounded-full px-3 py-1 text-xs font-semibold',
                     'bg-primary-50 text-primary-700' => $this->canImport(),
-                    'bg-negative-50 text-negative-700' => ! $this->canImport(),
+                    'bg-negative-50 text-negative-700' => !$this->canImport(),
                 ])>{{ $this->canImport() ? __('Ready to import') : __('Needs attention') }}</span>
             </div>
 

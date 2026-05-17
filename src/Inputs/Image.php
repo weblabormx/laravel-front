@@ -4,31 +4,22 @@ namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use WeblaborMx\Front\Facades\Front;
 
 class Image extends Input
 {
     public $directory = 'images';
-
     public $view_size = 'm';
-
     public $visibility = 'public';
-
     public $max_size = 5000;
-
     public $original_size;
-
     public $file_name;
-
     public $url_returned;
-
     public $extension;
-
     public $save = true;
-
     public $thumbnails = [];
 
     /*
@@ -195,7 +186,7 @@ class Image extends Input
             return $data;
         }
 
-        if (! isset($data[$this->column.'_new'])) {
+        if (!isset($data[$this->column.'_new'])) {
             unset($data[$this->column]);
 
             return $data;
@@ -211,14 +202,14 @@ class Image extends Input
 
     public function processDataAfterValidation($data)
     {
-        if (! isset($data[$this->column])) {
+        if (!isset($data[$this->column])) {
             return $data;
         }
         if ($this->isUrlValue($data[$this->column])) {
             return $data;
         }
 
-        if (! $this->save) {
+        if (!$this->save) {
             unset($data['image']);
 
             return $data;
@@ -334,7 +325,7 @@ class Image extends Input
         if (is_null($file_name)) {
             $file_name = Str::random(9);
         }
-        if (! is_null($file_name)) {
+        if (!is_null($file_name)) {
             $extension = $this->extension ?? $file->guessExtension();
             $file_name .= '.'.$extension;
         }
@@ -348,14 +339,14 @@ class Image extends Input
         $set_file_name = $this->getFileName($data, $file);
 
         // If original sizes were defined then save as thumb
-        if (! is_null($this->original_size) && is_array($this->original_size)) {
+        if (!is_null($this->original_size) && is_array($this->original_size)) {
             $url = $this->saveNewSize($file, $set_file_name, $this->original_size['width'], $this->original_size['height'], '', $this->original_size['fit']);
 
             return ['file_name' => $set_file_name, 'url' => $url];
         }
 
         // Save original file
-        if (! is_null($set_file_name)) {
+        if (!is_null($set_file_name)) {
             $storage_file = Storage::putFileAs($this->directory, $file, $set_file_name, $this->visibility);
         } else {
             $storage_file = Storage::putFile($this->directory, $file, $this->visibility);

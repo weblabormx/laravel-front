@@ -3,49 +3,26 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use WeblaborMx\Front\Traits\InputRules;
-use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputVisibility;
+use WeblaborMx\Front\Traits\InputSetters;
+use WeblaborMx\Front\Traits\InputRules;
 use WeblaborMx\Front\Traits\WithWidth;
+use Illuminate\Support\{Arr, Str};
 
-class Input implements \Stringable, Htmlable
+class Input implements Htmlable, \Stringable
 {
-    use InputRules, InputSetters, InputVisibility, WithWidth;
+    use InputVisibility, InputSetters, InputRules, WithWidth;
 
     public $is_input = true;
-
     public $is_panel = false;
-
     public $form_before = '';
-
     public $form_after = '';
-
     public $data_classes = '';
-
     public $title;
-
     public $set_title_executed = false;
-
     public $needs_to_be_on_panel = true;
-
-    public $column;
-
-    public $extra;
-
-    public $source;
-
-    public $value;
-
-    public $size;
-
-    public $attributes;
-
-    public $format;
-
+    public $column, $extra, $source, $value, $size, $attributes, $format;
     public $input_formatted = true;
-
     public $show_on_filter = true;
 
     public function __construct($title = null, $column = null, $extra = null, $source = null)
@@ -64,7 +41,7 @@ class Input implements \Stringable, Htmlable
 
     public static function make($title = null, $column = null, $extra = null)
     {
-        if (is_null($column) && ! is_null($title) && is_string($title)) {
+        if (is_null($column) && !is_null($title) && is_string($title)) {
             $column = class_basename($title);
             $column = Str::snake($column);
         }
@@ -81,7 +58,7 @@ class Input implements \Stringable, Htmlable
 
     public function setValue($value)
     {
-        if (! is_string($value) && is_callable($value)) {
+        if (!is_string($value) && is_callable($value)) {
             $value = $value();
         }
         $this->value = $value;
@@ -110,12 +87,12 @@ class Input implements \Stringable, Htmlable
         if (isset($this->value)) {
             return $this->value;
         }
-        if (! isset($object)) {
+        if (!isset($object)) {
             return null;
         }
 
         $column = $this->column;
-        if (! is_string($column) && is_callable($column)) {
+        if (!is_string($column) && is_callable($column)) {
             return $column($object);
         } elseif (Str::contains($column, '.')) {
             return Arr::get($object, $column);
@@ -158,13 +135,13 @@ class Input implements \Stringable, Htmlable
             $return = $format($return);
         }
 
-        if (Str::startsWith($return, 'http') && ! isset($this->link)) {
+        if (Str::startsWith($return, 'http') && !isset($this->link)) {
             $this->link = $return;
             $this->link_target = '_blank';
         }
         $link = $this->link;
         if (isset($link) && $return != '--') {
-            $add = isset($this->link_target) ? ' target="'.$this->link_target.'"' : '';
+            $add = isset($this->link_target) ? ' target="' . $this->link_target . '"' : '';
             $return = "<a href='{$link}'{$add}>{$return}</a>";
         }
         if (isset($this->display_using) && is_callable($this->display_using) && $return != '--') {
@@ -178,7 +155,7 @@ class Input implements \Stringable, Htmlable
     public function getColumn()
     {
         $column = $this->column;
-        if (! Str::contains($column, '.')) {
+        if (!Str::contains($column, '.')) {
             return $column;
         }
 
@@ -196,7 +173,10 @@ class Input implements \Stringable, Htmlable
         return $this->default_value ?? request()->$column;
     }
 
-    public function form() {}
+    public function form()
+    {
+        return;
+    }
 
     public function hideForm()
     {
@@ -208,13 +188,13 @@ class Input implements \Stringable, Htmlable
         if ($this->hide && (request()->filled($this->column))) {
             return $this->hideForm();
         }
-        if (! $this->input_formatted) {
+        if (!$this->input_formatted) {
             return $this->form();
         }
         $input = $this;
         $html = view('front::input-form', compact('input'))->render();
 
-        return $this->form_before.$html.$this->form_after;
+        return $this->form_before . $html . $this->form_after;
     }
 
     public function showHtml($object)
@@ -263,7 +243,7 @@ class Input implements \Stringable, Htmlable
     // In case there default attributes for the model
     public function setDefaultValueFromAttributes($model)
     {
-        if ($this->source != 'create' || ! is_null($this->default_value) || is_null($model)) {
+        if ($this->source != 'create' || !is_null($this->default_value) || is_null($model)) {
             return $this;
         }
         $model = new $model;
@@ -331,7 +311,7 @@ class Input implements \Stringable, Htmlable
     {
         // Prevents model `$casts` exceptions
         // PHP 7.1 compatible
-        if (isset($return) && ! is_string($return) && ! is_numeric($return) && ! is_bool($return)) {
+        if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
             if (is_scalar($return)) {
                 $return = strval($return);
             } elseif (is_array($return)) {

@@ -13,40 +13,17 @@ trait InputSetters
     public $help;
 
     public $resource;
-
     public $display_using;
-
-    public $link;
-
-    public $link_target;
-
+    public $link, $link_target;
     public $rename_after;
-
     public $get_value_from;
-
     public $class = '';
-
     public $default_value_force = false;
-
     public $hide = false;
-
     public $extra_data = [];
-
-    public $sort_column = null;
-
-    public $sort_callback = null;
-
-    public $sortable = null;
-
-    public $exportable = null;
-
-    public $importable = null;
-
-    public $import_callback = null;
-
-    public $front_column_key = null;
-
-    public $excel_type = null;
+    public $sort_column = null, $sort_callback = null, $sortable = null;
+    public $exportable = null, $importable = null, $import_callback = null;
+    public $front_column_key = null, $excel_type = null;
 
     public function setData($column, $value)
     {
@@ -111,7 +88,7 @@ trait InputSetters
                 $link = null;
             }
         }
-        if (! is_null($link) && strlen($link) > 0) {
+        if (!is_null($link) && strlen($link) > 0) {
             $this->link = $link;
         }
 
@@ -221,7 +198,7 @@ trait InputSetters
             $conditional = $this->conditional;
             foreach ($object as $key => $value) {
                 $conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
-                if (! Str::contains($conditional, '=')) {
+                if (!Str::contains($conditional, '=')) {
                     $conditional = str_replace($key, '$object["'.$key.'"] ?? false', $conditional);
                 }
             }
@@ -302,10 +279,10 @@ trait InputSetters
     public function default($value, $force = false)
     {
         $this->default_value_force = $force;
-        if ($this->source != 'create' && ! $force) {
+        if ($this->source != 'create' && !$force) {
             return $this;
         }
-        if (! is_string($value) && is_callable($value)) {
+        if (!is_string($value) && is_callable($value)) {
             $value = $value();
         }
         $this->default_value = $value;

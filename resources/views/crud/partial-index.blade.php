@@ -31,7 +31,7 @@
                                     <span @class([
                                         'inline-flex h-4 w-4 items-center justify-center transition',
                                         'text-primary-700' => $isSorted,
-                                        'text-secondary-300 group-hover:text-secondary-500' => ! $isSorted,
+                                        'text-secondary-300 group-hover:text-secondary-500' => !$isSorted,
                                     ]) aria-hidden="true">
                                         @if($sortDirection === 'desc')
                                             <x-icon name="chevron-down" class="h-3.5 w-3.5" />

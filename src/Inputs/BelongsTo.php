@@ -3,27 +3,17 @@
 namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Str;
+use WeblaborMx\Front\Facades\Front;
 use Opis\Closure\SerializableClosure;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Traits\InputRelationship;
 
 class BelongsTo extends Input
 {
     use InputRelationship;
 
-    public $relation;
-
-    public $model_name;
-
-    public $relation_front;
-
-    public $search_field;
-
-    public $empty_title;
-
+    public $relation, $model_name, $relation_front, $search_field, $empty_title;
     public $searchable = false;
-
     public $show_placeholder = true;
 
     public function __construct($title, $column = null, $extra = null, $source = null)
@@ -33,7 +23,7 @@ class BelongsTo extends Input
         $this->source = $source;
         $this->relation = Str::snake($this->column);
 
-        if (! isset($this->extra)) {
+        if (!isset($this->extra)) {
             $front = Str::singular($this->relation);
             $front = ucfirst(Str::camel($front));
             $this->extra = $title;
@@ -50,12 +40,12 @@ class BelongsTo extends Input
     {
         $relation = $this->relation;
         $relation_camel = Str::camel($relation);
-        if (! method_exists($resource, 'getModel')) {
+        if (!method_exists($resource, 'getModel')) {
             return parent::setResource($resource);
         }
 
         $class = $resource->getModel();
-        $model = new $class;
+        $model = new $class();
         if (method_exists($model, $relation)) {
             $relation_function = $model->$relation();
             $this->column = $relation_function->getForeignKeyName();
@@ -74,16 +64,16 @@ class BelongsTo extends Input
     public function getValue($object)
     {
         $relation = $this->relation;
-        if (! is_object($object->$relation)) {
+        if (!is_object($object->$relation)) {
             return '--';
         }
 
         $title_field = $this->search_field ?? $this->relation_front->search_title;
         $value = $object->$relation->$title_field;
-        if (! $this->hide_link && ! isset($this->link)) {
-            $this->link = $this->relation_front->getBaseUrl().'/'.$object->$relation->getKey();
+        if (!$this->hide_link && !isset($this->link)) {
+            $this->link = $this->relation_front->getBaseUrl() . '/' . $object->$relation->getKey();
         }
-        if (! isset($value)) {
+        if (!isset($value)) {
             return '--';
         }
 
@@ -95,7 +85,7 @@ class BelongsTo extends Input
         $relation = $this->relation;
         $related = $object?->$relation;
 
-        if (! is_object($related)) {
+        if (!is_object($related)) {
             return $this->getRawValue($object);
         }
 
@@ -106,12 +96,12 @@ class BelongsTo extends Input
             return $related->getKey();
         }
 
-        return $related->getKey().' - '.$title;
+        return $related->getKey() . ' - ' . $title;
     }
 
     public function parseExcelValue($value)
     {
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             return $value;
         }
 
@@ -149,7 +139,7 @@ class BelongsTo extends Input
             }
 
             return Autocomplete::make($this->title, $this->column)
-                ->setUrl($relation_front->getBaseUrl().'/search?filter_query='.$serialized)
+                ->setUrl($relation_front->getBaseUrl() . '/search?filter_query=' . $serialized)
                 ->setText($title)
                 ->default($this->default_value, $this->default_value_force)
                 ->size($this->size)
@@ -157,7 +147,7 @@ class BelongsTo extends Input
         }
 
         $model = $this->relation_front->getModel();
-        $model = new $model;
+        $model = new $model();
 
         if (isset($this->force_query)) {
             $force_query = $this->force_query;
@@ -193,28 +183,24 @@ class BelongsTo extends Input
     public function searchable($searchable = true)
     {
         $this->searchable = $searchable;
-
         return $this;
     }
 
     public function setSearchField($field)
     {
         $this->search_field = $field;
-
         return $this;
     }
 
     public function setEmptyTitle($value)
     {
         $this->empty_title = $value;
-
         return $this;
     }
 
     public function hidePlaceholder()
     {
         $this->show_placeholder = false;
-
         return $this;
     }
 }

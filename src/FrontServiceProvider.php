@@ -201,7 +201,7 @@ class FrontServiceProvider extends ServiceProvider
             $front = Front::makeResource($resource)->setSource('index');
             Gate::authorize('viewAny', $front->getModel());
 
-            if (! in_array('index', $front->actions)) {
+            if (!in_array('index', $front->actions)) {
                 abort(403, 'This action is unauthorized.');
             }
 
@@ -225,7 +225,7 @@ class FrontServiceProvider extends ServiceProvider
 
             Gate::authorize('viewAny', $front->getModel());
 
-            if (! $front->enable_import || ! in_array('index', $front->actions) || ! in_array('edit', $updateFront->actions) || ! in_array('update', $updateFront->actions)) {
+            if (!$front->enable_import || !in_array('index', $front->actions) || !in_array('edit', $updateFront->actions) || !in_array('update', $updateFront->actions)) {
                 abort(403, __('This action is unauthorized.'));
             }
 
@@ -326,7 +326,7 @@ class FrontServiceProvider extends ServiceProvider
     {
         Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
             $value = Form::getValueAttribute($name, $value);
-            if (! is_null($value) && ! $value instanceof DateTime) {
+            if (!is_null($value) && !$value instanceof DateTime) {
                 try {
                     $value = Carbon::parse($value);
                 } catch (Exception $e) {

@@ -7,7 +7,6 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 class Time extends Input
 {
     public $pattern = '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]';
-
     public $input_type = 'text';
 
     public function form()
@@ -28,7 +27,6 @@ class Time extends Input
     {
         $this->pattern = '([01]?[0-9]|2[0-3]):[0-5][0-9]';
         $this->input_type = 'time';
-
         return $this;
     }
 

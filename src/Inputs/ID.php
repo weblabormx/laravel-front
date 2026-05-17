@@ -7,7 +7,6 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 class ID extends Input
 {
     public $show_on_edit = false;
-
     public $show_on_create = false;
 
     public function __construct($title = null, $column = null, $extra = null, $source = null)
@@ -18,7 +17,10 @@ class ID extends Input
         }
     }
 
-    public function form() {}
+    public function form()
+    {
+        return;
+    }
 
     public function getValue($object)
     {

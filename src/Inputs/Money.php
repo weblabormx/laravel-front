@@ -24,7 +24,7 @@ class Money extends Input
     public function getValue($object)
     {
         $value = parent::getValue($object);
-        if (! is_numeric($value)) {
+        if (!is_numeric($value)) {
             return $value;
         }
 
@@ -37,7 +37,7 @@ class Money extends Input
         if (is_null($value) || $value === '') {
             return null;
         }
-        if (! is_numeric($value)) {
+        if (!is_numeric($value)) {
             return parent::getExcelValue($object);
         }
 
@@ -55,7 +55,7 @@ class Money extends Input
 
     public function excelFormat(): ?string
     {
-        if (! is_null($this->excel_type)) {
+        if (!is_null($this->excel_type)) {
             return $this->excel_type;
         }
 

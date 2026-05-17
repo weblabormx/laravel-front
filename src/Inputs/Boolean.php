@@ -7,7 +7,6 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 class Boolean extends Input
 {
     public $true_value = 1;
-
     public $false_value = 0;
 
     public function form()
@@ -17,7 +16,7 @@ class Boolean extends Input
         return html()
             ->checkbox(
                 $this->getColumn(),
-                ! is_null($value) ? $value == $this->true_value : null,
+                !is_null($value) ? $value == $this->true_value : null,
                 $this->true_value
             );
     }
@@ -36,10 +35,10 @@ class Boolean extends Input
             return '<span style="color: #e74344;">✘</span>';
         }
         if ($value == $this->true_value) {
-            return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> '.__('Yes');
+            return '<span style="color: #2cbb7d; padding-right: 7px;">✔</span> ' . __('Yes');
         }
 
-        return '<span style="color: #e74344; padding-right: 10px;">✘</span> '.__('No');
+        return '<span style="color: #e74344; padding-right: 10px;">✘</span> ' . __('No');
     }
 
     public function getExcelValue($object)
@@ -83,7 +82,7 @@ class Boolean extends Input
     public function processData($data)
     {
         $data = collect($data)->dot();
-        if (! isset($data[$this->column])) {
+        if (!isset($data[$this->column])) {
             $data[$this->column] = $this->false_value;
         }
         $data = $data->undot()->all();
