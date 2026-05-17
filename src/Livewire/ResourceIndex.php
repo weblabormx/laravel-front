@@ -136,6 +136,16 @@ class ResourceIndex extends Component
         cache()->forget($this->columnPreferenceCacheKey());
     }
 
+    public function toggleColumns(): void
+    {
+        $this->show_columns = ! $this->show_columns;
+    }
+
+    public function toggleImport(): void
+    {
+        $this->show_import = ! $this->show_import;
+    }
+
     public function export()
     {
         $front = $this->front();
@@ -274,6 +284,7 @@ class ResourceIndex extends Component
         request()->merge([
             'sort' => $this->sort,
             'direction' => $this->direction,
+            'dont_redirect' => true,
         ]);
     }
 

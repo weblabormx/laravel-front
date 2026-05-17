@@ -1,6 +1,6 @@
 @if($this->columnsEnabled())
     <div class="mt-4">
-        <button type="button" wire:click="$toggle('show_columns')" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+        <button type="button" wire:click="toggleColumns" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
             <span>{{ __('Columns') }}</span>
             <span class="text-xs text-gray-400">{{ $this->show_columns ? '↑' : '↓' }}</span>
         </button>
