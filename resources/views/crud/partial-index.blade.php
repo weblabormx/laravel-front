@@ -1,4 +1,10 @@
-@php $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null, $show_filters ?? null); @endphp
+@php
+    $helper = $front->getPartialIndexHelper($result, $pagination_name ?? null, $show_filters ?? null);
+
+    if (isset($frontIndexComponent) && $frontIndexComponent->columnsEnabled()) {
+        $helper->setSelectedColumns($frontIndexComponent->visibleColumnKeys(), $frontIndexComponent->manualColumnKeys());
+    }
+@endphp
 
 @if ($result->count() > 0)
     <div class="pb-2 text-gray-500 mt-6">
@@ -11,7 +17,18 @@
             <thead class="bg-gray-50">
                 <tr>
                     @foreach ($helper->headers() as $field)
-                        <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 {{ $field->class }}">{{ $field->title }}</th>
+                        <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 {{ $field->class }}">
+                            @if(isset($frontIndexComponent) && $frontIndexComponent->sortingEnabled() && $front->sortableIndexFields()->has($field->key))
+                                <button type="button" wire:click="sortBy('{{ $field->key }}')" class="inline-flex items-center gap-1 font-semibold cursor-pointer hover:text-primary-600">
+                                    <span>{{ $field->title }}</span>
+                                    @if($frontIndexComponent->sort === $field->key)
+                                        <span class="text-xs">{{ $frontIndexComponent->direction === 'desc' ? '↓' : '↑' }}</span>
+                                    @endif
+                                </button>
+                            @else
+                                {{ $field->title }}
+                            @endif
+                        </th>
                     @endforeach
                     @if ($helper->show_actions)
                         <th scope="col" class="relative py-3.5 pr-4 pl-3 sm:pr-6">

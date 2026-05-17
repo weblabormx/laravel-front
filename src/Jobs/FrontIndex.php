@@ -2,12 +2,14 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class FrontIndex
 {
-    public $front, $base;
+    public $front;
+
+    public $base;
 
     public function __construct($front, $base)
     {
@@ -27,15 +29,18 @@ class FrontIndex
         $objects = $this->front->globalIndexQuery();
 
         // Detect if crud is just for 1 item and redirects
-        if (!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
+        if (! Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
             $url = $this->base.'/'.$objects->getKey().'/edit';
+
             return redirect($url);
         }
 
         // If seeing trashed elements
-        if($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
+        if ($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
             $objects = $objects->onlyTrashed();
         }
+        $objects = $this->front->applyIndexSorting($objects);
+
         // If is normal query paginate results
         $result = $this->paginate($objects);
 
@@ -59,7 +64,7 @@ class FrontIndex
             $redirect_url = $this->front->redirects(false);
 
             // If there isn't any redirect url don't do anything
-            if (!isset($redirect_url) || url()->full() == $redirect_url) {
+            if (! isset($redirect_url) || url()->full() == $redirect_url) {
                 return $result;
             }
 
@@ -68,6 +73,7 @@ class FrontIndex
             $new_query = explode('?', $redirect_url)[1];
             $new_query = collect(explode('&', $new_query))->mapWithKeys(function ($item) {
                 $item = explode('=', $item);
+
                 return [$item[0] => $item[1]];
             })->toArray();
 
@@ -76,6 +82,7 @@ class FrontIndex
                 return redirect($redirect_url);
             }
         }
+
         return $result;
     }
 
@@ -85,7 +92,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if ($cache == false || !in_array('indexQuery', $this->front->cache)) {
+        if ($cache == false || ! in_array('indexQuery', $this->front->cache)) {
             return $objects->paginate($this->front->pagination);
         }
 
@@ -106,6 +113,7 @@ class FrontIndex
         $key = 'front:'.$request.':';
         $key .= $objects->toSql();
         $key = hash('sha256', $key);
+
         return $key;
     }
 
@@ -115,7 +123,7 @@ class FrontIndex
         $cache = $this->front->cacheFor();
 
         // If not time set so paginate directly
-        if ($cache == false || !in_array('indexResult', $this->front->cache)) {
+        if ($cache == false || ! in_array('indexResult', $this->front->cache)) {
             return $this->front->indexResult($result);
         }
 
@@ -133,6 +141,7 @@ class FrontIndex
         $key_name = $result->first()->getKeyName();
         $key = get_class($this).':result:'.$result->pluck($key_name)->implode('|');
         $key = hash('sha256', $key);
+
         return $key;
     }
 }
