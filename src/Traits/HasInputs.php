@@ -200,7 +200,6 @@ trait HasInputs
         })->filter()->filter(function ($item) {
             return $item->is_input
                 && $item->shouldBeShown()
-                && ($item->show_on_index || $item->show_on_show || $item->show_on_edit || $item->show_on_create)
                 && ! is_null($item->column)
                 && (is_string($item->column) || is_callable($item->column))
                 && ! $this->isLargeColumnPreferenceInput($item);
@@ -228,18 +227,7 @@ trait HasInputs
     private function isLargeColumnPreferenceInput($item): bool
     {
         return in_array(class_basename(get_class($item)), [
-            'BelongsToMany',
             'Code',
-            'File',
-            'HasMany',
-            'Hidden',
-            'Image',
-            'ImageCropper',
-            'ImagePointer',
-            'Images',
-            'MorphMany',
-            'MorphToMany',
-            'Password',
             'Textarea',
             'ToastEditor',
             'Trix',
