@@ -4,9 +4,11 @@ namespace WeblaborMx\Front;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Livewire\Livewire;
 use Opis\Closure\SerializableClosure;
 use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Console\Commands\CreateResource;
@@ -16,6 +18,8 @@ use WeblaborMx\Front\Console\Commands\CreateFilter;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Http\Controllers\FrontController;
 use WeblaborMx\Front\Http\Controllers\PageController;
+use WeblaborMx\Front\Jobs\FrontIndex;
+use WeblaborMx\Front\Livewire\ResourceIndex;
 use WeblaborMx\Front\ThumbManager;
 
 class FrontServiceProvider extends ServiceProvider
@@ -52,6 +56,7 @@ class FrontServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
+        Livewire::component('front.resource-index', ResourceIndex::class);
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider());
 
@@ -177,8 +182,22 @@ class FrontServiceProvider extends ServiceProvider
     {
         $actions = [];
 
-        $actions['index'] = Route::get('/', function (Request $request) use ($controller) {
-            return $controller->index();
+        $actions['index'] = Route::get('/', function () use ($front) {
+            $resource = $front::class;
+            $front = Front::makeResource($resource)->setSource('index');
+            Gate::authorize('viewAny', $front->getModel());
+
+            if (!in_array('index', $front->actions)) {
+                abort(403, 'This action is unauthorized.');
+            }
+
+            $response = $front->beforeRequest() ?: (new FrontIndex($front, $front->getBaseUrl()))->handle();
+
+            if (isResponse($response)) {
+                return $response;
+            }
+
+            return view('front::crud.livewire-index', compact('front', 'resource'));
         })->name('');
 
         $actions['create'] = Route::get('create', function () use ($controller) {
