@@ -29,16 +29,16 @@
                                 ]) aria-sort="{{ $isSorted ? ($sortDirection === 'desc' ? 'descending' : 'ascending') : 'none' }}">
                                     <span>{{ $field->title }}</span>
                                     <span @class([
-                                        'inline-flex h-4 w-4 items-center justify-center text-[10px] leading-none transition',
+                                        'inline-flex h-4 w-4 items-center justify-center transition',
                                         'text-primary-700' => $isSorted,
                                         'text-secondary-300 group-hover:text-secondary-500' => ! $isSorted,
                                     ]) aria-hidden="true">
                                         @if($sortDirection === 'desc')
-                                            ▼
+                                            <x-icon name="chevron-down" class="h-3.5 w-3.5" />
                                         @elseif($sortDirection === 'asc')
-                                            ▲
+                                            <x-icon name="chevron-up" class="h-3.5 w-3.5" />
                                         @else
-                                            ▽
+                                            <x-icon name="chevron-up-down" class="h-3.5 w-3.5" />
                                         @endif
                                     </span>
                                     <span class="sr-only">

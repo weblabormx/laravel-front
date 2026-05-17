@@ -140,6 +140,20 @@ class ResourceIndex extends Component
         $this->show_columns = ! $this->show_columns;
     }
 
+    public function applyColumnPreferences(array $columns, array $manual = []): void
+    {
+        $available = $this->availableColumns()->keys()->all();
+        $columns = array_values(array_unique(array_intersect($columns, $available)));
+        $manual = array_values(array_unique(array_intersect($manual, $available)));
+
+        if (count($columns) === 0) {
+            $columns = array_slice($this->availableDefaultColumnKeys(), 0, 1);
+        }
+
+        $this->saveColumnPreferences($columns, $manual);
+        $this->show_columns = false;
+    }
+
     public function export()
     {
         $front = $this->front();
@@ -220,6 +234,32 @@ class ResourceIndex extends Component
         }
 
         return $columns;
+    }
+
+    public function columnsForPreferences(): array
+    {
+        $available = $this->availableColumns();
+        $visible = $this->visibleColumnKeys();
+        $ordered = [];
+
+        foreach ($visible as $key) {
+            if ($available->has($key)) {
+                $ordered[] = $available->get($key);
+            }
+        }
+
+        foreach ($available as $key => $column) {
+            if (! in_array($key, $visible)) {
+                $ordered[] = $column;
+            }
+        }
+
+        return $ordered;
+    }
+
+    public function defaultColumnKeysForPreferences(): array
+    {
+        return $this->availableDefaultColumnKeys();
     }
 
     public function visibleColumnKeys(): array
