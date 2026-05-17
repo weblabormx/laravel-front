@@ -23,7 +23,7 @@
                                     $isSorted = $frontIndexComponent->sort === $field->key;
                                     $sortDirection = $isSorted ? $frontIndexComponent->direction : null;
                                 @endphp
-                                <button type="button" wire:click="sortBy('{{ $field->key }}')" @class([
+                                <button type="button" spinner wire:click="sortBy('{{ $field->key }}')" @class([
                                     'group inline-flex items-center gap-1 font-semibold cursor-pointer hover:text-primary-600',
                                     'text-primary-700' => $isSorted,
                                 ]) aria-sort="{{ $isSorted ? ($sortDirection === 'desc' ? 'descending' : 'ascending') : 'none' }}">
