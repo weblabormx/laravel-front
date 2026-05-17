@@ -224,7 +224,7 @@ class ResourceIndex extends Component
         $front = $this->front();
         $columns = collect();
 
-        foreach ($front->configurableIndexFields() as $index => $field) {
+        foreach ($front->configurableColumnFields() as $index => $field) {
             $key = $front->indexColumnKey($field, $index);
 
             $columns->put($key, [

@@ -181,6 +181,71 @@ trait HasInputs
         return $fields->values();
     }
 
+    public function configurableColumnFields()
+    {
+        return collect($this->getFields())->flatten()->map(function ($item) {
+            if ($item instanceof Panel) {
+                return collect($item->column)->flatten()->all();
+            }
+
+            return $item;
+        })->flatten()->map(function ($item) {
+            if ($item instanceof Input) {
+                return $item;
+            } elseif ($item instanceof Htmlable) {
+                return new HtmlableComponent($item);
+            }
+
+            return null;
+        })->filter()->filter(function ($item) {
+            return $item->is_input
+                && $item->shouldBeShown()
+                && ($item->show_on_index || $item->show_on_show || $item->show_on_edit || $item->show_on_create)
+                && ! is_null($item->column)
+                && (is_string($item->column) || is_callable($item->column))
+                && ! $this->isLargeColumnPreferenceInput($item);
+        })->map(function ($item) {
+            return $item->setResource($this)->setSource('index');
+        })->filter(function ($item) {
+            if (! isset($this->hide_columns) || is_null($item->column)) {
+                return true;
+            }
+
+            $columns = $this->hide_columns;
+
+            if (! is_array($columns)) {
+                $columns = [$columns];
+            }
+
+            if (! is_string($item->column) && is_callable($item->column)) {
+                return true;
+            }
+
+            return ! collect($columns)->contains($item->column);
+        })->values();
+    }
+
+    private function isLargeColumnPreferenceInput($item): bool
+    {
+        return in_array(class_basename(get_class($item)), [
+            'BelongsToMany',
+            'Code',
+            'File',
+            'HasMany',
+            'Hidden',
+            'Image',
+            'ImageCropper',
+            'ImagePointer',
+            'Images',
+            'MorphMany',
+            'MorphToMany',
+            'Password',
+            'Textarea',
+            'ToastEditor',
+            'Trix',
+        ], true);
+    }
+
     /** @return Collection */
     private function processInputFieldsCollection($fields = [], $where = 'index')
     {

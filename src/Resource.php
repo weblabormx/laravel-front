@@ -110,7 +110,7 @@ abstract class Resource
             $this->index_views = [
                 'normal' => [
                     'icon' => 'fa fa-th-list',
-                    'title' => __('Normal'),
+                    'title' => __('front::messages.normal'),
                     'view' => 'front::crud.partial-index',
                 ],
             ];
@@ -488,7 +488,7 @@ abstract class Resource
 
     public function sortableIndexFields()
     {
-        return $this->configurableIndexFields()->filter(function ($field) {
+        return $this->configurableColumnFields()->filter(function ($field) {
             if ($field->sortable === false) {
                 return false;
             }
@@ -547,7 +547,7 @@ abstract class Resource
 
     public function configurableIndexFieldsForColumns(array $columns)
     {
-        $fields = $this->configurableIndexFields()->map(function ($field, $index) {
+        $fields = $this->configurableColumnFields()->map(function ($field, $index) {
             $field->front_column_key = $this->indexColumnKey($field, $index);
 
             return $field;

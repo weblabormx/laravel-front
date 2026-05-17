@@ -180,7 +180,7 @@ class PartialIndex
     private function fieldsForIndex()
     {
         $fields = is_array($this->selected_columns)
-            ? $this->front->configurableIndexFields()
+            ? $this->front->configurableColumnFields()
             : $this->front->indexFields();
 
         $fields = $fields->map(function ($field, $index) {

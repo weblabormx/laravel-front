@@ -98,6 +98,7 @@
     "Missing from file": "No viene en el archivo",
     "This action is unauthorized.": "Esta acción no está autorizada.",
     "front.no_importable_columns": "No se encontraron columnas importables en el archivo.",
+    "front.normal": "Normal",
     "front.unreadable_file": "No se pudo leer la estructura del archivo. Verifica el formato y vuelve a intentarlo.",
     "Choose, reorder, and apply the columns shown in the table.": "Elige, reordena y aplica las columnas que se muestran en la tabla.",
     "Drag to reorder": "Arrastra para reordenar",
@@ -105,5 +106,6 @@
     "Hidden": "Oculta",
     "Apply columns": "Aplicar columnas",
     "Cancel": "Cancelar",
+    "Normal": "Normal",
     "Select at least one column.": "Selecciona al menos una columna."
 }
