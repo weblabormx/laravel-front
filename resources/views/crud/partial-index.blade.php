@@ -12,18 +12,44 @@
         {{ $helper->totals() }}
         {{ $helper->filters() }}
     </div>
-    <div class="overflow-x-auto -mx-4 shadow sm:-mx-6 md:mx-0 md:rounded-lg" style="{{ $style ?? '' }}">
+    <div class="overflow-x-auto -mx-4 shadow sm:-mx-6 md:mx-0 md:rounded-lg {{ $table_container_class ?? '' }}">
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
                 <tr>
                     @foreach ($helper->headers() as $field)
                         <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 {{ $field->class }}">
                             @if(isset($frontIndexComponent) && $frontIndexComponent->sortingEnabled() && $front->sortableIndexFields()->has($field->key))
-                                <button type="button" wire:click="sortBy('{{ $field->key }}')" class="inline-flex items-center gap-1 font-semibold cursor-pointer hover:text-primary-600">
+                                @php
+                                    $isSorted = $frontIndexComponent->sort === $field->key;
+                                    $sortDirection = $isSorted ? $frontIndexComponent->direction : null;
+                                @endphp
+                                <button type="button" wire:click="sortBy('{{ $field->key }}')" @class([
+                                    'group inline-flex items-center gap-1 font-semibold cursor-pointer hover:text-primary-600',
+                                    'text-primary-700' => $isSorted,
+                                ]) aria-sort="{{ $isSorted ? ($sortDirection === 'desc' ? 'descending' : 'ascending') : 'none' }}">
                                     <span>{{ $field->title }}</span>
-                                    @if($frontIndexComponent->sort === $field->key)
-                                        <span class="text-xs">{{ $frontIndexComponent->direction === 'desc' ? '↓' : '↑' }}</span>
-                                    @endif
+                                    <span @class([
+                                        'inline-flex h-4 w-4 items-center justify-center text-[10px] leading-none transition',
+                                        'text-primary-700' => $isSorted,
+                                        'text-secondary-300 group-hover:text-secondary-500' => ! $isSorted,
+                                    ]) aria-hidden="true">
+                                        @if($sortDirection === 'desc')
+                                            ▼
+                                        @elseif($sortDirection === 'asc')
+                                            ▲
+                                        @else
+                                            ▽
+                                        @endif
+                                    </span>
+                                    <span class="sr-only">
+                                        @if($sortDirection === 'desc')
+                                            {{ __('Sorted descending. Activate to sort ascending.') }}
+                                        @elseif($sortDirection === 'asc')
+                                            {{ __('Sorted ascending. Activate to sort descending.') }}
+                                        @else
+                                            {{ __('Activate to sort.') }}
+                                        @endif
+                                    </span>
                                 </button>
                             @else
                                 {{ $field->title }}

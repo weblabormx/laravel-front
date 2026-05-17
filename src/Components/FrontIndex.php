@@ -7,7 +7,9 @@ use WeblaborMx\Front\Facades\Front;
 class FrontIndex extends Component
 {
     public $front_class;
+
     public $query;
+
     public $lense;
 
     public function __construct($front_class, $column = null, $extra = null, $source = null)
@@ -29,25 +31,29 @@ class FrontIndex extends Component
             $query = $function($query);
         }
         $result = $query->get();
-        $style = 'margin-bottom: 30px;';
-        return view('front::crud.partial-index', compact('result', 'front', 'style'))->render();
+        $table_container_class = 'mb-8';
+
+        return view('front::crud.partial-index', compact('result', 'front', 'table_container_class'))->render();
     }
 
     public function setRequest($request)
     {
         request()->request->add($request);
+
         return $this;
     }
 
     public function query($query)
     {
         $this->query = $query;
+
         return $this;
     }
 
     public function setLense($lense)
     {
         $this->lense = $lense;
+
         return $this;
     }
 }
