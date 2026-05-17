@@ -13,6 +13,7 @@ class Select extends Input
     public function getValue($object)
     {
         $value = parent::getValue($object);
+        $value = $this->normalizeOptionKey($value);
         $options = $this->options;
 
         return $options[$value] ?? $value;
@@ -24,6 +25,7 @@ class Select extends Input
         if (is_null($value) || $value === '' || $value === '--') {
             return null;
         }
+        $value = $this->normalizeOptionKey($value);
 
         return collect($this->options)->get($value, $value);
     }
@@ -137,5 +139,20 @@ class Select extends Input
         $this->show_placeholder = $value;
 
         return $this;
+    }
+
+    private function normalizeOptionKey($value)
+    {
+        if ($value instanceof \BackedEnum) {
+            return $value->value;
+        }
+        if ($value instanceof \UnitEnum) {
+            return $value->name;
+        }
+        if (is_bool($value)) {
+            return (int) $value;
+        }
+
+        return $value;
     }
 }
