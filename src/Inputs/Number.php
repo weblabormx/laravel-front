@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Inputs;
 
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 class Number extends Input
 {
     public $decimals = null;
@@ -9,6 +11,7 @@ class Number extends Input
     public function form()
     {
         $this->attributes['step'] = $this->getStep();
+
         return html()
             ->number($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
@@ -17,6 +20,7 @@ class Number extends Input
     public function decimals($decimals)
     {
         $this->decimals = $decimals;
+
         return $this;
     }
 
@@ -28,15 +32,41 @@ class Number extends Input
         if ($this->decimals == 0) {
             return 1;
         }
+
         return 1 / pow(10, $this->decimals);
     }
 
     public function getValue($object)
     {
         $value = parent::getValue($object);
-        if (is_null($this->decimals) || !is_numeric($value) || !is_numeric($this->decimals)) {
+        if (is_null($this->decimals) || ! is_numeric($value) || ! is_numeric($this->decimals)) {
             return $value;
         }
+
         return round($value, $this->decimals);
+    }
+
+    public function getExcelValue($object)
+    {
+        $value = $this->getRawValue($object);
+        if (is_null($value) || $value === '') {
+            return null;
+        }
+
+        return is_numeric($value) ? (float) $value : parent::getExcelValue($object);
+    }
+
+    public function excelFormat(): ?string
+    {
+        if (! is_null($this->excel_type)) {
+            return $this->excel_type;
+        }
+        if (is_null($this->decimals) || ! is_numeric($this->decimals)) {
+            return NumberFormat::FORMAT_NUMBER;
+        }
+
+        $decimals = max(0, (int) $this->decimals);
+
+        return '0'.($decimals > 0 ? '.'.str_repeat('0', $decimals) : '');
     }
 }

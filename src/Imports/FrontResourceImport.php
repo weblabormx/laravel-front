@@ -48,7 +48,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                $data[$field->column] = $row[$heading];
+                $data[$field->column] = $field->parseExcelValue($row[$heading]);
             }
 
             if (count($data) === 0) {

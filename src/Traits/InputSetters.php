@@ -46,6 +46,8 @@ trait InputSetters
 
     public $front_column_key = null;
 
+    public $excel_type = null;
+
     public function setData($column, $value)
     {
         $this->extra_data[$column] = $value;
@@ -61,6 +63,13 @@ trait InputSetters
     public function setColumn($value)
     {
         $this->column = $value;
+
+        return $this;
+    }
+
+    public function setExcelType($value)
+    {
+        $this->excel_type = $value;
 
         return $this;
     }
