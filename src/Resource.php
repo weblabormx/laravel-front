@@ -167,7 +167,7 @@ abstract class Resource
 
     public function indexQuery($query)
     {
-        return $query->latest();
+        return $query;
     }
 
     // Modify the results gotten on the query
@@ -326,16 +326,21 @@ abstract class Resource
 
     public function applyIndexSorting($query)
     {
-        $sort = request()->filled('sort') ? request()->get('sort') : $this->default_sort;
+        $hasRequestedSort = request()->filled('sort');
+        $sort = $hasRequestedSort ? request()->get('sort') : $this->defaultIndexSortColumn();
 
-        if (! $this->enable_index_sorting || ! $sort) {
+        if (($hasRequestedSort && ! $this->enable_index_sorting) || ! $sort) {
             return $query;
         }
 
         $field = $this->sortableIndexFields()->get($sort);
 
         if (is_null($field)) {
-            return $query;
+            if ($hasRequestedSort || ! is_string($sort)) {
+                return $query;
+            }
+
+            return $this->applyDefaultIndexSorting($query, $sort);
         }
 
         $defaultDirection = $this->default_sort_direction === 'asc' ? 'asc' : 'desc';
@@ -372,6 +377,26 @@ abstract class Resource
         $key = $model->getQualifiedKeyName();
 
         return $query->orderBy($key);
+    }
+
+    public function defaultIndexSortColumn(): ?string
+    {
+        if (is_string($this->default_sort) && $this->default_sort !== '') {
+            return $this->default_sort;
+        }
+
+        $model = $this->getModel();
+        $model = new $model;
+
+        return $model->getKeyName();
+    }
+
+    private function applyDefaultIndexSorting($query, string $sort)
+    {
+        $direction = $this->default_sort_direction === 'asc' ? 'asc' : 'desc';
+        $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
+
+        return $query->orderBy($sort, $direction);
     }
 
     private function applyBelongsToIndexSorting($query, $field, string $direction)

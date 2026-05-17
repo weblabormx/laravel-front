@@ -35,9 +35,9 @@ class ResourceIndex extends Component
     public function mount(string $resource): void
     {
         $this->resource = $resource;
-        $this->sort = request()->get('sort', $this->sort);
-        $this->direction = request()->get('direction', $this->direction) === 'desc' ? 'desc' : 'asc';
         $front = $this->front();
+        $this->sort = request()->get('sort', $front->defaultIndexSortColumn());
+        $this->direction = request()->get('direction', $front->default_sort_direction) === 'asc' ? 'asc' : 'desc';
         $this->filters = $this->initialFilters($front);
 
         $this->authorize('viewAny', $front->getModel());
