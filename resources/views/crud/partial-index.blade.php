@@ -12,8 +12,16 @@
         {{ $helper->totals() }}
         {{ $helper->filters() }}
     </div>
-    <div class="overflow-x-auto -mx-4 shadow sm:-mx-6 md:mx-0 md:rounded-lg {{ $table_container_class ?? '' }}">
-        <table class="min-w-full divide-y divide-gray-300">
+    <div class="relative overflow-x-auto -mx-4 shadow sm:-mx-6 md:mx-0 md:rounded-lg {{ $table_container_class ?? '' }}">
+        @if(isset($frontIndexComponent))
+            <div wire:loading.flex class="absolute inset-0 z-10 items-start justify-center bg-white/70 pt-4 backdrop-blur-[1px]">
+                <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow">
+                    <x-icon name="arrow-path" class="h-4 w-4 animate-spin text-primary-600" />
+                    <span>{{ __('Loading results...') }}</span>
+                </div>
+            </div>
+        @endif
+        <table @if(isset($frontIndexComponent)) wire:loading.class="opacity-40" @endif class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
                 <tr>
                     @foreach ($helper->headers() as $field)
@@ -23,7 +31,7 @@
                                     $isSorted = $frontIndexComponent->sort === $field->key;
                                     $sortDirection = $isSorted ? $frontIndexComponent->direction : null;
                                 @endphp
-                                <button type="button" spinner wire:click="sortBy('{{ $field->key }}')" @class([
+                                <button type="button" wire:click="sortBy('{{ $field->key }}')" @class([
                                     'group inline-flex items-center gap-1 font-semibold cursor-pointer hover:text-primary-600',
                                     'text-primary-700' => $isSorted,
                                 ]) aria-sort="{{ $isSorted ? ($sortDirection === 'desc' ? 'descending' : 'ascending') : 'none' }}">

@@ -53,12 +53,12 @@
                 if (this.visible.length === 0 || this.applying) return;
 
                 this.applying = true;
+                this.open = false;
 
                 try {
                     await this.$wire.applyColumnPreferences(this.visible, this.manual);
                     this.serverVisible = [...this.visible];
                     this.serverManual = [...this.manual];
-                    this.open = false;
                 } finally {
                     this.applying = false;
                 }
@@ -68,6 +68,7 @@
         x-on:keydown.escape.window="if (!applying) open = false"
         x-show="open"
         x-cloak
+        wire:ignore
         class="relative z-50"
         aria-labelledby="front-columns-title"
         role="dialog"
@@ -99,14 +100,14 @@
                                     x-on:dragstart="dragging = column.key"
                                     x-on:dragover.prevent
                                     x-on:drop.prevent="move(dragging, column.key); dragging = null"
-                                    x-bind:class="isVisible(column.key) ? 'border-primary-100 bg-primary-50/40' : 'border-secondary-100 bg-white opacity-75'"
-                                    class="flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition"
+                                    x-bind:class="{ 'bg-primary-50/40 ring-1 ring-primary-100': isVisible(column.key), 'opacity-75': !isVisible(column.key) }"
+                                    class="flex items-center gap-3 rounded-lg border border-secondary-100 bg-white px-3 py-2 text-sm transition"
                                 >
                                     <button type="button" class="cursor-grab text-secondary-300 hover:text-secondary-500 active:cursor-grabbing" x-bind:class="{ 'opacity-30': !isVisible(column.key) }" aria-label="{{ __('Drag to reorder') }}">
                                         <x-icon name="bars-3" class="h-4 w-4" />
                                     </button>
 
-                                    <button type="button" x-on:click="toggle(column.key)" x-bind:aria-checked="isVisible(column.key)" x-bind:aria-label="column.title" role="checkbox" class="flex h-5 w-5 shrink-0 items-center justify-center rounded border transition hover:border-primary-500" x-bind:class="isVisible(column.key) ? 'border-primary-600 bg-primary-600 text-white' : 'border-secondary-300 bg-white text-transparent'">
+                                    <button type="button" x-on:click="toggle(column.key)" x-bind:aria-checked="isVisible(column.key)" x-bind:aria-label="column.title" role="checkbox" class="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-secondary-300 text-transparent transition hover:border-primary-500" x-bind:class="{ 'border-primary-600 bg-primary-600 text-white': isVisible(column.key), 'bg-white': !isVisible(column.key) }">
                                         <x-icon name="check" class="h-3.5 w-3.5" />
                                         <span class="sr-only" x-text="isVisible(column.key) ? '{{ __('Active') }}' : '{{ __('Hidden') }}'"></span>
                                     </button>
@@ -115,7 +116,7 @@
                                         <span class="truncate font-medium text-secondary-800" x-text="column.title"></span>
                                     </label>
 
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold" x-bind:class="isVisible(column.key) ? 'bg-primary-100 text-primary-700' : 'bg-secondary-100 text-secondary-500'" x-text="isVisible(column.key) ? '{{ __('Active') }}' : '{{ __('Hidden') }}'"></span>
+                                    <span class="rounded-full bg-secondary-100 px-2 py-0.5 text-xs font-semibold text-secondary-500" x-bind:class="{ 'bg-primary-100 text-primary-700': isVisible(column.key) }" x-text="isVisible(column.key) ? '{{ __('Active') }}' : '{{ __('Hidden') }}'"></span>
                                 </div>
                             </template>
                         </div>
