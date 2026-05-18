@@ -8,7 +8,6 @@ use Exception;
 use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -20,7 +19,6 @@ use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Http\Controllers\FrontController;
 use WeblaborMx\Front\Http\Controllers\PageController;
-use WeblaborMx\Front\Jobs\FrontIndex;
 use WeblaborMx\Front\Livewire\ResourceImport;
 use WeblaborMx\Front\Livewire\ResourceIndex;
 
@@ -196,41 +194,17 @@ class FrontServiceProvider extends ServiceProvider
     {
         $actions = [];
 
-        $actions['index'] = Route::get('/', function () use ($front) {
-            $resource = $front::class;
-            $front = Front::makeResource($resource)->setSource('index');
-            Gate::authorize('viewAny', $front->getModel());
-
-            if (!in_array('index', $front->actions)) {
-                abort(403, 'This action is unauthorized.');
-            }
-
-            $response = $front->beforeRequest() ?: (new FrontIndex($front, $front->getBaseUrl()))->handle();
-
-            if (isResponse($response)) {
-                return $response;
-            }
-
-            return view('front::crud.livewire-index', compact('front', 'resource'));
-        })->name('');
+        $actions['index'] = Route::livewire('/', ResourceIndex::class)
+            ->defaults('front_resource', $front::class)
+            ->name('');
 
         $actions['create'] = Route::get('create', function () use ($controller) {
             return $controller->create();
         })->name('.create');
 
-        Route::get('import', function () use ($front) {
-            $resource = $front::class;
-            $front = Front::makeResource($resource)->setSource('index');
-            $updateFront = Front::makeResource($resource)->setSource('update');
-
-            Gate::authorize('viewAny', $front->getModel());
-
-            if (!$front->enable_import || !in_array('index', $front->actions) || !in_array('edit', $updateFront->actions) || !in_array('update', $updateFront->actions)) {
-                abort(403, __('This action is unauthorized.'));
-            }
-
-            return view('front::crud.livewire-import', compact('front', 'resource'));
-        })->name('.import');
+        Route::livewire('import', ResourceImport::class)
+            ->defaults('front_resource', $front::class)
+            ->name('.import');
 
         Route::post('/', function (Request $request) use ($controller) {
             return $controller->store($request);

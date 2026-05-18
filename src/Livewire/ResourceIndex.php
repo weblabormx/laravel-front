@@ -28,9 +28,9 @@ class ResourceIndex extends Component
     public $show_columns = false;
     public $filters = [];
 
-    public function mount(string $resource): void
+    public function mount(?string $resource = null): void
     {
-        $this->resource = $resource;
+        $this->resource = $this->routeResource($resource);
         $front = $this->front();
         $this->sort = request()->get('sort', $front->defaultIndexSortColumn());
         $this->direction = request()->get('direction', $front->default_sort_direction) === 'asc' ? 'asc' : 'desc';
@@ -372,6 +372,26 @@ class ResourceIndex extends Component
 
     public function render()
     {
-        return view('front::livewire.resource-index');
+        $view = view('front::livewire.resource-index');
+
+        return $this->isPageComponentRoute()
+            ? $view->extends('front::layout')->section('content')
+            : $view;
+    }
+
+    private function routeResource(?string $resource): string
+    {
+        $resource = $resource ?? request()->route()?->defaults['front_resource'] ?? null;
+
+        if (is_null($resource)) {
+            abort(404);
+        }
+
+        return $resource;
+    }
+
+    private function isPageComponentRoute(): bool
+    {
+        return !is_null(request()->route()?->getAction('livewire_component'));
     }
 }

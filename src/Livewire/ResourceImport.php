@@ -30,9 +30,9 @@ class ResourceImport extends Component
     public $import_sheet_index = 0;
     public $analyzed = false;
 
-    public function mount(string $resource): void
+    public function mount(?string $resource = null): void
     {
-        $this->resource = $resource;
+        $this->resource = $this->routeResource($resource);
         $front = $this->front();
 
         $this->authorizeImport($front);
@@ -343,6 +343,26 @@ class ResourceImport extends Component
 
     public function render()
     {
-        return view('front::livewire.resource-import');
+        $view = view('front::livewire.resource-import');
+
+        return $this->isPageComponentRoute()
+            ? $view->extends('front::layout')->section('content')
+            : $view;
+    }
+
+    private function routeResource(?string $resource): string
+    {
+        $resource = $resource ?? request()->route()?->defaults['front_resource'] ?? null;
+
+        if (is_null($resource)) {
+            abort(404);
+        }
+
+        return $resource;
+    }
+
+    private function isPageComponentRoute(): bool
+    {
+        return !is_null(request()->route()?->getAction('livewire_component'));
     }
 }
