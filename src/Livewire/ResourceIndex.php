@@ -351,7 +351,11 @@ class ResourceIndex extends Component
         $front = $this->front();
         $columns = [];
 
-        foreach ($front->indexFields() as $index => $field) {
+        foreach ($front->configurableColumnFields() as $index => $field) {
+            if (!$field->show_on_index) {
+                continue;
+            }
+
             $columns[] = $front->indexColumnKey($field, $index);
         }
 
