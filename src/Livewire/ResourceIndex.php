@@ -31,7 +31,7 @@ class ResourceIndex extends Component
     {
         $this->resource = $this->routeResource($resource);
         $front = $this->front();
-        $this->sort = request()->get('sort', $front->defaultIndexSortColumn());
+        $this->sort = request()->get('sort');
         $this->direction = request()->get('direction', $front->default_sort_direction) === 'asc' ? 'asc' : 'desc';
         $this->filters = $this->initialFilters($front);
 
@@ -62,12 +62,21 @@ class ResourceIndex extends Component
             return;
         }
 
-        if ($this->sort === $column) {
-            $this->direction = $this->direction === 'asc' ? 'desc' : 'asc';
-        } else {
+        if ($this->sort !== $column) {
             $this->sort = $column;
             $this->direction = 'asc';
+
+            return;
         }
+
+        if ($this->direction === 'asc') {
+            $this->direction = 'desc';
+
+            return;
+        }
+
+        $this->sort = null;
+        $this->direction = $front->default_sort_direction === 'asc' ? 'asc' : 'desc';
     }
 
     public function toggleColumn($column): void
