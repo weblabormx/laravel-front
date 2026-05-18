@@ -9,26 +9,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use WeblaborMx\Front\Facades\Front;
-use WeblaborMx\Front\Inputs\BelongsTo as BelongsToInput;
-use WeblaborMx\Front\Inputs\ID as IDInput;
-use WeblaborMx\Front\Traits\HasActions;
-use WeblaborMx\Front\Traits\HasBreadcrumbs;
-use WeblaborMx\Front\Traits\HasCards;
-use WeblaborMx\Front\Traits\HasFilters;
-use WeblaborMx\Front\Traits\HasInputs;
-use WeblaborMx\Front\Traits\HasLenses;
-use WeblaborMx\Front\Traits\HasLinks;
-use WeblaborMx\Front\Traits\HasMassiveEditions;
-use WeblaborMx\Front\Traits\HasPermissions;
-use WeblaborMx\Front\Traits\IsValidated;
-use WeblaborMx\Front\Traits\ResourceHelpers;
-use WeblaborMx\Front\Traits\Sourceable;
+use WeblaborMx\Front\{Facades\Front, Inputs\BelongsTo as BelongsToInput, Inputs\ID as IDInput, Traits};
 
 abstract class Resource
 {
-    use HasActions, HasBreadcrumbs, HasCards, HasFilters, HasInputs, HasLenses;
-    use HasLinks, HasMassiveEditions, HasPermissions, IsValidated, ResourceHelpers, Sourceable;
+    use Traits\HasInputs, Traits\HasActions, Traits\HasLinks, Traits\HasBreadcrumbs, Traits\HasFilters, Traits\Sourceable,
+        Traits\HasLenses, Traits\ResourceHelpers, Traits\IsValidated, Traits\HasPermissions, Traits\HasMassiveEditions, Traits\HasCards;
 
     public $base_url, $data, $label, $layout, $model, $object, $plural_label, $related_object, $search_title, $view_title;
     public $functions_values = [], $hide_columns = [], $ignore_if_null = [], $index_views = [];
