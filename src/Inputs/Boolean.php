@@ -48,6 +48,10 @@ class Boolean extends Input
             return null;
         }
 
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
         return $value == $this->true_value ? 1 : 0;
     }
 
