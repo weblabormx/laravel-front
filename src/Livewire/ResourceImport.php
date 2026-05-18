@@ -92,17 +92,20 @@ class ResourceImport extends Component
         $this->authorizeImport($this->front());
         $this->validateImportFile();
 
-        if (!$this->analyzed) {
-            $this->analyzeImport();
-        }
-
-        if (!$this->canImport()) {
-            return;
-        }
-
         $file = null;
         try {
             $file = $this->localImportFile();
+            $this->extractHeadings($file['path']);
+            $this->import_preview = $this->buildImportPreview();
+            $this->import_extra_headings = $this->buildExtraHeadings();
+            $this->import_structure_errors = $this->buildImportStructureErrors();
+            $this->import_summary = null;
+            $this->analyzed = true;
+
+            if (!$this->canImport()) {
+                return;
+            }
+
             $import = new Importer($this->resource, $this->importColumnKeys(), $this->import_sheet_index);
             Excel::import($import, $file['path']);
         } catch (Throwable $throwable) {
