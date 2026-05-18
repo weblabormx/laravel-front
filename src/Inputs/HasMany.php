@@ -10,9 +10,7 @@ use WeblaborMx\Front\Traits\InputRelationship;
 
 class HasMany extends Input
 {
-    use InputWithActions;
-    use InputWithLinks;
-    use InputRelationship;
+    use InputWithActions, InputWithLinks, InputRelationship;
 
     public $is_input = false;
     public $show_on_edit = false;
@@ -20,6 +18,7 @@ class HasMany extends Input
     public $show_on_index = false;
     public $index_view = 'front::crud.partial-index';
     public $show_filters = false;
+    public $titleWasSet = false;
     public $front;
     public $relationship;
     public $massive_edit_link;
@@ -30,16 +29,13 @@ class HasMany extends Input
         $this->column = $column;
         $this->source = $source;
         if (!is_null($title)) {
+            $this->titleWasSet = true;
             $this->title = $title;
             $this->relationship = Str::snake(Str::plural($this->title));
         } else {
             $this->title = $this->front->plural_label;
             $this->relationship = Str::snake(Str::plural(class_basename(get_class($this->front))));
         }
-		if (!method_exists($this->front->model, $this->relationship)) {
-			$this->relationship = Str::camel($this->relationship);
-		}
-
         $this->create_link = $this->front->getBaseUrl() . '/create';
         $this->show_before = $this->front->canIndex();
         $this->massive_edit_link = '';
@@ -53,6 +49,10 @@ class HasMany extends Input
 
     public function setResource($resource)
     {
+		if (! method_exists($resource->getModel(), $this->relationship)) {
+			$this->relationship = Str::camel($this->relationship);
+		}
+
         // Get column name
         if (is_null($this->column)) {
             $relation = $this->relationship;

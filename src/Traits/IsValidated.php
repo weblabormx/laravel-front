@@ -65,6 +65,6 @@ trait IsValidated
         $column = str_replace('[', '.', $column);
         $column = str_replace(']', '', $column);
         $column = trim($column, '.');
-        return __($column);
+        return $column;
     }
 }

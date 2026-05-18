@@ -9,10 +9,11 @@ class Boolean extends Input
 
     public function form()
     {
+        $value = $this->getDefaultValue();
         return html()
             ->checkbox(
-                $this->column,
-                !is_null($this->default_value) ? $this->default_value == $this->true_value : null,
+                $this->getColumn(),
+                !is_null($value) ? $value == $this->true_value : null,
                 $this->true_value
             );
     }
@@ -20,7 +21,9 @@ class Boolean extends Input
     public function getValue($object)
     {
         $value = parent::getValue($object);
-        $value = $value === '--' ? false : $value;
+        if($value === '--') {
+            return $value;
+        }
         if ($this->source == 'index') {
             if ($value) {
                 return '<span style="color: #2cbb7d;">✔</span>';
@@ -47,9 +50,11 @@ class Boolean extends Input
 
     public function processData($data)
     {
+        $data = collect($data)->dot();
         if (!isset($data[$this->column])) {
             $data[$this->column] = $this->false_value;
         }
+        $data = $data->undot()->all();
         return $data;
     }
 }

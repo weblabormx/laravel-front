@@ -11,21 +11,42 @@ trait HasFilters
         return [];
     }
 
+    public function cachedFilters()
+    {
+        return cache()->store('array')->rememberForever('filters_' . static::class, function () {
+            return $this->filters();
+        });
+    }
+
     public function visibleFilters()
     {
-        return collect($this->filters())->where('visible', true);
+        return collect($this->cachedFilters())->where('visible', true);
     }
 
     public function getFilters()
     {
         $search_filter = $this->getDefaultSearchFilter();
-        $filters = $this->filters();
+        $filters = $this->cachedFilters();
         $filters[] = new $search_filter();
         return collect($filters)->filter(function ($item) {
             return $item->show;
         })->map(function ($item) {
             return $item->setResource($this);
         });
+    }
+
+    public function getFilterInputs()
+    {
+        return $this->getFilters()->map(function ($item) {
+            return $item->field();
+        })->flatten();
+    }
+
+    public function hasFilters()
+    {
+        return $this->getFilterInputs()->filter(function($item) {
+            return $item->show_on_filter;
+        })->count() > 0;
     }
 
     public function getDefaultSearchFilter()

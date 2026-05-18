@@ -18,6 +18,7 @@
         "laracasts/flash": ">=3",
         "laravel/framework": ">5.5",
         "opis/closure": "^3.1",
+        "symfony/dom-crawler": "^7.3",
         "weblabormx/laravel-html": "^1",
         "weblabormx/file-modifier": "*"
     },
@@ -36,7 +37,10 @@
         "laravel": {
             "providers": [
                 "WeblaborMx\\Front\\FrontServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Front": "WeblaborMx\\Front\\Facades\\Front"
+            }
         }
     },
     "config": {

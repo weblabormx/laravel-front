@@ -37,7 +37,7 @@ class ImageCropper extends Input
         $html = '<img src="' . $this->image . '" id="' . $id . '" style="max-width: none !important;" />';
 
         $html .= html()
-            ->hidden($this->column, $this->default_value)
+            ->hidden($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
 
         if (isset($this->handler)) {

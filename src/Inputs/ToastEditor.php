@@ -10,24 +10,41 @@ class ToastEditor extends Input
     public bool $dontTrim = false;
     public bool $hideModeSwitch = false;
     public bool $darkMode = false;
+    public bool $hideImage = false;
+    public bool $hideLink = false;
+    public bool $hideTable = false;
 
     public function form()
     {
-        $bools = \array_filter([
+        $attributes = collect([
             'data-no-trim' => $this->dontTrim,
             'data-hide-switch' => $this->hideModeSwitch,
             'data-dark' => $this->darkMode,
+            'data-hide-image' => $this->hideImage,
+            'data-hide-link' => $this->hideLink,
+            'data-hide-table' => $this->hideTable,
+        ])->filter(function($value) {
+            return $value;
+        })->merge([
+            'data-type' => 'toast-editor',
+            'data-height' => "{$this->height}px",
+            'data-preview' => $this->previewStyle,
+            'data-lang' => $this->lang,
         ]);
 
-        return \html()
-            ->textarea($this->column, $this->default_value)
-            ->attributes([
-                'data-type' => 'toast-editor',
-                'data-height' => "{$this->height}px",
-                'data-preview' => $this->previewStyle,
-                'data-lang' => $this->lang,
-                ...$bools
-            ]);
+        return html()
+            ->textarea($this->getColumn(), $this->getDefaultValue())
+            ->attributes($attributes->all());
+    }
+
+    public function getValue($object)
+    {
+        $value = parent::getValue($object);
+        if ($this->lang == 'json') {
+            $value = json_decode($value);
+            $value = json_encode($value, JSON_PRETTY_PRINT);
+        }
+        return markdownToHtml($value);
     }
 
     public function setHeight($height = 500)
@@ -75,6 +92,24 @@ class ToastEditor extends Input
     public function markdown()
     {
         $this->setLang('markdown');
+        return $this;
+    }
+
+    public function hideImage(bool $enable = true)
+    {
+        $this->hideImage = $enable;
+        return $this;
+    }
+
+    public function hideLink(bool $enable = true)
+    {
+        $this->hideLink = $enable;
+        return $this;
+    }
+
+    public function hideTable(bool $enable = true)
+    {
+        $this->hideTable = $enable;
         return $this;
     }
 }

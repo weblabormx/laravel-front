@@ -7,7 +7,7 @@ use WeblaborMx\Front\Traits\InputVisibility;
 use WeblaborMx\Front\Traits\InputSetters;
 use WeblaborMx\Front\Traits\InputRules;
 use WeblaborMx\Front\Traits\WithWidth;
-use Illuminate\Support\Str;
+use Illuminate\Support\{Arr, Str};
 
 class Input implements Htmlable, \Stringable
 {
@@ -21,14 +21,9 @@ class Input implements Htmlable, \Stringable
     public $title;
     public $set_title_executed = false;
     public $needs_to_be_on_panel = true;
-    public $column;
-    public $extra;
-    public $source;
-    public $value;
-    public $size;
+    public $column, $extra, $source, $value, $size, $attributes, $format;
     public $input_formatted = true;
-    public $attributes;
-    public $format;
+    public $show_on_filter = true;
 
     public function __construct($title = null, $column = null, $extra = null, $source = null)
     {
@@ -83,15 +78,7 @@ class Input implements Htmlable, \Stringable
         if (!is_string($column) && is_callable($column)) {
             $return = $column($object);
         } elseif (Str::contains($column, '.')) {
-            $return = collect(explode('.', $column))->reduce(function ($carry, $item) use ($object) {
-                if (isset($carry[$item])) {
-                    return $carry[$item];
-                }
-                if (is_object($carry) && isset($carry->$item)) {
-                    return $carry?->$item;
-                }
-                return null;
-            }, $object);
+            $return = Arr::get($object, $column);
         } else {
             $return = $object?->$column;
         }
@@ -141,6 +128,12 @@ class Input implements Htmlable, \Stringable
         $column = $explode[0];
         $key = $explode[1];
         return "{$column}[{$key}]";
+    }
+
+    public function getDefaultValue()
+    {
+        $column = $this->getColumn();
+        return $this->default_value ?? request()->$column;
     }
 
     public function form()
@@ -198,7 +191,7 @@ class Input implements Htmlable, \Stringable
 
     public function massiveSize($size = null)
     {
-        if (\Cache::store('array')->get('is_massive') !== true) {
+        if (cache()->store('array')->get('is_massive') !== true) {
             return $this;
         }
         return $this->size($size);
@@ -260,7 +253,7 @@ class Input implements Htmlable, \Stringable
     {
         return;
     }
-    
+
     /* -----------
      * Internal
      ----------- */
@@ -281,24 +274,24 @@ class Input implements Htmlable, \Stringable
     protected function castReturnValue(mixed $return): ?string
     {
         // Prevents model `$casts` exceptions
-		// PHP 7.1 compatible
-		if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
-			if (is_scalar($return)) {
-				$return = strval($return);
-			} else if (enum_exists($return::class)) {
-				$return = $return->value ?? $return->name;
-			} else if (is_array($return)) {
-				$return = json_encode($return);
-			} else if (gettype($return) === 'object') {
-				if (method_exists($return, '__toString')) {
-					$return = $return->__toString();
-				} else if ($return instanceof \BackedEnum) {
-					$return = $return->value;
-				} else if ($return instanceof \JsonSerializable) {
-					$return = json_encode($return);
-				}
-			}
-		}
+        // PHP 7.1 compatible
+        if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
+            if (is_scalar($return)) {
+                $return = strval($return);
+            } else if (is_array($return)) {
+                $return = json_encode($return);
+            } else if (gettype($return) === 'object') {
+                if (method_exists($return, '__toString')) {
+                    $return = $return->__toString();
+                } else if ($return instanceof \BackedEnum) {
+                    $return = $return->value;
+                } else if ($return instanceof \UnitEnum) {
+                    $return = $return->name;
+                } else if ($return instanceof \JsonSerializable) {
+                    $return = json_encode($return);
+                }
+            }
+        }
 
         return $return;
     }

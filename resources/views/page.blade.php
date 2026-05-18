@@ -32,7 +32,7 @@
                         {!! $button->form() !!}
                     @endforeach
             </div>
-            <div class="p-5 border-t">
+            <div class="p-5 border-t border-gray-200">
                 <div>
                     @foreach ($page->allFields() as $field)
                         {!! $field->html() !!}

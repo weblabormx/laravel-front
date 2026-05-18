@@ -6,7 +6,7 @@
         {{ $helper->totals() }}
         {{ $helper->filters() }}
     </div>
-    <div class="overflow-x-auto -mx-4 ring-1 ring-black ring-opacity-5 shadow sm:-mx-6 md:mx-0 md:rounded-lg" style="{{ $style ?? '' }}">
+    <div class="overflow-x-auto -mx-4 shadow sm:-mx-6 md:mx-0 md:rounded-lg" style="{{ $style ?? '' }}">
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
                 <tr>
@@ -47,7 +47,7 @@
         </div>
     @endif
 @else
-    <div class="py-20 mt-4 text-center text-gray-500 bg-white ring-1 ring-black ring-opacity-5 md:rounded-lg">
+    <div class="py-20 mt-4 text-center text-gray-500 bg-white md:rounded-lg">
         {{ __('No data to show') }}
     </div>
 @endif

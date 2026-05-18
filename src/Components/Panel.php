@@ -8,8 +8,7 @@ use WeblaborMx\Front\Traits\InputWithLinks;
 
 class Panel extends Component
 {
-    use InputWithActions;
-    use InputWithLinks;
+    use InputWithActions, InputWithLinks;
 
     public $is_panel = true;
     public $description;

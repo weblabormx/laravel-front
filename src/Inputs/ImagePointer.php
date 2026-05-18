@@ -16,7 +16,7 @@ class ImagePointer extends Input
         $html = '<img src="' . $this->image . '" id="' . $id . '" width="' . $this->width . ';" />';
 
         $html .= html()
-            ->hidden($this->column, $this->default_value)
+            ->hidden($this->getColumn(), $this->getDefaultValue())
             ->attributes($this->attributes);
 
         return $html;

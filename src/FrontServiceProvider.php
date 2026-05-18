@@ -3,20 +3,19 @@
 namespace WeblaborMx\Front;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\AliasLoader;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use WeblaborMx\Front\Http\Controllers\PageController;
 use Opis\Closure\SerializableClosure;
+use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Console\Commands\CreateResource;
 use WeblaborMx\Front\Console\Commands\CreatePage;
 use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Console\Commands\CreateFilter;
-use WeblaborMx\Front\Http\Controllers\FrontController;
-use Illuminate\Http\Request;
-use WeblaborMx\Front\ButtonManager;
 use WeblaborMx\Front\Facades\Front;
+use WeblaborMx\Front\Http\Controllers\FrontController;
+use WeblaborMx\Front\Http\Controllers\PageController;
 use WeblaborMx\Front\ThumbManager;
 
 class FrontServiceProvider extends ServiceProvider
@@ -32,16 +31,9 @@ class FrontServiceProvider extends ServiceProvider
             define('WLFRONT_PATH', realpath(__DIR__ . '/../'));
         }
 
+        $this->loadMacros();
         $this->registerFront();
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CreateResource::class,
-                CreatePage::class,
-                Install::class,
-                CreateFilter::class
-            ]);
-        }
+        $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
     }
 
     /**
@@ -51,40 +43,44 @@ class FrontServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        
         $this->publishes([__DIR__ . '/../config/front.php' => config_path('front.php')], 'config');
         $this->publishes([
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/front'),
         ]);
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
-
+        
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
-        $this->registerRoutes();
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
         $this->registerBladeDirectives();
         SerializableClosure::addSecurityProvider(new SecurityProvider());
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateResource::class,
+                CreatePage::class,
+                Install::class,
+                CreateFilter::class
+            ]);
+        }
+
+        // Registrar directiva @easyJsLibrary
+        Blade::directive('easyJsLibrary', function () {
+            return <<<'EOT'
+                <?php if(config('front.include_jquery')): ?>
+                    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+                <?php endif; ?>
+                <script type="text/javascript" src="https://weblabormx.github.io/Easy-JS-Library/library/script.js"></script>
+                EOT;
+        });
     }
 
     /**
-     * Register Front Facade
+     * Load the custom route macros
      *
      * @return void
      */
-    protected function registerFront()
-    {
-        $this->app->singleton(ButtonManager::class);
-        $this->app->singleton(ThumbManager::class);
-        $this->app->singleton('Front', Front::class);
-        $loader = AliasLoader::getInstance();
-
-        $loader->alias('Front', Front::class);
-    }
-
-    /**
-     * Register the package routes.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
+    protected function loadMacros()
     {
         $provider = $this;
         Route::macro('front', function ($model) use ($provider) {
@@ -121,8 +117,18 @@ class FrontServiceProvider extends ServiceProvider
                 Route::delete('/', fn() =>  app(PageController::class)->page($model, 'delete'))->name('.delete');
             });
         });
+    }
 
-        Route::post('api/laravel-front/upload-image', '\WeblaborMx\Front\Http\Controllers\ToolsController@uploadImage');
+    /**
+     * Register Front Facade
+     *
+     * @return void
+     */
+    protected function registerFront()
+    {
+        $this->app->singleton(ButtonManager::class);
+        $this->app->singleton(ThumbManager::class);
+        $this->app->singleton('Front', Front::class);
     }
 
     /**

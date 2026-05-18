@@ -63,18 +63,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Hidden default value
-    |--------------------------------------------------------------------------
-    |
-    | If you want to get the exactly value added on Hidden::make('The Value') set "title" (In this case it will use the column 'The Value')
-    | Otherwise put "value" to convert to lower case and Snake case, example: "the_value" instead
-    |
-    */
-
-    'hidden_value' => 'column',
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Date Format
     |--------------------------------------------------------------------------
     |
@@ -167,7 +155,7 @@ return [
     */
 
     'default_input_attributes' => [
-        'class' => 'mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+        'class' => 'mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm bg-white focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm'
     ],
 
     /* 
@@ -181,6 +169,27 @@ return [
     */
 
     'datetime_wrap' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Include jQuery
+    |--------------------------------------------------------------------------
+    | If you want to include jQuery on the layout
+    | Useful if you already loaded jquery on your app layout
+    |*/
+
+    'include_jquery' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scripts Stack
+    |--------------------------------------------------------------------------
+    | The stack where you want to load the scripts
+    | on your layout, remember to add @stack('scripts-stack-name')
+    | on your layout
+    |*/
+    
+    'scripts_stack' => 'scripts-footer',
 
     /*
     |--------------------------------------------------------------------------

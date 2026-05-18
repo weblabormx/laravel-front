@@ -145,6 +145,12 @@ class FrontController extends Controller
         if (isResponse($response)) {
             return $response;
         }
+
+        $redirect = $front->updateRedirectionUrl($response);
+        if($redirect) {
+            return redirect($redirect);
+        }
+        
         // Redirect
         return back();
     }

@@ -10,7 +10,7 @@ class Password extends Input
     public function form()
     {
         return html()
-            ->password($this->column)
+            ->password($this->getColumn())
             ->attributes($this->attributes);
     }
 }

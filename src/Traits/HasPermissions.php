@@ -8,22 +8,29 @@ trait HasPermissions
 {
     public function canIndex()
     {
-        return Gate::allows('viewAny', $this->getModel()) && in_array('index', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canIndex:'.$this->getModel(), function() {
+            return in_array('index', $this->actions) && Gate::allows('viewAny', $this->getModel());
+        });
     }
 
     public function canIndexDeleted()
     {
-        if(!Gate::allows('viewDeleted', $this->getModel()) || !in_array('index', $this->actions)) {
-            return false;
-        }
-        $model = $this->getModel();
-        $model = new $model;
-        return method_exists($model, 'trashed');
+        return cache()->store('array')->rememberForever('HasPermission:canIndexDeleted:'.$this->getModel(), function() {
+            if(!in_array('destroy', $this->actions) || !Gate::allows('viewDeleted', $this->getModel()) || !in_array('index', $this->actions)) {
+                return false;
+            }
+            $model = $this->getModel();
+            $model = new $model;
+            return method_exists($model, 'trashed');
+        });
     }
 
     public function canCreate()
     {
-        return Gate::allows('create', $this->getModel()) && in_array('create', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canCreate:'.$this->getModel(), function() {
+            return in_array('create', $this->actions) && Gate::allows('create', $this->getModel());
+        });
+        
     }
 
     public function canShow($object = null)
@@ -31,7 +38,10 @@ trait HasPermissions
         if (is_null($object)) {
             $object = $this->object;
         }
-        return Gate::allows('view', $object) && in_array('show', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canShow:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
+            return in_array('show', $this->actions) && Gate::allows('view', $object);
+        });
+        
     }
 
     public function canUpdate($object = null)
@@ -39,7 +49,9 @@ trait HasPermissions
         if (is_null($object)) {
             $object = $this->object;
         }
-        return Gate::allows('update', $object) && in_array('edit', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canUpdate:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
+            return in_array('edit', $this->actions) && Gate::allows('update', $object);
+        });
     }
 
     public function canRemove($object = null)
@@ -47,7 +59,9 @@ trait HasPermissions
         if (is_null($object)) {
             $object = $this->object;
         }
-        return Gate::allows('delete', $object) && in_array('destroy', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canRemove:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
+            return in_array('destroy', $this->actions) && Gate::allows('delete', $object);
+        });
     }
 
     public function canRestore($object = null)
@@ -55,7 +69,9 @@ trait HasPermissions
         if (is_null($object)) {
             $object = $this->object;
         }
-        return Gate::allows('restore', $object) && in_array('index', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canRestore:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
+            return in_array('index', $this->actions) && Gate::allows('restore', $object);
+        });
     }
 
     public function canForceDelete($object = null)
@@ -63,6 +79,8 @@ trait HasPermissions
         if (is_null($object)) {
             $object = $this->object;
         }
-        return Gate::allows('forceDelete', $object) && in_array('destroy', $this->actions);
+        return cache()->store('array')->rememberForever('HasPermission:canForceDelete:'.$this->getModel().':'.$object->getKey(), function() use ($object) {
+            return in_array('destroy', $this->actions) && Gate::allows('forceDelete', $object);
+        });
     }
 }
