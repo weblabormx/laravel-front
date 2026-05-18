@@ -71,7 +71,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
                 continue;
             } catch (Throwable $throwable) {
                 report($throwable);
-                $this->addError($rowIndex, __('The row could not be imported.'));
+                $this->addError($rowIndex, $this->errorMessage($throwable));
 
                 continue;
             }
@@ -101,7 +101,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
                 $this->addError($rowIndex, collect($exception->errors())->flatten()->implode(' '));
             } catch (Throwable $throwable) {
                 report($throwable);
-                $this->addError($rowIndex, __('The row could not be imported.'));
+                $this->addError($rowIndex, $this->errorMessage($throwable));
             } finally {
                 app()->instance('request', $originalRequest);
             }
@@ -207,5 +207,14 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
             'row' => $rowIndex + 2,
             'message' => $message,
         ];
+    }
+
+    private function errorMessage(Throwable $throwable): string
+    {
+        if (config('app.debug')) {
+            return $throwable->getMessage();
+        }
+
+        return __('The row could not be imported.');
     }
 }
