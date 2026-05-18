@@ -5,17 +5,14 @@ namespace WeblaborMx\Front\Inputs;
 use Illuminate\Support\Str;
 use WeblaborMx\Front\Facades\Front;
 use Opis\Closure\SerializableClosure;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use WeblaborMx\Front\Traits\InputRelationship;
 
 class BelongsTo extends Input
 {
     use InputRelationship;
 
-    public $relation;
-    public $model_name;
-    public $relation_front;
-    public $search_field;
-    public $empty_title;
+    public $relation, $model_name, $relation_front, $search_field, $empty_title;
     public $searchable = false;
     public $show_placeholder = true;
 
@@ -60,6 +57,7 @@ class BelongsTo extends Input
         } else {
             $this->column = str_replace(' ', '_', strtolower($this->column));
         }
+
         return parent::setResource($resource);
     }
 
@@ -78,7 +76,45 @@ class BelongsTo extends Input
         if (!isset($value)) {
             return '--';
         }
+
         return $value;
+    }
+
+    public function getExcelValue($object)
+    {
+        $relation = $this->relation;
+        $related = $object?->$relation;
+
+        if (!is_object($related)) {
+            return $this->getRawValue($object);
+        }
+
+        $title_field = $this->search_field ?? $this->relation_front->search_title;
+        $title = $related->$title_field ?? null;
+
+        if (is_null($title) || $title === '') {
+            return $related->getKey();
+        }
+
+        return $related->getKey() . ' - ' . $title;
+    }
+
+    public function parseExcelValue($value)
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        if (preg_match('/^\\s*(.+?)\\s+-\\s+.+$/', $value, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return $value;
+    }
+
+    public function excelFormat(): ?string
+    {
+        return $this->excel_type ?? NumberFormat::FORMAT_TEXT;
     }
 
     public function form()
@@ -101,6 +137,7 @@ class BelongsTo extends Input
                 $serialized = serialize($wrapper);
                 $serialized = json_encode($serialized);
             }
+
             return Autocomplete::make($this->title, $this->column)
                 ->setUrl($relation_front->getBaseUrl() . '/search?filter_query=' . $serialized)
                 ->setText($title)
@@ -139,6 +176,7 @@ class BelongsTo extends Input
             ->setEmptyTitle($this->empty_title)
             ->withMeta($this->attributes)
             ->setPlaceholder($this->show_placeholder);
+
         return $select->form();
     }
 

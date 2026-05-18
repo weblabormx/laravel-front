@@ -7,8 +7,11 @@ use Illuminate\Support\Str;
 trait InputSetters
 {
     public $default_value = null;
+
     public $conditional;
+
     public $help;
+
     public $resource;
     public $display_using;
     public $link, $link_target;
@@ -18,10 +21,14 @@ trait InputSetters
     public $default_value_force = false;
     public $hide = false;
     public $extra_data = [];
+    public $sort_column = null, $sort_callback = null, $sortable = null;
+    public $exportable = null, $importable = null, $import_callback = null;
+    public $front_column_key = null, $excel_type = null;
 
     public function setData($column, $value)
     {
         $this->extra_data[$column] = $value;
+
         return $this;
     }
 
@@ -33,30 +40,42 @@ trait InputSetters
     public function setColumn($value)
     {
         $this->column = $value;
+
+        return $this;
+    }
+
+    public function setExcelType($value)
+    {
+        $this->excel_type = $value;
+
         return $this;
     }
 
     public function setBefore($value)
     {
         $this->form_before = $value;
+
         return $this;
     }
 
     public function setAfter($value)
     {
         $this->form_after = $value;
+
         return $this;
     }
 
     public function setSource($value)
     {
         $this->source = $value;
+
         return $this;
     }
 
     public function style($css)
     {
         $this->attributes['style'] = $css;
+
         return $this;
     }
 
@@ -72,6 +91,7 @@ trait InputSetters
         if (!is_null($link) && strlen($link) > 0) {
             $this->link = $link;
         }
+
         return $this;
     }
 
@@ -82,32 +102,91 @@ trait InputSetters
         } else {
             unset($this->attributes['disabled']);
         }
+
         return $this;
     }
 
-    public function sortable()
+    public function sortable($column = true)
     {
-        // Do nothing
+        $this->sortable = (bool) $column;
+
+        if (is_string($column) || is_callable($column)) {
+            $this->sort_column = $column;
+        }
+
+        return $this;
+    }
+
+    public function unsortable()
+    {
+        $this->sortable = false;
+
+        return $this;
+    }
+
+    public function sortUsing($callback)
+    {
+        $this->sortable = true;
+        $this->sort_callback = $callback;
+
+        return $this;
+    }
+
+    public function exportable($exportable = true)
+    {
+        $this->exportable = $exportable;
+
+        return $this;
+    }
+
+    public function unexportable()
+    {
+        $this->exportable = false;
+
+        return $this;
+    }
+
+    public function importable($importable = true)
+    {
+        $this->importable = $importable;
+
+        return $this;
+    }
+
+    public function unimportable()
+    {
+        $this->importable = false;
+
+        return $this;
+    }
+
+    public function importUsing($callback)
+    {
+        $this->importable = true;
+        $this->import_callback = $callback;
+
         return $this;
     }
 
     public function conditionalOld($column, $value)
     {
         // This work on form
-        $this->form_before = '<div data-type="conditional" data-cond-option="' . $column . '" data-cond-value="' . $value . '" style="' . $this->style_width() . '">';
+        $this->form_before = '<div data-type="conditional" data-cond-option="'.$column.'" data-cond-value="'.$value.'" style="'.$this->style_width().'">';
         $this->form_after = '</div>';
-        $this->conditional = $column . '=' . $value;
+        $this->conditional = $column.'='.$value;
+
         return $this;
     }
 
-	public function conditional($conditional)
-	{
-		// This work on form
-		$this->form_before = '<div data-type="conditional2" class="col-span-12" data-condition="' . $conditional . '" style="' . $this->style_width() . '">';
-		$this->form_after = '</div>';
-		$this->conditional = $conditional;
-		return $this;
-	}
+    public function conditional($conditional)
+    {
+        // This work on form
+        $this->form_before = '<div data-type="conditional2" class="col-span-12" data-condition="'.$conditional.'" style="'.$this->style_width().'">';
+        $this->form_after = '</div>';
+        $this->conditional = $conditional;
+
+        return $this;
+    }
 
     public function validateConditional($object)
     {
@@ -118,9 +197,9 @@ trait InputSetters
             })->all();
             $conditional = $this->conditional;
             foreach ($object as $key => $value) {
-                $conditional = str_replace($key . '=', '$object["' . $key . '"]=', $conditional);
+                $conditional = str_replace($key.'=', '$object["'.$key.'"]=', $conditional);
                 if (!Str::contains($conditional, '=')) {
-                    $conditional = str_replace($key, '$object["' . $key . '"] ?? false', $conditional);
+                    $conditional = str_replace($key, '$object["'.$key.'"] ?? false', $conditional);
                 }
             }
             try {
@@ -131,24 +210,28 @@ trait InputSetters
                 return false;
             }
         }
+
         return true;
     }
 
     public function center()
     {
         $this->data_classes = 'center';
+
         return $this;
     }
 
     public function help($help)
     {
         $this->help = $help;
+
         return $this;
     }
 
     public function displayUsing($display_using)
     {
         $this->display_using = $display_using;
+
         return $this;
     }
 
@@ -160,6 +243,7 @@ trait InputSetters
         } else {
             $this->resource = $resource;
         }
+
         return $this;
     }
 
@@ -167,24 +251,28 @@ trait InputSetters
     {
         $attributes = collect($this->attributes)->merge($attributes)->toArray();
         $this->attributes = $attributes;
+
         return $this;
     }
 
     public function placeholder($placeholder)
     {
         $this->attributes['placeholder'] = $placeholder;
+
         return $this;
     }
 
     public function addAttribute($key, $value)
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 
     public function withId($id)
     {
         $this->attributes['id'] = $id;
+
         return $this;
     }
 
@@ -198,12 +286,14 @@ trait InputSetters
             $value = $value();
         }
         $this->default_value = $value;
+
         return $this;
     }
 
     public function class($class)
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -215,18 +305,21 @@ trait InputSetters
     public function hideWhenValuesSet()
     {
         $this->hide = true;
+
         return $this;
     }
 
     public function renameAfter($value)
     {
         $this->rename_after = $value;
+
         return $this;
     }
 
     public function getValueFrom($value)
     {
         $this->get_value_from = $value;
+
         return $this;
     }
 
@@ -234,6 +327,7 @@ trait InputSetters
     {
         $this->renameAfter($value);
         $this->getValueFrom($value);
+
         return $this;
     }
 }

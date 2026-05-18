@@ -1,0 +1,80 @@
+<!-- This example requires Tailwind CSS v2.0+ -->
+@include('front::elements.breadcrumbs')
+
+<div class="mt-2 md:flex md:items-start md:justify-between">
+    <div class="min-w-0 flex-1">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">{{$front->plural_label}}</h2>
+    </div>
+    <div class="mt-4 flex shrink-0 flex-col items-start gap-3 md:mt-0 md:ml-4 md:items-end">
+        <div class="flex flex-wrap gap-2">
+            @foreach($front->getIndexLinks() as $button)
+                {!! $button->form() !!}
+            @endforeach
+        </div>
+    </div>
+</div>
+@if(isset($frontIndexComponent))
+    @include('front::livewire.column-preferences')
+@endif
+@if($front->hasFilters())
+    @php
+        $isLivewireIndex = isset($frontIndexComponent);
+        $activeFiltersCount = $isLivewireIndex
+            ? $frontIndexComponent->activeFiltersCount()
+            : $front->activeFiltersCount();
+    @endphp
+    <div x-data="{ filterShow: false }">
+        <div class="mt-6 flex items-center justify-between gap-4 font-bold">
+            <div>
+                <span class="uppercase">{{ __('Filter') }} {{ $front->plural_label }}</span>
+                <span class="rounded bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold mx-1" data-filter-count="{{ $activeFiltersCount }}">{{ $activeFiltersCount }}</span>
+                <x-icon name="funnel" class="inline w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700" x-on:click="filterShow = !filterShow" />
+            </div>
+            @if(isset($frontIndexComponent))
+                @include('front::livewire.index-actions')
+            @endif
+        </div>
+        @if($isLivewireIndex)
+            <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
+                @foreach($front->getFilters() as $filter)
+                    @foreach($front->filterInputs($filter) as $filterInput)
+                        @php
+                            $filterInput->setColumn($filterInput->column ?: $filter->slug);
+                            $filterInput->addAttribute('spinner', true);
+                            $filterInput->addAttribute('wire:model.live.debounce.500ms', 'filters.'.$frontIndexComponent->filterModelKey($filter->slug));
+                        @endphp
+                        {!! $filterInput->formHtml() !!}
+                    @endforeach
+                @endforeach
+            </div>
+        @else
+            {{ html()->formWithDefaults(request()->all(), 'GET', request()->url())->open() }}
+                <div class="mt-2 mb-4 flex flex-col sm:flex-row flex-wrap gap-x-6 gap-y-2 bg-slate-50 p-4 border border-gray-200 rounded-lg" x-show="filterShow" x-transition>
+                    {{ html()->hidden($front->getCurrentViewRequestName()) }}
+                    @foreach($front->getFilterInputs() as $filter)
+                        {!! $filter->formHtml() !!}
+                    @endforeach
+                    <div>
+                        {{ html()->submit(__('Search'))->class('bg-primary-600 text-white px-4 rounded md:mt-6 py-2 cursor-pointer') }}
+                    </div>
+                </div>
+            {{ html()->closeFormWithDefaults() }}
+        @endif
+    </div>
+@elseif(isset($frontIndexComponent))
+    <div class="mt-4 flex justify-end">
+        @include('front::livewire.index-actions')
+    </div>
+@endif
+
+@if($front->getLenses()->count() > 1)
+    <div class="flex flex-wrap gap-3 items-center mt-6">
+        <h4 class="text-lg font-medium">Lenses</h4>
+        @foreach($front->getLenses() as $button)
+            {!! $button->form() !!}
+        @endforeach
+    </div>
+@endif
+
+@include ('front::components.cards', ['cards' => $front->cards()])
+@include ($front->getCurrentView())

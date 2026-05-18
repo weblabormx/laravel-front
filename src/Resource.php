@@ -3,15 +3,17 @@
 namespace WeblaborMx\Front;
 
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use Illuminate\Routing\Route;
-use Illuminate\Support\Str;
-use WeblaborMx\Front\Traits;
 use Illuminate\Support\Arr;
-use WeblaborMx\Front\Facades\Front;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use WeblaborMx\Front\{Facades\Front, Inputs\BelongsTo as BelongsToInput, Inputs\ID as IDInput, Traits};
 
 abstract class Resource
 {
-    use Traits\HasInputs, Traits\HasActions,      Traits\HasLinks,    Traits\HasBreadcrumbs, Traits\HasFilters,         Traits\Sourceable,
+    use Traits\HasInputs, Traits\HasActions, Traits\HasLinks, Traits\HasBreadcrumbs, Traits\HasFilters, Traits\Sourceable,
         Traits\HasLenses, Traits\ResourceHelpers, Traits\IsValidated, Traits\HasPermissions, Traits\HasMassiveEditions, Traits\HasCards;
 
     public $base_url, $data, $label, $layout, $model, $object, $plural_label, $related_object, $search_title, $view_title;
@@ -24,6 +26,12 @@ abstract class Resource
     public $show_create_button_on_index = true;
     public $show_title = true;
     public $enable_massive_edition = false;
+    public $default_sort = null;
+    public $default_sort_direction = 'desc';
+    public $enable_index_sorting = true;
+    public $enable_column_preferences = true;
+    public $enable_export = true;
+    public $enable_import = true;
 
     public function __construct($source = null)
     {
@@ -50,9 +58,9 @@ abstract class Resource
             $this->index_views = [
                 'normal' => [
                     'icon' => 'fa fa-th-list',
-                    'title' => 'Normal',
-                    'view' => 'front::crud.partial-index'
-                ]
+                    'title' => __('Normal'),
+                    'view' => 'front::crud.partial-index',
+                ],
             ];
         }
         if (is_array($this->indexViews())) {
@@ -64,7 +72,7 @@ abstract class Resource
         $this->load();
     }
 
-    public function route(string $source = null): ?Route
+    public function route(?string $source = null): ?Route
     {
         return Front::routeOf($this, $source);
     }
@@ -76,6 +84,7 @@ abstract class Resource
     /**
      * Ran after authorization, but before
      * running any action for the resource.
+     *
      * @return mixed Return Response to hijack the request.
      */
     public function beforeRequest()
@@ -106,7 +115,7 @@ abstract class Resource
 
     public function indexQuery($query)
     {
-        return $query->latest();
+        return $query;
     }
 
     // Modify the results gotten on the query
@@ -182,6 +191,7 @@ abstract class Resource
     public function create($data)
     {
         $model = $this->getModel();
+
         return $model::create($data);
     }
 
@@ -199,10 +209,7 @@ abstract class Resource
     }
 
     // Change url for redirection after a update is done, if null we go back
-    public function updateRedirectionUrl($object)
-    {
-        return;
-    }
+    public function updateRedirectionUrl($object) {}
 
     // Change url for redirection after a delete is done
 
@@ -219,13 +226,13 @@ abstract class Resource
     {
         $class = $this->getModel();
         if (is_null($query)) {
-            $query = new $class();
+            $query = new $class;
         }
 
         // Get filters
         try {
             $filters = $this->getFilters();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $query;
         }
 
@@ -265,6 +272,350 @@ abstract class Resource
         return $query;
     }
 
+    public function applyIndexSorting($query)
+    {
+        $hasRequestedSort = request()->filled('sort');
+        $sort = $hasRequestedSort ? request()->get('sort') : $this->defaultIndexSortColumn();
+
+        if (($hasRequestedSort && !$this->enable_index_sorting) || !$sort) {
+            return $query;
+        }
+
+        $field = $this->sortableIndexFields()->get($sort);
+
+        if (is_null($field)) {
+            if ($hasRequestedSort || !is_string($sort)) {
+                return $query;
+            }
+
+            return $this->applyDefaultIndexSorting($query, $sort);
+        }
+
+        $defaultDirection = $this->default_sort_direction === 'asc' ? 'asc' : 'desc';
+        $direction = request()->filled('sort')
+            ? (request()->get('direction') === 'desc' ? 'desc' : 'asc')
+            : $defaultDirection;
+
+        if (is_callable($field->sort_callback)) {
+            $callback = $field->sort_callback;
+
+            return $callback($query, $direction, $field);
+        }
+
+        $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
+
+        $belongsToSortedQuery = !isset($field->sort_column)
+            ? $this->applyBelongsToIndexSorting($query, $field, $direction)
+            : null;
+
+        if (!is_null($belongsToSortedQuery)) {
+            $query = $belongsToSortedQuery;
+        } else {
+            $column = $field->sort_column ?? $field->column;
+
+            if (!is_string($column)) {
+                return $query;
+            }
+
+            $query = $query->orderBy($column, $direction);
+        }
+
+        $model = $this->getModel();
+        $model = new $model;
+        $key = $model->getQualifiedKeyName();
+
+        return $query->orderBy($key);
+    }
+
+    public function defaultIndexSortColumn(): ?string
+    {
+        if (is_string($this->default_sort) && $this->default_sort !== '') {
+            return $this->default_sort;
+        }
+
+        $model = $this->getModel();
+        $model = new $model;
+
+        return $model->getKeyName();
+    }
+
+    private function applyDefaultIndexSorting($query, string $sort)
+    {
+        $direction = $this->default_sort_direction === 'asc' ? 'asc' : 'desc';
+        $query = is_callable([$query, 'reorder']) ? $query->reorder() : $query;
+
+        return $query->orderBy($sort, $direction);
+    }
+
+    private function applyBelongsToIndexSorting($query, $field, string $direction)
+    {
+        $relation = $this->belongsToSortRelation($field);
+
+        if (is_null($relation)) {
+            return null;
+        }
+
+        $titleColumn = $this->belongsToSortTitleColumn($field, $relation);
+
+        if (is_null($titleColumn)) {
+            return null;
+        }
+
+        $relatedModel = $relation->getRelated();
+        $relatedQuery = $relatedModel->newQuery()
+            ->select($relatedModel->qualifyColumn($titleColumn))
+            ->whereColumn(
+                $relatedModel->qualifyColumn($relation->getOwnerKeyName()),
+                $relation->getQualifiedForeignKeyName()
+            )
+            ->limit(1);
+
+        return $query->orderBy($relatedQuery, $direction);
+    }
+
+    private function belongsToSortRelation($field): ?EloquentBelongsTo
+    {
+        $relationName = $this->belongsToSortRelationName($field);
+
+        if (is_null($relationName)) {
+            return null;
+        }
+
+        $model = $this->getModel();
+        $model = new $model;
+
+        if (!method_exists($model, $relationName)) {
+            return null;
+        }
+
+        $relation = $model->$relationName();
+
+        if (!$relation instanceof EloquentBelongsTo) {
+            return null;
+        }
+
+        return $relation;
+    }
+
+    private function belongsToSortRelationName($field): ?string
+    {
+        if ($field instanceof BelongsToInput) {
+            return $field->relation;
+        }
+
+        if (!is_string($field->column) || !Str::endsWith($field->column, '_id')) {
+            return null;
+        }
+
+        return Str::camel(Str::beforeLast($field->column, '_id'));
+    }
+
+    private function belongsToSortTitleColumn($field, EloquentBelongsTo $relation): ?string
+    {
+        if ($field instanceof BelongsToInput) {
+            $titleColumn = $field->search_field ?? $field->relation_front->search_title;
+
+            return $this->belongsToSortColumnExists($relation, $titleColumn) ? $titleColumn : null;
+        }
+
+        $resourceTitleColumn = $this->relatedResourceTitleColumn($relation);
+
+        if (!is_null($resourceTitleColumn)) {
+            return $resourceTitleColumn;
+        }
+
+        foreach (['name', 'title'] as $titleColumn) {
+            if ($this->belongsToSortColumnExists($relation, $titleColumn)) {
+                return $titleColumn;
+            }
+        }
+
+        return null;
+    }
+
+    private function relatedResourceTitleColumn(EloquentBelongsTo $relation): ?string
+    {
+        $relatedModel = get_class($relation->getRelated());
+
+        foreach (Front::getRegisteredResources() as $resourceClass) {
+            $resource = Front::makeResource($resourceClass);
+
+            if ($resource->getModel() !== $relatedModel) {
+                continue;
+            }
+
+            $titleColumn = $resource->search_title ?? $resource->title;
+
+            return $this->belongsToSortColumnExists($relation, $titleColumn) ? $titleColumn : null;
+        }
+
+        return null;
+    }
+
+    private function belongsToSortColumnExists(EloquentBelongsTo $relation, ?string $column): bool
+    {
+        return is_string($column)
+            && !Str::contains($column, ['.', '[', ']'])
+            && $relation->getRelated()->getConnection()->getSchemaBuilder()->hasColumn($relation->getRelated()->getTable(), $column);
+    }
+
+    public function sortableIndexFields()
+    {
+        return $this->configurableColumnFields()->filter(function ($field) {
+            if ($field->sortable === false) {
+                return false;
+            }
+
+            if ($field->sortable === true || is_callable($field->sort_callback)) {
+                return true;
+            }
+
+            $column = $field->sort_column ?? $field->column;
+
+            return is_string($column)
+                && !Str::contains($column, ['.', '[', ']']);
+        })->mapWithKeys(function ($field, $index) {
+            return [$this->indexColumnKey($field, $index) => $field];
+        });
+    }
+
+    public function indexColumnKey($field, $index = null)
+    {
+        if (is_string($field->column)) {
+            return $field->column;
+        }
+
+        return 'column_'.md5(get_class($field).':'.$field->title.':'.$index);
+    }
+
+    public function exportableIndexFields(array $columns)
+    {
+        $fields = $this->configurableIndexFieldsForColumns($columns)->filter(function ($field) {
+            return $field->exportable !== false;
+        });
+
+        return $this->withExcelIdField($fields);
+    }
+
+    public function importableIndexFields(array $columns = [])
+    {
+        $fields = count($columns) > 0
+            ? $this->configurableIndexFieldsForColumns($columns)
+            : $this->configurableIndexFields();
+        $model = $this->getModel();
+        $table = (new $model)->getTable();
+
+        return $fields->filter(function ($field) use ($table) {
+            if ($field->importable === false) {
+                return false;
+            }
+
+            if ($field->importable === true || is_callable($field->import_callback)) {
+                return true;
+            }
+
+            return is_string($field->column)
+                && !Str::contains($field->column, ['.', '[', ']'])
+                && $field->column !== $this->excelIdKeyName()
+                && Schema::hasColumn($table, $field->column);
+        });
+    }
+
+    public function excelIdKeyName(): string
+    {
+        $model = $this->getModel();
+        $model = new $model;
+
+        return $model->getKeyName();
+    }
+
+    public function excelIdHeading(): string
+    {
+        return 'ID';
+    }
+
+    public function excelIdHeadingKey(): string
+    {
+        return str($this->excelIdHeading())->slug('_')->toString();
+    }
+
+    public function excelIdField()
+    {
+        $field = IDInput::make(null, $this->excelIdKeyName())
+            ->setResource($this)
+            ->setSource('index');
+        $field->title = $this->excelIdHeading();
+        $field->front_column_key = $this->excelIdKeyName();
+
+        return $field;
+    }
+
+    public function excelHeadingForField($field): string
+    {
+        return $this->normalizeExcelHeading($field->title);
+    }
+
+    public function excelHeadingsForField($field): array
+    {
+        return collect([
+            $field->title,
+            $field->front_column_key,
+            $field->column,
+        ])->filter(function ($heading) {
+            return is_string($heading);
+        })->map(function ($heading) {
+            return $this->normalizeExcelHeading($heading);
+        })->unique()->values()->all();
+    }
+
+    public function normalizeExcelHeading($heading): string
+    {
+        return str($heading)->slug('_')->toString();
+    }
+
+    public function excelObjectForKey($key)
+    {
+        if (is_null($key) || $key === '') {
+            return null;
+        }
+
+        return $this->globalIndexQuery()->whereKey($key)->first();
+    }
+
+    public function processExcel(array $data, string $direction = 'import', $row = null, $object = null): array
+    {
+        return $data;
+    }
+
+    public function importData($data, $object = null, $row = null)
+    {
+        return $data;
+    }
+
+    private function withExcelIdField($fields)
+    {
+        $key = $this->excelIdKeyName();
+
+        return collect([$this->excelIdField()])
+            ->merge($fields->reject(function ($field) use ($key) {
+                return $field->column === $key;
+            }))
+            ->values();
+    }
+
+    public function configurableIndexFieldsForColumns(array $columns)
+    {
+        $fields = $this->configurableColumnFields()->map(function ($field, $index) {
+            $field->front_column_key = $this->indexColumnKey($field, $index);
+
+            return $field;
+        });
+
+        return collect($columns)->map(function ($column) use ($fields) {
+            return $fields->firstWhere('front_column_key', $column);
+        })->filter()->values();
+    }
+
     public function sourceIsForm()
     {
         return $this->source != 'index' && $this->source != 'show';
@@ -294,6 +645,7 @@ abstract class Resource
             } elseif (is_array($default) && !isset($default[$try])) {
                 $default = $default[0];
             }
+
             return [$filter->slug => $default ?? null];
         })->filter(function ($item) {
             return isset($item) && strlen($item);
@@ -302,6 +654,7 @@ abstract class Resource
         $clean_filters = $filters->mapWithKeys(function ($item, $key) {
             $key = str_replace('[', '', $key);
             $key = str_replace(']', '', $key);
+
             return [$key => $item];
         });
 
@@ -323,8 +676,47 @@ abstract class Resource
         // Generate the url to be redirected
         $filters['is_redirect'] = true;
         $url = request()->url();
-        $url .= '?' . http_build_query($filters->toArray());
+        $url .= '?'.http_build_query($filters->toArray());
+
         return $url;
+    }
+
+    public function activeFiltersCount(?array $values = null): int
+    {
+        $values ??= request()->all();
+        $count = 0;
+
+        foreach ($this->getFilters() as $filter) {
+            foreach ($this->filterInputs($filter) as $input) {
+                if (!$input->show_on_filter) {
+                    continue;
+                }
+
+                $value = $values[$filter->slug] ?? request()->input($filter->slug);
+
+                if (filled($value)) {
+                    $count++;
+                    break;
+                }
+            }
+        }
+
+        return $count;
+    }
+
+    public function filterInputs($filter)
+    {
+        $field = $filter->field();
+
+        if ($field instanceof Collection) {
+            return $field->filter();
+        }
+
+        if (is_array($field)) {
+            return collect($field)->filter();
+        }
+
+        return collect([$field])->filter();
     }
 
     public function validate($data)
@@ -335,6 +727,7 @@ abstract class Resource
         }
 
         $this->makeValidation($data);
+
         return $this;
     }
 
@@ -358,12 +751,14 @@ abstract class Resource
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -386,12 +781,14 @@ abstract class Resource
     public function addData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
     public function hideColumns($hide_columns)
     {
         $this->hide_columns = $hide_columns;
+
         return $this;
     }
 
@@ -420,29 +817,33 @@ abstract class Resource
             // If there isnt any field selected
             $column = $result_explode[1] ?? null;
             if (!isset($result_explode[1]) || !isset($value->$column)) {
-                $base_url = str_replace('{' . $result . '}', $value, $base_url);
+                $base_url = str_replace('{'.$result.'}', $value, $base_url);
             } else {
-                $base_url = str_replace('{' . $result . '}', $value->$column, $base_url);
+                $base_url = str_replace('{'.$result.'}', $value->$column, $base_url);
             }
         }
+
         return $base_url;
     }
 
     public function setBaseUrl($base_url)
     {
         $this->base_url = $base_url;
+
         return $this;
     }
 
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
     public function setPluralLabel($plural_label)
     {
         $this->plural_label = $plural_label;
+
         return $this;
     }
 
@@ -450,12 +851,14 @@ abstract class Resource
     {
         $name = Str::snake(class_basename(get_class($this)));
         $name .= '_view';
+
         return $name;
     }
 
     public function getCurrentViewName()
     {
         $name = $this->getCurrentViewRequestName();
+
         return request()->$name ?? collect($this->index_views)->keys()->first();
     }
 
@@ -465,18 +868,21 @@ abstract class Resource
         $view = collect($this->index_views)->filter(function ($item, $key) use ($current_view_name) {
             return $key == $current_view_name;
         })->first();
+
         return $view['view'];
     }
 
     public function setRelatedObject($related_object)
     {
         $this->related_object = $related_object;
+
         return $this;
     }
 
     public function getTitle()
     {
         $field = $this->title;
+
         return $this->object?->$field;
     }
 
@@ -493,6 +899,7 @@ abstract class Resource
         }
 
         $helper = $this->getActionsHelper($relatedResource->object, $relatedResource->getBaseUrl(), null, null);
+
         return $helper->showUrl();
     }
 

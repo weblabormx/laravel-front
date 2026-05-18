@@ -3,20 +3,24 @@
 namespace WeblaborMx\Front;
 
 use Carbon\Carbon;
+use DateTime;
+use Exception;
+use Form;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Blade;
+use Livewire\Livewire;
 use Opis\Closure\SerializableClosure;
-use WeblaborMx\Front\ButtonManager;
-use WeblaborMx\Front\Console\Commands\CreateResource;
-use WeblaborMx\Front\Console\Commands\CreatePage;
-use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Console\Commands\CreateFilter;
+use WeblaborMx\Front\Console\Commands\CreatePage;
+use WeblaborMx\Front\Console\Commands\CreateResource;
+use WeblaborMx\Front\Console\Commands\Install;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Http\Controllers\FrontController;
 use WeblaborMx\Front\Http\Controllers\PageController;
-use WeblaborMx\Front\ThumbManager;
+use WeblaborMx\Front\Livewire\ResourceImport;
+use WeblaborMx\Front\Livewire\ResourceIndex;
 
 class FrontServiceProvider extends ServiceProvider
 {
@@ -28,12 +32,14 @@ class FrontServiceProvider extends ServiceProvider
     public function register()
     {
         if (! defined('WLFRONT_PATH')) {
-            define('WLFRONT_PATH', realpath(__DIR__ . '/../'));
+            define('WLFRONT_PATH', realpath(__DIR__.'/../'));
         }
 
         $this->loadMacros();
         $this->registerFront();
-        $this->mergeConfigFrom(__DIR__ . '/../config/front.php', 'front');
+        $this->mergeConfigFrom(__DIR__.'/../config/front.php', 'front');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'front');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
     }
 
     /**
@@ -43,24 +49,25 @@ class FrontServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
-        $this->publishes([__DIR__ . '/../config/front.php' => config_path('front.php')], 'config');
+
+        $this->publishes([__DIR__.'/../config/front.php' => config_path('front.php')], 'config');
         $this->publishes([
-            __DIR__ . '/../resources/views' => base_path('resources/views/vendor/front'),
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/front'),
         ]);
-        
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'front');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'front');
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
+        Livewire::component('front.resource-index', ResourceIndex::class);
+        Livewire::component('front.resource-import', ResourceImport::class);
         $this->registerBladeDirectives();
-        SerializableClosure::addSecurityProvider(new SecurityProvider());
+        SerializableClosure::addSecurityProvider(new SecurityProvider);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateResource::class,
                 CreatePage::class,
                 Install::class,
-                CreateFilter::class
+                CreateFilter::class,
             ]);
         }
 
@@ -87,14 +94,15 @@ class FrontServiceProvider extends ServiceProvider
             $class = Front::registerResource($model);
             $front = Front::makeResource($class);
             $prefix = class_basename($front->base_url);
-            return Route::prefix($prefix)->name('front.' . str($prefix)->classBasename()->snake()->lower())->group(function () use ($front, $model, $provider) {
+
+            return Route::prefix($prefix)->name('front.'.str($prefix)->classBasename()->snake()->lower())->group(function () use ($front, $model, $provider) {
                 $controller = new FrontController($model);
                 $provider->generateFrontRoutes($front, $controller);
             });
         });
 
         Route::macro('lense', function ($model) use ($provider) {
-            $model = 'Lenses\\' . $model;
+            $model = 'Lenses\\'.$model;
             $class = Front::registerResource($model);
             $front = Front::makeResource($class);
             $prefix = $front->base_url;
@@ -110,11 +118,19 @@ class FrontServiceProvider extends ServiceProvider
             $slug = str($model)->classBasename()->snake()->lower()->toString();
             $route = \strval($route) ?? $slug;
 
-            return Route::prefix($route)->name('front.page.' . $slug)->group(function () use ($model) {
-                Route::get('/', fn() =>  app(PageController::class)->page($model, 'get'))->name('');
-                Route::post('/', fn() =>  app(PageController::class)->page($model, 'post'))->name('.post');
-                Route::put('/', fn() =>  app(PageController::class)->page($model, 'put'))->name('.put');
-                Route::delete('/', fn() =>  app(PageController::class)->page($model, 'delete'))->name('.delete');
+            return Route::prefix($route)->name('front.page.'.$slug)->group(function () use ($model) {
+                Route::get('/', function () use ($model) {
+                    return app(PageController::class)->page($model, 'get');
+                })->name('');
+                Route::post('/', function () use ($model) {
+                    return app(PageController::class)->page($model, 'post');
+                })->name('.post');
+                Route::put('/', function () use ($model) {
+                    return app(PageController::class)->page($model, 'put');
+                })->name('.put');
+                Route::delete('/', function () use ($model) {
+                    return app(PageController::class)->page($model, 'delete');
+                })->name('.delete');
             });
         });
     }
@@ -151,7 +167,7 @@ class FrontServiceProvider extends ServiceProvider
         });
 
         Blade::if('isactive', function ($route) {
-            return request()->is($route . '/*') || request()->is($route);
+            return request()->is($route.'/*') || request()->is($route);
         });
 
         Blade::directive('var_active_exact', function ($route) {
@@ -160,6 +176,7 @@ class FrontServiceProvider extends ServiceProvider
 
         Blade::directive('pushonce', function ($expression) {
             $var = '$__env->{"__pushonce_" . md5(__FILE__ . ":" . __LINE__)}';
+
             return "<?php if(!isset({$var})): {$var} = true; \$__env->startPush({$expression}); ?>";
         });
 
@@ -177,13 +194,17 @@ class FrontServiceProvider extends ServiceProvider
     {
         $actions = [];
 
-        $actions['index'] = Route::get('/', function (Request $request) use ($controller) {
-            return $controller->index();
-        })->name('');
+        $actions['index'] = Route::livewire('/', ResourceIndex::class)
+            ->defaults('front_resource', $front::class)
+            ->name('');
 
         $actions['create'] = Route::get('create', function () use ($controller) {
             return $controller->create();
         })->name('.create');
+
+        Route::livewire('import', ResourceImport::class)
+            ->defaults('front_resource', $front::class)
+            ->name('.import');
 
         Route::post('/', function (Request $request) use ($controller) {
             return $controller->store($request);
@@ -277,16 +298,17 @@ class FrontServiceProvider extends ServiceProvider
      */
     public function loadInputs()
     {
-        \Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
-            $value = \Form::getValueAttribute($name, $value);
-            if (!is_null($value) && !$value instanceof \DateTime) {
+        Form::macro('frontDatetime', function ($name, $value = null, $options = []) {
+            $value = Form::getValueAttribute($name, $value);
+            if (!is_null($value) && !$value instanceof DateTime) {
                 try {
                     $value = Carbon::parse($value);
-                } catch (\Exception $e) {
-                    
+                } catch (Exception $e) {
+
                 }
             }
-            return \Form::datetimeLocal($name, $value, $options);;
+
+            return Form::datetimeLocal($name, $value, $options);
         });
     }
 }

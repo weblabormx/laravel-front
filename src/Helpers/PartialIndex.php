@@ -2,8 +2,8 @@
 
 namespace WeblaborMx\Front\Helpers;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 
 class PartialIndex
 {
@@ -13,14 +13,16 @@ class PartialIndex
     private $headers;
     private $rows;
     private $show_filters;
+    private $selected_columns = null;
+    private $manual_columns = [];
     public $show_actions;
 
     public function __construct($front, $result, $page_name = 'page', $show_filters = false)
     {
-        $this->front          = $front;
-        $this->result         = $result;
-        $this->page_name      = $page_name;
-        $this->show_filters   = $show_filters;
+        $this->front = $front;
+        $this->result = $result;
+        $this->page_name = $page_name;
+        $this->show_filters = $show_filters;
 
         // If in front there is show_actions, use that
         if (isset($this->front->show_actions)) {
@@ -39,20 +41,32 @@ class PartialIndex
         if ($this->result->count() > 0) {
             $this->getUnusedColumns();
         }
+
+        return $this;
+    }
+
+    public function setSelectedColumns(array $columns, array $manual_columns = [])
+    {
+        $this->selected_columns = $columns;
+        $this->manual_columns = $manual_columns;
+        $this->getUnusedColumns();
+
         return $this;
     }
 
     public function links()
     {
-        if (!$this->result instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+        if (!$this->result instanceof LengthAwarePaginator) {
             return;
         }
         $appends = collect(request()->except($this->page_name))->map(function ($item) {
             if (is_null($item)) {
                 $item = '';
             }
+
             return $item;
         })->all();
+
         return $this->result->appends($appends)->links();
     }
 
@@ -73,6 +87,7 @@ class PartialIndex
             return;
         }
         $front = $this->front;
+
         return view('front::elements.relation_filters', compact('front'));
     }
 
@@ -83,6 +98,7 @@ class PartialIndex
         } else {
             $total = $this->result->total();
         }
+
         return view('front::elements.total_results', compact('total'));
     }
 
@@ -90,13 +106,15 @@ class PartialIndex
     {
         $this->front->setObject($this->result->first());
         $result = collect([]);
-        foreach ($this->front->indexFields() as $field) {
+        foreach ($this->fieldsForIndex() as $field) {
             $input = [];
             $input['class'] = $field->data_classes;
             $input['title'] = $field->title;
             $input['column'] = $field->column;
+            $input['key'] = $field->front_column_key;
             $result[] = (object) $input;
         }
+
         return $result;
     }
 
@@ -104,16 +122,19 @@ class PartialIndex
     {
         return $this->result->map(function ($object) {
             $this->front->setObject($object);
-            $columns = $this->front->indexFields()->map(function ($column) use ($object) {
+            $columns = $this->fieldsForIndex()->map(function ($column) use ($object) {
                 $input = [];
                 $input['class'] = $column->data_classes;
                 $input['title'] = $column->title;
                 $input['value'] = $column->getValueProcessed($object);
                 $input['column'] = $column->column;
+                $input['key'] = $column->front_column_key;
                 $input['extra_data'] = $column->extra_data;
                 $input['object'] = $column;
+
                 return (object) $input;
             })->values();
+
             return (object) compact('columns', 'object');
         });
     }
@@ -127,11 +148,15 @@ class PartialIndex
             $column = $column->filter(function ($item) {
                 return $item->value === '--';
             })->keys();
+
             return $column;
         })->flatten()->countBy()->filter(function ($item) use ($rows) {
             $total_items = $rows->count();
+
             return $item == $total_items;
-        })->keys();
+        })->keys()->filter(function ($key) use ($headers) {
+            return !in_array($headers[$key]->key, $this->manual_columns);
+        });
 
         foreach ($unused_columns as $key) {
             unset($headers[$key]);
@@ -142,6 +167,27 @@ class PartialIndex
 
         $this->headers = $headers;
         $this->rows = $rows;
+    }
+
+    private function fieldsForIndex()
+    {
+        $fields = is_array($this->selected_columns)
+            ? $this->front->configurableColumnFields()
+            : $this->front->indexFields();
+
+        $fields = $fields->map(function ($field, $index) {
+            $field->front_column_key = $this->front->indexColumnKey($field, $index);
+
+            return $field;
+        });
+
+        if (!is_array($this->selected_columns)) {
+            return $fields;
+        }
+
+        return collect($this->selected_columns)->map(function ($column) use ($fields) {
+            return $fields->firstWhere('front_column_key', $column);
+        })->filter()->values();
     }
 
     public function views()
@@ -155,6 +201,7 @@ class PartialIndex
             $data = $item;
             $data['name'] = $key;
             $data['url'] = $this->getViewUrl($data['name']);
+
             return $data;
         })->values();
 
@@ -164,6 +211,7 @@ class PartialIndex
         // Set is active
         $views = $views->map(function ($item) use ($current_view) {
             $item['is_active'] = $current_view == $item['name'];
+
             return $item;
         });
 
@@ -188,6 +236,7 @@ class PartialIndex
 
         $url = str_replace('?&', '?', $url);
         $url = str_replace('??', '?', $url);
+
         return $url;
     }
 }
