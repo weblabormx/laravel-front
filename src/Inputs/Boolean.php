@@ -23,9 +23,9 @@ class Boolean extends Input
 
     public function getValue($object)
     {
-        $value = parent::getValue($object);
-        if ($value === '--') {
-            return $value;
+        $value = parent::getRawValue($object);
+        if (is_null($value)) {
+            return '--';
         }
         if ($this->source == 'index') {
             if ($value) {
