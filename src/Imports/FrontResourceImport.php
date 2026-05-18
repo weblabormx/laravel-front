@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Symfony\Component\HttpFoundation\InputBag;
 use Throwable;
 use WeblaborMx\Front\Facades\Front;
 use WeblaborMx\Front\Jobs\FrontStore;
@@ -164,7 +165,6 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
         }
 
         $response = (new FrontUpdate($request, $front, $object))->handle();
-
         return isResponse($response);
     }
 
@@ -195,6 +195,7 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
             $originalRequest->server->all(),
         );
         $rowRequest->setMethod($method);
+        $rowRequest->setJson(new InputBag($data));
         $rowRequest->setUserResolver($originalRequest->getUserResolver());
         $rowRequest->setRouteResolver($originalRequest->getRouteResolver());
 
