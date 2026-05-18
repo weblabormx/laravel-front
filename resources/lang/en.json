@@ -1,0 +1,19 @@
+{
+    "This action is unauthorized.": "This action is unauthorized.",
+    "The file structure could not be read. Verify the format and try again.": "The file structure could not be read. Verify the format and try again.",
+    "The import file must include an ID column exported from this resource.": "The import file must include an ID column exported from this resource.",
+    "The row ID does not exist or is not available for this resource.": "The row ID does not exist or is not available for this resource.",
+    "No importable columns were found in the file.": "No importable columns were found in the file.",
+    "Choose, reorder, and apply the columns shown in the table.": "Choose, reorder, and apply the columns shown in the table.",
+    "Drag to reorder": "Drag to reorder",
+    "Active": "Active",
+    "Hidden": "Hidden",
+    "Apply columns": "Apply columns",
+    "Cancel": "Cancel",
+    "Normal": "Normal",
+    "Select at least one column.": "Select at least one column.",
+    "Extra columns in file": "Extra columns in file",
+    "Ignored from file": "Ignored from file",
+    "Columns read from file": "Columns read from file",
+    "Loading results...": "Loading results..."
+}

@@ -2,6 +2,8 @@
 
 namespace WeblaborMx\Front\Inputs;
 
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 class ID extends Input
 {
     public $show_on_edit = false;
@@ -23,5 +25,15 @@ class ID extends Input
     public function getValue($object)
     {
         return $object->getKey();
+    }
+
+    public function getExcelValue($object)
+    {
+        return $object->getKey();
+    }
+
+    public function excelFormat(): ?string
+    {
+        return $this->excel_type ?? NumberFormat::FORMAT_NUMBER;
     }
 }

@@ -47,6 +47,7 @@ class Input implements Htmlable, \Stringable
         }
 
         $source = session('source');
+
         return new static($title, $column, $extra, $source);
     }
 
@@ -62,35 +63,68 @@ class Input implements Htmlable, \Stringable
         }
         $this->value = $value;
         $this->default_value = $value;
+
         return $this;
     }
 
     public function getValue($object)
     {
-        if (isset($this->value)) {
-            return $this->value;
-        }
-        if (!isset($object)) {
-            return;
-        }
-        $return = '';
-        $column = $this->column;
-        if (!is_string($column) && is_callable($column)) {
-            $return = $column($object);
-        } elseif (Str::contains($column, '.')) {
-            $return = Arr::get($object, $column);
-        } else {
-            $return = $object?->$column;
-        }
+        $return = $this->getRawValue($object);
 
         try {
             $return = $this->castReturnValue($return);
         } catch (\TypeError $th) {
-            throw new \TypeError("Column '$column' can't be casted to string to be shown on input", 0, $th);
+            throw new \TypeError("Column '$this->column' can't be casted to string to be shown on input", 0, $th);
         }
 
         $return = isset($return) && strlen($return) > 0 ? $return : '--';
+
         return $return;
+    }
+
+    public function getRawValue($object)
+    {
+        if (isset($this->value)) {
+            return $this->value;
+        }
+        if (!isset($object)) {
+            return null;
+        }
+
+        $column = $this->column;
+        if (!is_string($column) && is_callable($column)) {
+            return $column($object);
+        } elseif (Str::contains($column, '.')) {
+            return Arr::get($object, $column);
+        }
+
+        return $object?->$column;
+    }
+
+    public function getExcelValue($object)
+    {
+        $value = $this->getRawValue($object);
+
+        if (is_null($value) || $value === '' || $value === '--') {
+            return null;
+        }
+
+        return strip_tags((string) $this->castReturnValue($value));
+    }
+
+    public function parseExcelValue($value)
+    {
+        return $value;
+    }
+
+    public function excelFormat(): ?string
+    {
+        return $this->excel_type;
+    }
+
+    public function excelOptions(): array
+    {
+        return [];
     }
 
     public function getValueProcessed($object)
@@ -114,6 +148,7 @@ class Input implements Htmlable, \Stringable
             $function = $this->display_using;
             $return = $function($return);
         }
+
         return $return;
     }
 
@@ -127,12 +162,14 @@ class Input implements Htmlable, \Stringable
         $explode = explode('.', $column);
         $column = $explode[0];
         $key = $explode[1];
+
         return "{$column}[{$key}]";
     }
 
     public function getDefaultValue()
     {
         $column = $this->getColumn();
+
         return $this->default_value ?? request()->$column;
     }
 
@@ -156,6 +193,7 @@ class Input implements Htmlable, \Stringable
         }
         $input = $this;
         $html = view('front::input-form', compact('input'))->render();
+
         return $this->form_before . $html . $this->form_after;
     }
 
@@ -163,12 +201,14 @@ class Input implements Htmlable, \Stringable
     {
         $input = $this;
         $html = view('front::input-show', compact('input', 'object'))->render();
+
         return $this->validateConditional($object) ? $html : null;
     }
 
     public function setColumn($column)
     {
         $this->column = $column;
+
         return $this;
     }
 
@@ -176,6 +216,7 @@ class Input implements Htmlable, \Stringable
     {
         $this->title = __($title);
         $this->set_title_executed = true;
+
         return $this;
     }
 
@@ -185,7 +226,8 @@ class Input implements Htmlable, \Stringable
             return $this;
         }
         $this->size = $size;
-        $this->attributes['style'] = 'width: ' . $size . 'px';
+        $this->attributes['style'] = 'width: '.$size.'px';
+
         return $this;
     }
 
@@ -194,6 +236,7 @@ class Input implements Htmlable, \Stringable
         if (cache()->store('array')->get('is_massive') !== true) {
             return $this;
         }
+
         return $this->size($size);
     }
 
@@ -203,24 +246,25 @@ class Input implements Htmlable, \Stringable
         if ($this->source != 'create' || !is_null($this->default_value) || is_null($model)) {
             return $this;
         }
-        $model = new $model();
+        $model = new $model;
         $attributes = $model->getAttributes();
         if (isset($attributes[$this->column])) {
             $this->default($attributes[$this->column]);
         }
+
         return $this;
     }
 
     public function setFormat($format)
     {
         $this->format = $format;
+
         return $this;
     }
 
     /**
      * Allow to edit the data passed to create function of the object, returns the request gotten
      **/
-
     public function processData($data)
     {
         return $data;
@@ -239,20 +283,12 @@ class Input implements Htmlable, \Stringable
     /**
      * Can add extra validation to inputs in case is needed
      **/
-
-    public function validate($data)
-    {
-        return;
-    }
+    public function validate($data) {}
 
     /**
      * Action that is executed bofore an object is removed
      **/
-
-    public function removeAction($object)
-    {
-        return;
-    }
+    public function removeAction($object) {}
 
     /* -----------
      * Internal
@@ -278,16 +314,16 @@ class Input implements Htmlable, \Stringable
         if (isset($return) && !is_string($return) && !is_numeric($return) && !is_bool($return)) {
             if (is_scalar($return)) {
                 $return = strval($return);
-            } else if (is_array($return)) {
+            } elseif (is_array($return)) {
                 $return = json_encode($return);
-            } else if (gettype($return) === 'object') {
+            } elseif (gettype($return) === 'object') {
                 if (method_exists($return, '__toString')) {
                     $return = $return->__toString();
-                } else if ($return instanceof \BackedEnum) {
+                } elseif ($return instanceof \BackedEnum) {
                     $return = $return->value;
-                } else if ($return instanceof \UnitEnum) {
+                } elseif ($return instanceof \UnitEnum) {
                     $return = $return->name;
-                } else if ($return instanceof \JsonSerializable) {
+                } elseif ($return instanceof \JsonSerializable) {
                     $return = json_encode($return);
                 }
             }

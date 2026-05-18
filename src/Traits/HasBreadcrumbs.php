@@ -85,6 +85,11 @@ trait HasBreadcrumbs
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];
         }
 
+        // Import
+        if ($front->source == 'index' && isset($data['import'])) {
+            $breadcrumbs[] = ['title' => __('Import'), 'active' => true];
+        }
+
         // Show normal
         if ($front->source == 'show' && is_null($relation['front'])) {
             $breadcrumbs[] = ['title' => $front->plural_label, 'url' => $front->getIndexUrl()];

@@ -4,8 +4,10 @@ namespace WeblaborMx\Front\Inputs;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use WeblaborMx\Front\Facades\Front;
 
 class Image extends Input
@@ -20,6 +22,7 @@ class Image extends Input
     public $extension;
     public $save = true;
     public $thumbnails = [];
+    public $style;
 
     /*
      * Basic functions
@@ -36,7 +39,8 @@ class Image extends Input
     public function form()
     {
         $input = $this;
-        $id = 'file_' . rand();
+        $id = 'file_'.rand();
+
         return view('front::inputs.image-form', compact('input', 'id'));
     }
 
@@ -48,7 +52,46 @@ class Image extends Input
         }
         $original = $value;
         $thumb = Front::thumbs()->get($value, $this->view_size);
-        return view('front::inputs.image', compact('original', 'thumb'));
+        $style = $this->style;
+
+        return view('front::inputs.image', compact('original', 'thumb', 'style'));
+    }
+
+    public function getExcelValue($object)
+    {
+        $value = $this->getRawValue($object);
+        if (is_null($value) || $value === '') {
+            return null;
+        }
+
+        if ($this->isUrlValue($value)) {
+            return $value;
+        }
+
+        return url($value);
+    }
+
+    public function parseExcelValue($value)
+    {
+        return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    public function getRules($source = 'store')
+    {
+        $rules = parent::getRules($source);
+
+        if (!$this->isUrlValue(request()->input($this->column))) {
+            return $rules;
+        }
+
+        return collect($rules)->reject(function ($rule) {
+            return $rule === 'image' || (is_string($rule) && Str::startsWith($rule, 'mimes:'));
+        })->values()->all();
+    }
+
+    public function excelFormat(): ?string
+    {
+        return $this->excel_type ?? NumberFormat::FORMAT_TEXT;
     }
 
     /*
@@ -58,18 +101,21 @@ class Image extends Input
     public function setDirectory($directory)
     {
         $this->directory = $directory;
+
         return $this;
     }
 
     public function setFileName($file_name)
     {
         $this->file_name = $file_name;
+
         return $this;
     }
 
     public function addThumb($prefix, $width, $height, $fit)
     {
         $this->thumbnails[] = compact('prefix', 'width', 'height', 'fit');
+
         return $this;
     }
 
@@ -78,18 +124,21 @@ class Image extends Input
         $this->thumbnails = collect($this->thumbnails)->filter(function ($item) use ($thumbs) {
             return in_array($item['prefix'], $thumbs);
         })->values()->toArray();
+
         return $this;
     }
 
     public function setThumbs($thumbnails)
     {
         $this->thumbnails = $thumbnails;
+
         return $this;
     }
 
     public function setUrlReturned($url_returned)
     {
         $this->url_returned = $url_returned;
+
         return $this;
     }
 
@@ -97,12 +146,14 @@ class Image extends Input
     {
         $this->setThumbs([]); // Dont have thumbs
         $this->sizeToShow(''); // Show original file by default
+
         return $this;
     }
 
     public function originalSize($width, $height, $fit = false)
     {
         $this->original_size = compact('width', 'height', 'fit');
+
         return $this;
     }
 
@@ -130,6 +181,12 @@ class Image extends Input
         return $this;
     }
 
+    public function setStyle($style)
+    {
+        $this->style = $style;
+        return $this;
+    }
+
     public function noSave()
     {
         $this->save = false;
@@ -142,15 +199,21 @@ class Image extends Input
 
     public function processData($data)
     {
-        if (!isset($data[$this->column . '_new'])) {
-            unset($data[$this->column]);
+        if (isset($data[$this->column]) && $this->isUrlValue($data[$this->column])) {
             return $data;
         }
-        $file = $data[$this->column . '_new'];
+
+        if (!isset($data[$this->column.'_new'])) {
+            unset($data[$this->column]);
+
+            return $data;
+        }
+        $file = $data[$this->column.'_new'];
 
         // Assign data to request
         $data[$this->column] = $file;
-        unset($data[$this->column . '_new']);
+        unset($data[$this->column.'_new']);
+
         return $data;
     }
 
@@ -159,8 +222,19 @@ class Image extends Input
         if (!isset($data[$this->column])) {
             return $data;
         }
+        if ($this->isUrlValue($data[$this->column])) {
+            $data[$this->column] = $this->normalizeStorageUrl($data[$this->column]);
+            if ($this->isStoredUrlValue($data[$this->column])) {
+                return $data;
+            }
+            $data[$this->column] = $this->saveRemoteUrl($data, $data[$this->column]);
+
+            return $data;
+        }
+
         if (!$this->save) {
             unset($data['image']);
+
             return $data;
         }
         $file = $data[$this->column];
@@ -183,6 +257,7 @@ class Image extends Input
 
         // Assign data to request
         $data[$this->column] = $url;
+
         return $data;
     }
 
@@ -191,12 +266,22 @@ class Image extends Input
         $name = $this->column;
         $attribute_name = $this->title;
 
+        if (isset($data[$name]) && $this->isUrlValue($data[$name])) {
+            Validator::make($data, [
+                $name => ['nullable', 'url'],
+            ], [], [
+                $name => $attribute_name,
+            ])->validate();
+
+            return;
+        }
+
         $rules = [
-            $name => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:' . $this->max_size]
+            $name => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:'.$this->max_size],
         ];
 
         $attributes = [
-            $name => $attribute_name
+            $name => $attribute_name,
         ];
 
         Validator::make($data, $rules, [], $attributes)->validate();
@@ -215,7 +300,7 @@ class Image extends Input
 
         // Get file names
         $original_file_name = str_replace($base, '', $value);
-        $file_names = array();
+        $file_names = [];
         $file_names[] = $original_file_name;
         foreach ($this->thumbnails as $thumbnail) {
             $file_names[] = Front::thumbs()->get($original_file_name, $thumbnail['prefix']);
@@ -223,7 +308,7 @@ class Image extends Input
 
         // Remove the files
         Storage::delete($file_names);
-        return;
+
     }
 
     /*
@@ -244,12 +329,13 @@ class Image extends Input
 
         // Save the image
         $new_name = Front::thumbs()->get($file_name, $prefix, true);
-        $file_name = $this->directory . '/' . $new_name;
+        $file_name = $this->directory.'/'.$new_name;
         $storage_file = Storage::put($file_name, (string) $new_file->encode(), $this->visibility);
         if ($storage_file == false) {
             abort(406, "{$file_name} wasn't uploaded");
         }
         $url_returned = $this->url_returned;
+
         return $url_returned($file_name);
     }
 
@@ -264,8 +350,9 @@ class Image extends Input
         }
         if (!is_null($file_name)) {
             $extension = $this->extension ?? $file->guessExtension();
-            $file_name .= '.' . $extension;
+            $file_name .= '.'.$extension;
         }
+
         return $file_name;
     }
 
@@ -277,6 +364,7 @@ class Image extends Input
         // If original sizes were defined then save as thumb
         if (!is_null($this->original_size) && is_array($this->original_size)) {
             $url = $this->saveNewSize($file, $set_file_name, $this->original_size['width'], $this->original_size['height'], '', $this->original_size['fit']);
+
             return ['file_name' => $set_file_name, 'url' => $url];
         }
 
@@ -289,7 +377,78 @@ class Image extends Input
 
         $file_name = class_basename($storage_file);
         $url_returned = $this->url_returned;
-        $url = $url_returned($this->directory . '/' . $file_name);
+        $url = $url_returned($this->directory.'/'.$file_name);
+
         return compact('file_name', 'url');
+    }
+
+    private function isUrlValue($value): bool
+    {
+        return is_string($value) && Str::startsWith($value, ['http://', 'https://']);
+    }
+
+    private function normalizeStorageUrl($value)
+    {
+        $base = $this->storageUrlBase();
+        $absoluteBase = $this->isUrlValue($base) ? $base : rtrim(url($base), '/').'/';
+
+        if (Str::startsWith($value, $absoluteBase)) {
+            return $base.Str::after($value, $absoluteBase);
+        }
+
+        return $value;
+    }
+
+    private function isStoredUrlValue($value): bool
+    {
+        return is_string($value) && Str::startsWith($value, $this->storageUrlBase());
+    }
+
+    private function storageUrlBase()
+    {
+        $function = $this->url_returned;
+        $format = $function('test.test');
+
+        return str_replace('test.test', '', $format);
+    }
+
+    private function saveRemoteUrl($data, $url)
+    {
+        $contents = @file_get_contents($url);
+        if ($contents === false) {
+            throw ValidationException::withMessages([
+                $this->column => __('The selected :attribute is invalid.', ['attribute' => $this->title]),
+            ]);
+        }
+
+        $extension = pathinfo(parse_url($url, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION) ?: 'jpg';
+        $file_name = Str::random(40).'.'.$extension;
+
+        if (!is_null($this->file_name)) {
+            $file_name = $this->getFileName($data, new class($extension) {
+                private $extension;
+
+                public function __construct($extension)
+                {
+                    $this->extension = $extension;
+                }
+
+                public function guessExtension()
+                {
+                    return $this->extension;
+                }
+            });
+        }
+
+        $storage_file = $this->directory.'/'.$file_name;
+        Storage::put($storage_file, $contents, $this->visibility);
+
+        foreach ($this->thumbnails as $thumbnail) {
+            $this->saveNewSize($contents, $file_name, $thumbnail['width'], $thumbnail['height'], $thumbnail['prefix'], $thumbnail['fit']);
+        }
+
+        $url_returned = $this->url_returned;
+
+        return $url_returned($storage_file);
     }
 }

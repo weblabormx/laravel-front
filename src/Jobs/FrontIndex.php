@@ -2,12 +2,13 @@
 
 namespace WeblaborMx\Front\Jobs;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class FrontIndex
 {
-    public $front, $base;
+    public $front;
+    public $base;
 
     public function __construct($front, $base)
     {
@@ -29,13 +30,16 @@ class FrontIndex
         // Detect if crud is just for 1 item and redirects
         if (!Str::contains(get_class($objects), 'Illuminate\Database\Eloquent')) {
             $url = $this->base.'/'.$objects->getKey().'/edit';
+
             return redirect($url);
         }
 
         // If seeing trashed elements
-        if($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
+        if ($this->front->canIndexDeleted() && request()->filled('trashed') && request()->get('trashed')) {
             $objects = $objects->onlyTrashed();
         }
+        $objects = $this->front->applyIndexSorting($objects);
+
         // If is normal query paginate results
         $result = $this->paginate($objects);
 
@@ -68,6 +72,7 @@ class FrontIndex
             $new_query = explode('?', $redirect_url)[1];
             $new_query = collect(explode('&', $new_query))->mapWithKeys(function ($item) {
                 $item = explode('=', $item);
+
                 return [$item[0] => $item[1]];
             })->toArray();
 
@@ -76,6 +81,7 @@ class FrontIndex
                 return redirect($redirect_url);
             }
         }
+
         return $result;
     }
 
@@ -106,6 +112,7 @@ class FrontIndex
         $key = 'front:'.$request.':';
         $key .= $objects->toSql();
         $key = hash('sha256', $key);
+
         return $key;
     }
 
@@ -133,6 +140,7 @@ class FrontIndex
         $key_name = $result->first()->getKeyName();
         $key = get_class($this).':result:'.$result->pluck($key_name)->implode('|');
         $key = hash('sha256', $key);
+
         return $key;
     }
 }
