@@ -497,6 +497,32 @@ abstract class Resource
         return $this->withExcelIdField($fields);
     }
 
+    public function exportColumnKeys(array $columns)
+    {
+        return collect($columns)
+            ->merge($this->requiredExportColumnKeys())
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function requiredExportColumnKeys()
+    {
+        $fields = $this->configurableColumnFields()->map(function ($field, $index) {
+            $field->front_column_key = $this->indexColumnKey($field, $index);
+
+            return $field;
+        });
+
+        return $this->importableIndexFields($fields->pluck('front_column_key')->all())
+            ->filter(function ($field) {
+                return $this->fieldHasRequiredRule($field);
+            })
+            ->pluck('front_column_key')
+            ->values()
+            ->all();
+    }
+
     public function importableIndexFields(array $columns = [])
     {
         $fields = count($columns) > 0
@@ -550,6 +576,17 @@ abstract class Resource
         return $field;
     }
 
+    private function fieldHasRequiredRule($field)
+    {
+        return collect($field->getRules('store'))->contains(function ($rule) {
+            if (!is_string($rule)) {
+                return false;
+            }
+
+            return in_array('required', explode('|', $rule), true);
+        });
+    }
+
     public function excelHeadingForField($field): string
     {
         return $this->normalizeExcelHeading($field->title);
@@ -579,7 +616,7 @@ abstract class Resource
             return null;
         }
 
-        return $this->globalIndexQuery()->whereKey($key)->first();
+        return $this->globalIndexQuery()->find($key);
     }
 
     public function processExcel(array $data, string $direction = 'import', $row = null, $object = null): array

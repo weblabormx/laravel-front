@@ -37,6 +37,10 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
         $originalRequest = request();
 
         foreach ($rows as $rowIndex => $row) {
+            if (!$this->rowHasData($row)) {
+                continue;
+            }
+
             $id = $row[$idHeading] ?? null;
             $object = filled($id) ? $indexFront->excelObjectForKey($id) : null;
             if (filled($id) && is_null($object)) {
@@ -182,6 +186,17 @@ class FrontResourceImport implements ToCollection, WithHeadingRow, WithMultipleS
         }
 
         return null;
+    }
+
+    private function rowHasData(Collection $row): bool
+    {
+        return $row->contains(function ($value) {
+            if (is_string($value)) {
+                return trim($value) !== '';
+            }
+
+            return !is_null($value) && $value !== '';
+        });
     }
 
     private function requestForRow(Request $originalRequest, array $data, string $method): Request
