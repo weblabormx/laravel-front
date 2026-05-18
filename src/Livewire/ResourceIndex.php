@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
-use Livewire\Component;
+use Livewire\{Component, WithPagination};
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 use WeblaborMx\Front\Exports\FrontResourceExport;
@@ -16,8 +16,7 @@ use WeblaborMx\Front\Traits\IsRunable;
 
 class ResourceIndex extends Component
 {
-    use AuthorizesRequests;
-    use IsRunable;
+    use AuthorizesRequests, IsRunable, WithPagination;
 
     #[Locked]
     public $resource;
